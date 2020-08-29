@@ -1,6 +1,6 @@
 import React from 'react'
 import PoapLogo from '../assets/images/POAP.svg'
-
+import { Link } from 'react-router-dom'
 
 export default function () {
   return (

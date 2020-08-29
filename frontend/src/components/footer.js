@@ -8,9 +8,7 @@ export default function () {
   return (
       <footer
         role="contentinfo"
-        className={`footer-events 
-        ${path === 'home' ? 'normal-background' : ''} 
-        ${path === 'token' ? 'secondary-background' : ''}`}
+        className={`footer-events normal-background`}
       >
         <div className="image-footer">
           <img src={FooterShadow} className="mobile" alt="" />
