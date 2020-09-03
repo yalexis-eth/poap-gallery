@@ -31,6 +31,40 @@
   }
 }
 
+.gallery-grid {
+  //background: lightblue;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    grid-gap: 3rem,
+  
+}
+
+@media (min-width: $bp-m){ // 479 px
+  .gallery-grid{
+    //background: orange;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-gap: 3rem,
+    
+  }
+}
+
+@media (min-width: $bp-l){ //1140 px
+  .gallery-grid{
+    //background: blue;
+    grid-auto-flow: row;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    grid-gap: '3rem',
+
+  }
+  
+}
+
+
 .poap-app {
   header {
     height: 200px;
