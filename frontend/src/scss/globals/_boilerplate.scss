@@ -153,14 +153,14 @@ ol {
 
 .btn {
   display: block;
-  min-width: 320px;
-  margin: 0 auto 20px;
+  min-width: 20%;
+  margin: 1rem 0px;
   cursor: pointer;
 
-  margin-top: 20px;
+  margin-top: 20px; 
   padding: 12px 24px;
 
-  border-radius: 40px;
+  border-radius: 40px; //40
 
   font-weight: $fontWeight-bold;
   font-family: $font-family-narrow;

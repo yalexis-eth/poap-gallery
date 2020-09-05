@@ -8,9 +8,22 @@ export default function gallery() {
      <div className="container" style={{
       padding: '1rem',
     }}>
-      <div style={{
-        display: 'grid'
+<div  style={{display: "flex", justifyContent: "space-between", alignItems: "center", margin:"0rem 0",}}>
+      <div>
+      <input type="text" placeholder="Search.."/>
+      </div>
+
+      <div className= "btn" >
+      <btn type ="text" style={{height: 50}} >Sort</btn>
+      </div>
+
+</div>
+
+
+      <div className="gallery-grid" style={{
+          //_poapapp.scss media 
       }}>
+
         <Cards/>
       </div>
     </div>
@@ -20,7 +33,7 @@ export default function gallery() {
 
 
 function Cards() {
-  var amount = 30
+  var amount = 9;
   var cards = []
   for (let index = 0; index < amount ; index++) {
     cards.push(<TokenCard/>)
@@ -29,19 +42,19 @@ function Cards() {
 }
 
 
-
 function TokenCard() {
   return (
       <div style={{
         // border: 'black solid 1px',
         borderRadius: '.5rem',
-        width: '200px',
-        height: '200px',
+        width: '200',
+        height: '200',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-around',
         alignItems: 'center',
         boxShadow: '0 5px 16px rgba(100,100,100, 0.3)',
+        padding: '1rem 0rem',
       }}>
         <div style={{
           // border: 'black solid 1px',
@@ -61,8 +74,11 @@ function TokenCard() {
           <h3>Poap Token</h3>
         </div>
         <div>
-          some description or tags
+          <p>Name</p>
+          <p>Release date</p>
+          <p>Circulating supply X</p>
         </div>
       </div>
   )
 }
+
