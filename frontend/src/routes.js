@@ -2,6 +2,7 @@ export const ROUTES = {
   home: '/',
   token: '/token/:tokenId',
   activity: '/activity'
+  
   // scan: '/scan/:account',
   // token: '/token/:tokenId',
   // callback: '/callback',
