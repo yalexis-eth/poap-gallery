@@ -7,8 +7,8 @@ export default function activity() {
       padding: '1rem',
     }}></div>
 
-<div  style={{display: "flex", justifyContent: "space-evenly", alignItems: "center", margin:"0rem 0"}}>
-<div class="row" style={{display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%"}>
+<div  style={{display: "flex", justifyContent: "space-evenly", alignItems: "center", margin:"0rem 0",}}>
+<div class="row" style={{display: "flex", justifyContent: "space-between", width: "100%" , alignItems: "center"}}>
         <div class="column">
             <h2>Column 1</h2>
             <p>Data..</p>
