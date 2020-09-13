@@ -19,7 +19,7 @@ function App() {
     <Router>
       <Header />
       <Switch>
-        <Route path={ROUTES.home} component={Activity}></Route>
+        <Route path={ROUTES.home} component={Gallery}></Route>
        {/* </Switch><Route path={/activity} component={Activity}></Route> */}
 
       </Switch>

@@ -7,6 +7,7 @@ import FooterPattern from '../assets/images/footer-pattern.svg';
 export default function () {
   return (
       <footer
+      id="footer"
         role="contentinfo"
         className={`footer-events normal-background`}
       >

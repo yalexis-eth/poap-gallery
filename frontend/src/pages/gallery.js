@@ -1,61 +1,198 @@
-import React from 'react'
-import PoapLogo from '../assets/images/POAP.svg'
+import React, { useState, useEffect, useRef } from 'react'
+import ReactModal from 'react-modal';
+import { Formik, FormikActions, Form, Field, FieldProps, ErrorMessage } from 'formik';
+import { SubmitButton } from '../components/submitButton';
+import classNames from 'classnames';
+import { InView } from 'react-intersection-observer';
+
+ReactModal.setAppElement('#root');
+
+const handleFormSubmit = async (
+  values,
+  actions
+) => {
+  console.log('form submitted')
+  // if (!selectedFilter) return;
+  // try {
+  //   actions.setStatus(null);
+  //   actions.setSubmitting(true);
+
+  //   const gasPriceInWEI = convertFromGWEI(values.gasPrice);
+  //   await setSigner(selectedFilter.id, gasPriceInWEI);
+  //   fetchSigners();
+  //   closeEditModal();
+  // } catch (error) {
+  //   actions.setStatus({ ok: false, msg: `Gas price couldn't be changed` });
+  // } finally {
+  //   actions.setSubmitting(false);
+  // }
+};
 
 
-export default function gallery() {
+
+
+export default function Gallery() {
+  const [error, setError] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [items, setItems] = useState([]);
+  const [search, setSearch] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState(true);
+  const [offset, setOffset] = useState(0)
+  const [length, setLength] = useState(20)
+
+  const openModal = () => {
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
+
+  const handleSearch = (event) => {
+    const value = event.target.value
+    if(value && value.length) {
+      const filteredItems = items.filter(item => {
+        return item.name.slice(0, value.length).toLowerCase() === value.toLowerCase()
+      })
+      setSearch(filteredItems)
+      console.log('search results', search)
+    } else {
+      console.log('deleting search')
+      setSearch([])
+    }
+  }
+
+  useEffect(() => {
+    fetch("https://api.poap.xyz/events")
+      .then(res => res.json())
+      .then(
+        (result) => {
+          setIsLoaded(true);
+          setItems(result);
+        },
+        // Note: it's important to handle errors here
+        // instead of a catch() block so that we don't swallow
+        // exceptions from actual bugs in components.
+        (error) => {
+          setIsLoaded(true);
+          setError(error);
+        }
+      )
+  }, [])
   return (
     <main id="site-main" role="main" className="app-content">
-     <div className="container" style={{
-      padding: '1rem',
-    }}>
-<div  style={{display: "flex", justifyContent: "space-between", alignItems: "center", margin:"0rem 0",}}>
-      <div>
-      <input type="text" placeholder="Search.."/>
-      </div>
-
-      <div className= "btn" >
-      <btn type ="text" style={{height: 50}} >Sort</btn>
-      </div>
-
-</div>
-
-
+     <div className="container" style={{padding: '1rem'}}>
       <div className="gallery-grid" style={{
-          //_poapapp.scss media 
+        //_poapapp.scss media 
       }}>
-
-        <Cards/>
+      <div className="gallery-search">
+    <input onChange={handleSearch} type="text" placeholder="Search.."/> <span style={{
+      position: 'absolute',
+      top: '85%',
+      right: '0',
+      color: '#66666688',
+      fontSize: '.8rem',
+    }}>{search.length} result(s)</span>
       </div>
+      <div className="gallery-filter">
+        <a onClick={() => openModal()} className="btn" >
+          <span>Filter</span>
+        </a>
+      </div>
+        <Cards events={search && search.length ? search : items} length={length} offset={offset}/>
+      </div>
+      <InView
+      threshold={1}
+      onChange={(inView, entry) => {
+         if(inView && items && items.length) {
+           if((length + 20) < items.length) {
+             setLength(length + 20)
+           } else {
+             setLength(items.length)
+           }
+         }
+      }}
+      >
+      {({ inView, ref, entry }) => (
+        <div ref={ref}>
+        </div>
+      )}
+      </InView>
     </div>
+    <ReactModal
+        isOpen={modalOpen}
+        // shouldFocusAfterRender={true}
+
+      >
+        <div>
+          <h3>Set Filter</h3>
+          {selectedFilter &&
+            <Formik
+              enableReinitialize
+              onSubmit={handleFormSubmit}
+              initialValues={{ gasPrice: 1 }}
+              // validationSchema={}
+            >
+              {({ dirty, isValid, isSubmitting, status, touched }) => {
+                return (
+                  <Form className="price-gas-modal-form">
+                    <Field
+                      name="gasPrice"
+                      render={({ field, form }) => {
+                        return (
+                          <input
+                            type="text"
+                            autoComplete="off"
+                            className={classNames(!!form.errors[field.name] && 'error')} 
+                            placeholder={'Gas price in GWEI'}
+                            {...field}
+                          />
+                        );
+                      }}
+                    />
+                    <ErrorMessage name="gasPrice" component="p" className="bk-error"/>
+                    {status && (
+                      <p className={status.ok ? 'bk-msg-ok' : 'bk-msg-error'}>{status.msg}</p>
+                    )}
+                    <SubmitButton
+                      text="Modify gas price"
+                      isSubmitting={isSubmitting}
+                      canSubmit={isValid && dirty}
+                    />
+                    <div onClick={closeModal} className={'close-modal'}>
+                      Cancel
+                    </div>
+                  </Form>
+                );
+              }}
+            </Formik>
+          }
+        </div>
+      </ReactModal>
   </main>
   )
 }
 
 
-function Cards() {
-  var amount = 9;
-  var cards = []
-  for (let index = 0; index < amount ; index++) {
-    cards.push(<TokenCard/>)
+function Cards({ events, offset, length }) {
+  let cards = []
+  if (events && events.length && length <= events.length) {
+    for (let i = offset; i < length; i++) {
+      cards.push(<TokenCard key={i} event={events[i]}/>)
+    }
+  } else {
+    for (let i = 0; i < events.length; i++) {
+      cards.push(<TokenCard key={i} event={events[i]}/>)
+    }
   }
   return cards
 }
 
 
-function TokenCard() {
+function TokenCard({ event }) {
   return (
-      <div style={{
-        // border: 'black solid 1px',
-        borderRadius: '.5rem',
-        width: '200',
-        height: '200',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-around',
-        alignItems: 'center',
-        boxShadow: '0 5px 16px rgba(100,100,100, 0.3)',
-        padding: '1rem 0rem',
-      }}>
+      <div className="gallery-card">
         <div style={{
           // border: 'black solid 1px',
           borderRadius: '50%',
@@ -64,18 +201,29 @@ function TokenCard() {
           display: 'flex',
           width: '75px',
           height: '75px',
+          borderRadius: '50%',
         }}>
           <img style={{
             width: 'auto',
-            height: '100%'
-          }} src={PoapLogo} alt="POAP" />
+            height: '100%',
+            borderRadius: '50%',
+          }} src={event.image_url} alt="POAP" />
+        </div>
+        <div style={{
+          overflow: 'auto',
+          width: '100%',
+          }}>
+        <h3 title={event.name} className="h4"
+        style={{
+          fontSize: '1rem',
+          textAlign: 'center',
+          margin: '.8rem 0',
+        }}
+        >{event.name}</h3>
         </div>
         <div>
-          <h3>Poap Token</h3>
-        </div>
-        <div>
-          <p>Name</p>
-          <p>Release date</p>
+        <p>{event.city || "virtual"}</p>
+        <p>{event.start_date}</p>
           <p>Circulating supply X</p>
         </div>
       </div>
