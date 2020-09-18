@@ -193,6 +193,9 @@ function Cards({ events, offset, length }) {
 function TokenCard({ event }) {
   return (
       <div className="gallery-card">
+        <div className="place">
+          
+        </div>
         <div style={{
           // border: 'black solid 1px',
           borderRadius: '50%',
