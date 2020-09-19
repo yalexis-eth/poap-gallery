@@ -39,7 +39,7 @@ export default function Gallery() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState(true);
   const [offset, setOffset] = useState(0)
-  const [length, setLength] = useState(20)
+  const [length, setLength] = useState(50)
 
   const openModal = () => {
     setModalOpen(true);
@@ -87,20 +87,27 @@ export default function Gallery() {
         //_poapapp.scss media 
       }}>
       <div className="gallery-search">
-    <input onChange={handleSearch} type="text" placeholder="Search.."/> <span style={{
-      position: 'absolute',
-      top: '85%',
-      right: '0',
-      color: '#66666688',
-      fontSize: '.8rem',
-    }}>{search.length} result(s)</span>
+        <input onChange={handleSearch} type="text" placeholder="Search.."/> <span style={{
+          position: 'absolute',
+          top: '85%',
+          right: '0',
+          color: '#66666688',
+          fontSize: '.8rem',
+        }}>{search.length} result(s)</span>
       </div>
       <div className="gallery-filter">
         <a onClick={() => openModal()} className="btn" >
           <span>Filter</span>
         </a>
       </div>
+      {isLoaded ? (
         <Cards events={search && search.length ? search : items} length={length} offset={offset}/>
+      ) : (
+        <div className="spinner">
+          <div className="cube1"></div>
+          <div className="cube2"></div>
+        </div>
+      )}
       </div>
       <InView
       threshold={1}
