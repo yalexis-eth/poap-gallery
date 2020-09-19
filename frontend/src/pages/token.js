@@ -36,16 +36,18 @@ export function Token() {
   const [error, setError] = useState(null)
   const [isLoaded, setIsLoaded] = useState(false)
 
-
-
   useEffect(() => {
     fetch('https://api.poap.xyz/events')
       .then((res) => res.json())
       .then(
         (result) => {
-          result = result.filter(event => event.id === tokenId)
+          result = result.filter(event => event.id + "" === tokenId)
+          
           setIsLoaded(true)
-          setEvent(result)
+          if(result && result.length) {
+            setEvent(result[0])
+          }
+
         },
         (error) => {
           setIsLoaded(true)
@@ -64,14 +66,14 @@ export function Token() {
         <div className="gallery-grid"></div>
     
       <div  style={{display: "flex", flexWrap: "wrap", justifyContent: "space-between", margin:"0rem 0"}}>
-       <div style={{flex: "3"}}> <TokenCard/> </div> 
+       <div style={{flex: "3"}}> <TokenCard event={event}/> </div> 
        <div style={{display: "flex", flexDirection: "column", flex: "7", justifyContent: "center"}}> 
-        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> Description </h4> </div>  <div style={{marginLeft: "3rem"}}> {apiInfo()} </div> </div>
-        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> Virtual Event </h4> </div>  <div style={{marginLeft: "3rem"}}> {apiInfo()} </div> </div>
-        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> Country  </h4> </div>  <div style={{marginLeft: "3rem"}}> {apiInfo()} </div> </div>
-        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> Start date </h4> </div>  <div style={{marginLeft: "3rem"}}> {apiInfo()} </div> </div>
-        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> End date </h4> </div>  <div style={{marginLeft: "3rem"}}> {apiInfo()} </div> </div>
-        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> Website </h4> </div>  <div style={{marginLeft: "3rem"}}> {apiInfo()} </div> </div>
+        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> Description </h4> </div>  <div style={{marginLeft: "3rem"}}> {event.description} </div> </div>
+        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> Virtual Event </h4> </div>  <div style={{marginLeft: "3rem"}}> {event.virtual_event} </div> </div>
+   { event.country ? <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> Country  </h4> </div>  <div style={{marginLeft: "3rem"}}> {event.country} </div> </div> : null}
+        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> Start date </h4> </div>  <div style={{marginLeft: "3rem"}}>{event.start_date} </div> </div>
+        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> End date </h4> </div>  <div style={{marginLeft: "3rem"}}>{event.end_date} </div> </div>
+        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> Website </h4> </div>  <div style={{marginLeft: "3rem"}}> {event.event_url} </div> </div>
        </div>
 
  
@@ -80,12 +82,15 @@ export function Token() {
 
   <div  style={{display: "flex", alignItems: "center", margin:"2rem 0",}}>
         <table className="activityTable" style={{width: "100%" ,border: "none"}}>
+          <thead>
             <tr>
               <th>#</th>
               <th>Owner</th>
               <th>Claim date</th>
               <th>Transfer count</th>
             </tr>
+          </thead>
+          <tbody>
             <tr> 
               <td>1</td>
               <td>ABC </td>
@@ -97,22 +102,20 @@ export function Token() {
               <td>ABC POAP</td>
               <td>0xb4367dc4de</td>
               <td>0xb4367dc4d2</td>
-
             </tr>
             <tr> 
               <td>3</td>
               <td>ABC PP3</td>
               <td>0xb4367dc4de</td>
               <td>Stefan.eth</td>
-
             </tr>
             <tr> 
               <td>4</td>
               <td>ABC 1</td>
               <td>Max.eth</td>
               <td>Alexander.eth</td>
-   
             </tr>
+          </tbody>
         </table>
     </div>
 
@@ -123,7 +126,7 @@ export function Token() {
 
 
 
-  function TokenCard() {
+  function TokenCard({ event }) {
     return (
         <div style={{
           // border: 'black solid 1px',
@@ -149,10 +152,10 @@ export function Token() {
             <img style={{
               width: 'auto',
               height: '100%'
-            }} src={PoapLogo} alt="POAP" />
+            }} src={event.image_url} alt="POAP" />
           </div>
           <div>
-            <h3>Poap Token</h3>
+          <h3>{event.name}</h3>
           </div>
           <div>
           </div>
