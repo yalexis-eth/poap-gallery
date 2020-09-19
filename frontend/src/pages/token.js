@@ -2,7 +2,7 @@ import React from 'react'
 import PoapLogo from '../assets/images/POAP.svg'
 
 
-export default function Activity() {
+export default function Activity( event ) {
   return (
     <main id="site-main" role="main" className="app-content">
       <div className="container" style={{
@@ -12,19 +12,19 @@ export default function Activity() {
         //_poapapp.scss media 
       }}></div>
     
-      <div  style={{display: "flex", justifyContent: "space-between", margin:"0rem 0",}}>
+      <div  style={{display: "flex", flexWrap: "wrap", justifyContent: "space-between", margin:"0rem 0"}}>
        <div style={{flex: "3"}}> <TokenCard/> </div> 
        <div style={{display: "flex", flexDirection: "column", flex: "7", justifyContent: "center"}}> 
-     
-        <h4> Description </h4>
-        <h4> Virtual Event </h4>
-        <h4> Country </h4>
-        <h4> Start date </h4>
-        <h4> End date </h4>
-        <h4> Website </h4>
-        
-        
+        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> Description </h4> </div>  <div style={{marginLeft: "3rem"}}> {apiInfo()} </div> </div>
+        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> Virtual Event </h4> </div>  <div style={{marginLeft: "3rem"}}> {apiInfo()} </div> </div>
+        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> Country  </h4> </div>  <div style={{marginLeft: "3rem"}}> {apiInfo()} </div> </div>
+        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> Start date </h4> </div>  <div style={{marginLeft: "3rem"}}> {apiInfo()} </div> </div>
+        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> End date </h4> </div>  <div style={{marginLeft: "3rem"}}> {apiInfo()} </div> </div>
+        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> Website </h4> </div>  <div style={{marginLeft: "3rem"}}> {apiInfo()} </div> </div>
        </div>
+
+ 
+
   </div>
 
   <div  style={{display: "flex", alignItems: "center", margin:"2rem 0",}}>
@@ -34,7 +34,6 @@ export default function Activity() {
               <th>Owner</th>
               <th>Claim date</th>
               <th>Transfer count</th>
-              {apiInfo()}
             </tr>
             <tr> 
               <td>1</td>
@@ -111,6 +110,6 @@ export default function Activity() {
   }
 
   function apiInfo() {
-    return ( <h2>Hello</h2>)
+    return ( <h4>Hello</h4> )
   }
   

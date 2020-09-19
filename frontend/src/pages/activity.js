@@ -5,7 +5,7 @@ export default function activity() {
     <main id="site-main" role="main" className="app-content">
       <div className="container" style={{
       padding: '0rem',
-    }}></div>
+    }}>
 
 <div  style={{display: "flex", alignItems: "center", margin:"0rem 0",}}>
         <table className="activityTable" style={{width: "100%" ,border: "none"}}>
@@ -56,7 +56,7 @@ export default function activity() {
             </tr>
         </table>
   
-
+        </div>
 </div>
     </main>
   )
