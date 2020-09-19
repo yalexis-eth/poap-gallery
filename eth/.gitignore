@@ -1,0 +1,9 @@
+# zos sessions
+zos.dev-*
+
+# contracts build
+build
+
+.zos.session
+.openzeppelin/
+node_modules
