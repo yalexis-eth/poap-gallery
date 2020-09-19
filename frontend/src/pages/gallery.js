@@ -42,7 +42,7 @@ export default function Gallery() {
       <div className="container" style={{ padding: '1rem' }}>
         <div>
           {' '}
-          link to activity <Link to="/activity">Activity link</Link>
+          link to activity view: <Link to="/activity">Activity link</Link>
         </div>
         <div className="gallery-grid">
           <div className="gallery-search">
