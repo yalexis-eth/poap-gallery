@@ -16,12 +16,12 @@ export default function activity() {
        <div style={{flex: "3"}}> <TokenCard/> </div> 
        <div style={{display: "flex", flexDirection: "column", flex: "7", justifyContent: "center"}}> 
      
-       <h4> Description </h4>
-       <h4> Virtual Event </h4>
-       <h4> Country </h4>
-       <h4> Start date </h4>
-       <h4> End date </h4>
-       <h4> Website </h4>
+        <h4> Description</h4>
+        <h4> Virtual Event </h4>
+        <h4> Country </h4>
+        <h4> Start date </h4>
+        <h4> End date </h4>
+        <h4> Website </h4>
        </div>
 
 
