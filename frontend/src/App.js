@@ -5,6 +5,7 @@ import { ROUTES } from './routes'
 import './scss/main.scss'
 import Gallery from './pages/gallery'
 import Activity from './pages/activity'
+import Token from './pages/token'
 
 
 import Header from './components/header'
@@ -19,7 +20,7 @@ function App() {
     <Router>
       <Header />
       <Switch>
-        <Route path={ROUTES.home} component={Activity}></Route>
+        <Route path={ROUTES.home} component={Token}></Route>
        {/* </Switch><Route path={/activity} component={Activity}></Route> */}
 
       </Switch>
