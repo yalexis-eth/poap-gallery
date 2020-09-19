@@ -1,16 +1,67 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import PoapLogo from '../assets/images/POAP.svg'
+import {
+  Switch,
+  Route,
+  useRouteMatch,
+  useParams
+} from "react-router-dom";
 
 
-export default function Activity() {
+
+export default function Tokens () {
+  let match = useRouteMatch();
+  console.log('matched route:', match)
+
+  return (
+    <Switch>
+      <Route path={`${match.path}/:tokenId`}>
+        <Token />
+      </Route>
+      <Route path={match.path}>
+        <h3>No token Selected</h3>
+      </Route>
+    </Switch>
+  )
+}
+
+
+
+export function Token() {
+  
+  const params = useParams();
+  let { tokenId } = params;
+
+  const [event, setEvent] = useState({})
+  const [error, setError] = useState(null)
+  const [isLoaded, setIsLoaded] = useState(false)
+
+
+
+  useEffect(() => {
+    fetch('https://api.poap.xyz/events')
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          result = result.filter(event => event.id === tokenId)
+          setIsLoaded(true)
+          setEvent(result)
+        },
+        (error) => {
+          setIsLoaded(true)
+          setError(error)
+        }
+      )
+  }, [])
+
+
   return (
     <main id="site-main" role="main" className="app-content">
       <div className="container" style={{
-      padding: '0rem',
-    }}>
-        <div className="gallery-grid" style={{
-        //_poapapp.scss media 
-      }}></div>
+        padding: '0rem',
+      }}>
+      <h1>showing token {tokenId}</h1>
+        <div className="gallery-grid"></div>
     
       <div  style={{display: "flex", justifyContent: "space-between", margin:"0rem 0",}}>
        <div style={{flex: "3"}}> <TokenCard/> </div> 

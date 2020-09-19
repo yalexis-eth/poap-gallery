@@ -2,24 +2,12 @@ import React, { useState, useEffect } from 'react'
 import { InView } from 'react-intersection-observer'
 import { Link } from 'react-router-dom'
 
-
 export default function Gallery() {
   const [error, setError] = useState(null)
   const [isLoaded, setIsLoaded] = useState(false)
   const [items, setItems] = useState([])
   const [search, setSearch] = useState([])
-  const [modalOpen, setModalOpen] = useState(false)
-  const [selectedFilter, setSelectedFilter] = useState(true)
-  const [offset, setOffset] = useState(0)
   const [length, setLength] = useState(50)
-
-  const openModal = () => {
-    setModalOpen(true)
-  }
-
-  const closeModal = () => {
-    setModalOpen(false)
-  }
 
   const handleSearch = (event) => {
     const value = event.target.value
@@ -28,9 +16,7 @@ export default function Gallery() {
         return item.name.slice(0, value.length).toLowerCase() === value.toLowerCase()
       })
       setSearch(filteredItems)
-      console.log('search results', search)
     } else {
-      console.log('deleting search')
       setSearch([])
     }
   }
@@ -43,19 +29,21 @@ export default function Gallery() {
           setIsLoaded(true)
           setItems(result)
         },
-        // Note: it's important to handle errors here
-        // instead of a catch() block so that we don't swallow
-        // exceptions from actual bugs in components.
         (error) => {
           setIsLoaded(true)
           setError(error)
         }
       )
   }, [])
+
+  
   return (
     <main id="site-main" role="main" className="app-content">
       <div className="container" style={{ padding: '1rem' }}>
-        <div> link to activity <Link to="/activity">Activity link</Link></div>
+        <div>
+          {' '}
+          link to activity <Link to="/activity">Activity link</Link>
+        </div>
         <div className="gallery-grid">
           <div className="gallery-search">
             <input onChange={handleSearch} type="text" placeholder="Search.." />{' '}
@@ -72,34 +60,49 @@ export default function Gallery() {
             </span>
           </div>
           <div className="gallery-filter">
-            <div style={{
+            <div
+              style={{
                 display: 'flex',
                 flexWrap: 'wrap',
                 alignItems: 'center',
-                marginRight: '-.3rem'
-                }} className="gallery-sort">
-              <span  style={{
-                padding: '.2rem',
-                flex: '1 1 60px',
-                textAlign: 'right',
-                marginRight: '1rem',
-                }}>Sort by </span>
-              <div style={{ flex: '2 1 160px'}} className="sort-options">
-                <div style={{
-                  display: 'flex', 
-                  flexWrap: 'wrap',
-                  justifyContent: 'space-between' 
-                  }} className="selection-group">
-                  <div 
+                marginRight: '-.3rem',
+              }}
+              className="gallery-sort"
+            >
+              <span
+                style={{
+                  padding: '.2rem',
+                  flex: '1 1 60px',
+                  textAlign: 'right',
+                  marginRight: '1rem',
+                }}
+              >
+                Sort by{' '}
+              </span>
+              <div style={{ flex: '2 1 160px' }} className="sort-options">
+                <div
                   style={{
-                    margin: '.5rem .3rem',
-                    flex: '5 5 calc(50% - 1rem)',
-                    minWidth: '9rem',
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    justifyContent: 'space-between',
                   }}
-                  className="selection-item">
-                    <div style={{
-                     width: 'inherit'
-                    }} className="gallery-select-container" role="menu">
+                  className="selection-group"
+                >
+                  <div
+                    style={{
+                      margin: '.5rem .3rem',
+                      flex: '5 5 calc(50% - 1rem)',
+                      minWidth: '9rem',
+                    }}
+                    className="selection-item"
+                  >
+                    <div
+                      style={{
+                        width: 'inherit',
+                      }}
+                      className="gallery-select-container"
+                      role="menu"
+                    >
                       <select name="sort-by" id="" className="select">
                         <option value="date">Release</option>
                         <option value="holders">Holders</option>
@@ -107,16 +110,24 @@ export default function Gallery() {
                       </select>
                     </div>
                   </div>
-                  <div style={{
-                    margin: '.5rem .3rem',
-                    flex: '5 5 calc(50% - 1rem)',
-                    minWidth: '9rem',
-                  }} className="selection-item">
-                  <div style={{
-                    width: 'inherit'
-                  }} className="gallery-select-container" role="menu">
-                      <select style={{padding: '0 1rem'}} name="sort-by" id="" className="select">
+                  <div
+                    style={{
+                      margin: '.5rem .3rem',
+                      flex: '5 5 calc(50% - 1rem)',
+                      minWidth: '9rem',
+                    }}
+                    className="selection-item"
+                  >
+                    <div
+                      style={{
+                        width: 'inherit',
+                      }}
+                      className="gallery-select-container"
+                      role="menu"
+                    >
+                      <select style={{ padding: '0 1rem' }} name="sort-by" id="" className="select">
                         <option value="desc">High to Low</option>
+                        
                         <option value="asc">Low to High</option>
                       </select>
                     </div>
@@ -124,12 +135,15 @@ export default function Gallery() {
                 </div>
               </div>
             </div>
-            {/* <a onClick={() => openModal()} className="btn">
-              <span>Filter</span>
-            </a> */}
           </div>
-          {isLoaded ? (
-            <Cards events={search && search.length ? search : items} length={length} offset={offset} />
+          {error ? (
+            <div style={{
+              gridColumn: '1 / 3'
+            }}>
+              <span>Could not load gallery, check your connection and try again</span>
+            </div>
+          ) : isLoaded ? (
+            <Cards events={search && search.length ? search : items} length={length} />
           ) : (
             <div className="spinner">
               <div className="cube1"></div>
@@ -156,10 +170,10 @@ export default function Gallery() {
   )
 }
 
-function Cards({ events, offset, length }) {
+function Cards({ events, length }) {
   let cards = []
   if (events && events.length && length <= events.length) {
-    for (let i = offset; i < length; i++) {
+    for (let i = 0; i < length; i++) {
       cards.push(<TokenCard key={i} event={events[i]} />)
     }
   } else {
@@ -172,19 +186,15 @@ function Cards({ events, offset, length }) {
 
 function TokenCard({ event }) {
   return (
-    <Link to="/token">
-    <div className="gallery-card">
+    <Link to={"/token/" + event.id} className="gallery-card">
       <div className="place"></div>
       <div
         style={{
-          // border: 'black solid 1px',
-          borderRadius: '50%',
           justifyContent: 'center',
           alignItems: 'center',
           display: 'flex',
           width: '75px',
           height: '75px',
-          borderRadius: '50%',
         }}
       >
         <img
@@ -210,6 +220,7 @@ function TokenCard({ event }) {
             fontSize: '1rem',
             textAlign: 'center',
             margin: '.8rem 0',
+            overflowWrap: 'anywhere',
           }}
         >
           {event.name}
@@ -220,7 +231,6 @@ function TokenCard({ event }) {
         <p>{event.start_date}</p>
         <p>Circulating supply X</p>
       </div>
-    </div>
     </Link>
   )
 }
