@@ -16,16 +16,15 @@ export default function activity() {
        <div style={{flex: "3"}}> <TokenCard/> </div> 
        <div style={{display: "flex", flexDirection: "column", flex: "7", justifyContent: "center"}}> 
      
-        <h4> Description</h4>
+        <h4> Description </h4>
         <h4> Virtual Event </h4>
         <h4> Country </h4>
         <h4> Start date </h4>
         <h4> End date </h4>
         <h4> Website </h4>
+        
+        
        </div>
-
-
-       
   </div>
 
   <div  style={{display: "flex", alignItems: "center", margin:"2rem 0",}}>
@@ -35,7 +34,7 @@ export default function activity() {
               <th>Owner</th>
               <th>Claim date</th>
               <th>Transfer count</th>
-            
+              {apiInfo()}
             </tr>
             <tr> 
               <td>1</td>
@@ -65,15 +64,13 @@ export default function activity() {
    
             </tr>
         </table>
-
-</div>
-
-
+    </div>
 
   </div>
     </main>
   )
 }
+
 
 
   function TokenCard() {
@@ -112,3 +109,8 @@ export default function activity() {
         </div>
     )
   }
+
+  function apiInfo() {
+    return ( <h2>Hello</h2>)
+  }
+  
