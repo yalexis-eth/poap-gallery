@@ -26,7 +26,6 @@ export default function Tokens () {
 }
 
 
-
 export function Token() {
 
   const params = useParams();
@@ -67,18 +66,9 @@ export function Token() {
     
       <div  style={{display: "flex", flexWrap: "wrap", justifyContent: "space-between", margin:"0rem 0"}}>
        <div style={{flex: "3"}}> <TokenCard event={event}/> </div> 
-       <div style={{display: "flex", flexDirection: "column", flex: "7", justifyContent: "center"}}> 
-        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> Description </h4> </div>  <div style={{marginLeft: "3rem"}}> {event.description} </div> </div>
-        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> Virtual Event </h4> </div>  <div style={{marginLeft: "3rem"}}> {event.virtual_event} </div> </div>
-   { event.country ? <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> Country  </h4> </div>  <div style={{marginLeft: "3rem"}}> {event.country} </div> </div> : null}
-        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> Start date </h4> </div>  <div style={{marginLeft: "3rem"}}>{event.start_date} </div> </div>
-        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> End date </h4> </div>  <div style={{marginLeft: "3rem"}}>{event.end_date} </div> </div>
-        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> Website </h4> </div>  <div style={{marginLeft: "3rem"}}> {event.event_url} </div> </div>
+       {tokenDetails(event)}
        </div>
 
- 
-
-  </div>
 
   <div  style={{display: "flex", alignItems: "center", margin:"2rem 0",}}>
         <table className="activityTable" style={{width: "100%" ,border: "none"}}>
@@ -118,8 +108,8 @@ export function Token() {
           </tbody>
         </table>
     </div>
+    </div>
 
-  </div>
     </main>
   )
 }
@@ -167,3 +157,33 @@ export function Token() {
     return ( <h4>Hello</h4> )
   }
   
+
+
+  function tokenDetails(event){
+
+    let array1 = [{value: event.description, key: "Description"},{value: event.virtual_event ,key: "Virtual Event"}, {value: event.country, key: "Country"}, {value: event.start_date, key: "Start date"}, {value: event.end_date, key: "End date"}, {value: event.event_url, key: "Website"}]
+    let array2 = []
+
+    for (let i = 0; i < array1.length; i++) {
+      let e = (
+        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> {array1[i].key} </h4> </div>  <div style={{marginLeft: "3rem"}}> {array1[i].value} </div> </div>
+      )
+      array2.push(e)
+    }
+    console.log(array2)
+    return array2
+
+
+  }
+
+
+/*
+  
+        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> Description </h4> </div>  <div style={{marginLeft: "3rem"}}> {event.description} </div> </div>
+        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> Virtual Event </h4> </div>  <div style={{marginLeft: "3rem"}}> {event.virtual_event} </div> </div>
+   { event.country ? <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> Country  </h4> </div>  <div style={{marginLeft: "3rem"}}> {event.country} </div> </div> : null}
+        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> Start date </h4> </div>  <div style={{marginLeft: "3rem"}}>{event.start_date} </div> </div>
+        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> End date </h4> </div>  <div style={{marginLeft: "3rem"}}>{event.end_date} </div> </div>
+        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> Website </h4> </div>  <div style={{marginLeft: "3rem"}}> {event.event_url} </div> </div>
+
+        */
