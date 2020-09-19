@@ -1,6 +1,6 @@
 export const ROUTES = {
   home: '/',
-  token: '/token/:tokenId',
+  token: '/token',
   activity: '/activity'
   
   // scan: '/scan/:account',

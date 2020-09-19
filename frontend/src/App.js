@@ -1,5 +1,5 @@
 import React from 'react';
-import {BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import {BrowserRouter, Route, Switch, Link } from 'react-router-dom';
 import { ROUTES } from './routes'
 // import './App.css';
 import './scss/main.scss'
@@ -16,18 +16,30 @@ function App() {
 
 
   return (
+    <BrowserRouter>
     <div className="landing">
-    <Router>
       <Header />
+      <Link to="/">Home</Link>
+      <Link to="/about">About</Link>
       <Switch>
-        <Route path={ROUTES.home} component={Token}></Route>
-       {/* </Switch><Route path={/activity} component={Activity}></Route> */}
-
+        <Route path={ROUTES.token}>
+          <Token />
+        </Route>
+        <Route path={ROUTES.activity}>
+          <Activity />
+        </Route>
+        <Route  path={ROUTES.home}>
+          <Gallery />
+        </Route>
       </Switch>
     <Footer />
-    </Router>
     </div>
+    </BrowserRouter>
   );
+}
+
+function About() {
+  return <h2>About</h2>;
 }
 
 

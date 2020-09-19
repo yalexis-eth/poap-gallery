@@ -2,7 +2,7 @@ import React from 'react'
 import PoapLogo from '../assets/images/POAP.svg'
 
 
-export default function activity() {
+export default function Activity() {
   return (
     <main id="site-main" role="main" className="app-content">
       <div className="container" style={{
