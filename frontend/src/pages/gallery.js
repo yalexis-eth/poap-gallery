@@ -4,10 +4,22 @@ import { Link } from 'react-router-dom'
 
 export default function Gallery() {
   const [error, setError] = useState(null)
-  const [isLoaded, setIsLoaded] = useState(false)
-  const [items, setItems] = useState([])
+  const [isLoaded, setIsLoaded] = useState(true)
+  let events = []
+  // try {
+  //   events = JSON.parse(localStorage.getItem('poap_events'))
+  // } catch(e) {}
+
+  // if(events && events.length === 0) {
+  //   setIsLoaded(false)
+  // }
+
+  const [items, setItems] = useState(events)
   const [search, setSearch] = useState([])
   const [length, setLength] = useState(50)
+  // false is descending true is ascending
+  const [sortOrder, setSortOrder] = useState(false)
+  const [sortVariable, setSortVariable] = useState('date')
 
   const handleSearch = (event) => {
     const value = event.target.value
@@ -21,6 +33,17 @@ export default function Gallery() {
     }
   }
 
+  const handleFilter = () => {
+    const sortedItems = items.sort((a, b) => {
+      if(new Date(a.start_date).getTime() >  new Date(b.start_date).getTime()) {
+        return sortOrder
+      } else {
+        return !sortOrder
+      }
+    })
+    setItems(sortedItems)
+  }
+
   useEffect(() => {
     fetch('https://api.poap.xyz/events')
       .then((res) => res.json())
@@ -28,6 +51,7 @@ export default function Gallery() {
         (result) => {
           setIsLoaded(true)
           setItems(result)
+          // localStorage.setItem('poap_events', JSON.stringify(result))
         },
         (error) => {
           setIsLoaded(true)

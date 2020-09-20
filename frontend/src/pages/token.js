@@ -53,17 +53,19 @@ export function Token() {
           padding: '0rem',
         }}
       >
-        <div className="gallery-grid"></div>
         <div style={{ 
           display: 'flex', 
-          alignItems: 'center'}}
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          margin: '0 2rem',
+          alignContent: 'space-around',
+          justifyContent: 'space-around',
+        }}
           >
-          <div style={{
-            marginRight: '2rem'
-          }}>
+          <div style={{}}>
             <TokenCard event={event} />
           </div>
-          <div style={{}}>
+          <div style={{maxWidth: '500px', overflowWrap: 'anywhere'}}>
             {tokenDetails(event)}
           </div>
         </div>
@@ -121,8 +123,7 @@ function TokenCard({ event }) {
         justifyContent: 'center',
         alignItems: 'center',
         padding: '1rem 0rem',
-        width: '300px',
-        backgroundColor: '#bbc4ef88',
+        maxWidth: '300px',
       }}
     >
       <div
@@ -161,16 +162,17 @@ function TokenCard({ event }) {
   );
 }
 
-function apiInfo() {
-  return <h4>Hello</h4>;
-}
-
 function tokenDetails(event) {
   let array1 = [
     { value: event.country, key: 'Country' },
     { value: event.start_date, key: 'Start date' },
     { value: event.end_date, key: 'End date' },
-    { value: event.event_url, key: 'Website' },
+    { value: event.event_url, key: 'Website', render: (value) => {
+      let host = new URL(value).hostname
+      return (
+      <a href={value} className="href">{host}</a>
+      )
+    } },
     { value: event.description, key: 'Description' },
   ];
   let array2 = [];
@@ -180,7 +182,7 @@ function tokenDetails(event) {
       let e = (
         <div style={{ display: 'flex'}}>
           <h4 style={{ flex: '0 0 120px'}}> {array1[i].key} </h4>
-          <div style={{ flex: '1 1'}}> {array1[i].value} </div>
+          <div style={{ flex: '1 1'}}> {array1[i].render ? array1[i].render(array1[i].value) : array1[i].value} </div>
         </div>
       );
       array2.push(e);
