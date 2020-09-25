@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import ReactTooltip from 'react-tooltip';
 import PoapLogo from '../assets/images/POAP.svg';
 import { Switch, Route, useRouteMatch, useParams } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons'
+import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'
+import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
+
 
 export default function Tokens() {
   let match = useRouteMatch();
@@ -51,8 +57,7 @@ export function Token() {
         className="container"
         style={{
           padding: '0rem',
-        }}
-      >
+        }}>
         <div style={{ 
           display: 'flex', 
           alignItems: 'center',
@@ -60,10 +65,16 @@ export function Token() {
           margin: '0 2rem',
           alignContent: 'space-around',
           justifyContent: 'space-around',
-        }}
-          >
-          <div style={{}}>
-            <TokenCard event={event} />
+        }}> 
+      
+          <div style={{display: 'flex', flexDirection: "column", justifyContent: "space-between"}}>
+          <div style={{display: 'flex', flexDirection: "row", justifyContent: "space-between"}}> 
+          <FontAwesomeIcon icon={faAngleLeft}> </FontAwesomeIcon> 
+          <h4> Event Id: {tokenId}   </h4>
+          <FontAwesomeIcon icon={faAngleRight}> </FontAwesomeIcon>
+          </div>
+          <div style = {{display: 'flex', flexDirection: "row", justifyContent: "space-between"}}> <TokenCard event={event} />  </div>
+
           </div>
           <div style={{maxWidth: '500px', overflowWrap: 'anywhere'}}>
             {tokenDetails(event)}
@@ -78,32 +89,37 @@ export function Token() {
                 <th>Owner</th>
                 <th>Claim date</th>
                 <th>Transfer count</th>
+                <th>POAP Power <FontAwesomeIcon icon={faQuestionCircle} data-tip="Total amount of unique POAPs held by this address" /> <ReactTooltip /> </th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td>1</td>
-                <td>ABC </td>
+                <td>ABC2 </td>
                 <td>0xb4367dc4d2</td>
                 <td> Inan</td>
+                <td> 100 </td>
               </tr>
               <tr>
                 <td>2</td>
                 <td>ABC POAP</td>
                 <td>0xb4367dc4de</td>
                 <td>0xb4367dc4d2</td>
+                <td> 100 </td>
               </tr>
               <tr>
                 <td>3</td>
                 <td>ABC PP3</td>
                 <td>0xb4367dc4de</td>
                 <td>Stefan.eth</td>
+                <td> 100 </td>
               </tr>
               <tr>
                 <td>4</td>
                 <td>ABC 1</td>
                 <td>Max.eth</td>
                 <td>Alexander.eth</td>
+                <td> 100 </td>
               </tr>
             </tbody>
           </table>
@@ -125,8 +141,8 @@ function TokenCard({ event }) {
         padding: '1rem 0rem',
         maxWidth: '300px',
       }}
-    >
-      <div
+    > 
+      <div 
         style={{
           justifyContent: 'center',
           alignItems: 'center',
@@ -178,7 +194,11 @@ function tokenDetails(event) {
   let array2 = [];
 
   for (let i = 0; i < array1.length; i++) {
-    if(array1[i].value) {
+    if(array1[1].value == array1[2].value){
+      array1[1].value = null;
+      array1[2] = {value: event.end_date, key: 'Date'} 
+    } //todo: if 1 == 2 , it pushes the the table down
+    if(array1[i].value){
       let e = (
         <div style={{ display: 'flex'}}>
           <h4 style={{ flex: '0 0 120px'}}> {array1[i].key} </h4>

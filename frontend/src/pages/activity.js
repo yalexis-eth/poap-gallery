@@ -1,24 +1,61 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import ReactTooltip from 'react-tooltip';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons'
+import { Token } from './token';
+import PoapLogo from '../assets/images/POAP.svg';
 
-export default function activity() {
+export default function Activity() {
+
+  const [items, setItems] = useState([])
+  const [search, setSearch] = useState([])
+  const [length, setLength] = useState(50)
+  // false is descending true is ascending
+  const [sortOrder, setSortOrder] = useState(false)
+  const [sortVariable, setSortVariable] = useState('date')
+
+
+  useEffect(() => {
+    fetch('https://api.poap.xyz/events')
+      .then((res) => res.json())
+      .then(
+        (result) => {
+
+          setItems(result)
+          // localStorage.setItem('poap_events', JSON.stringify(result))
+        },
+        (error) => {
+
+
+        }
+      )
+  }, [])
   return (
     <main id="site-main" role="main" className="app-content">
       <div className="container" style={{
-      padding: '0rem',
-    }}>
+        padding: '0rem',
+      }}>
 
-<div  style={{display: "flex", alignItems: "center", margin:"0rem 0",}}>
-        <table className="activityTable" style={{width: "100%" ,border: "none"}}>
+        <div className="activitycards" style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+          {items && items.length ? <TokenCard event={items[0]} /> : null}
+          {items && items.length ? <TokenCard event={items[1]} /> : null}
+          {items && items.length ? <TokenCard event={items[2]} /> : null}
+          {items && items.length ? <TokenCard event={items[3]} /> : null}
+
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", margin: "0rem 0", }}>
+          <table className="activityTable" style={{ width: "100%", border: "none" }}>
             <tr>
               <th>#</th>
               <th>Name of POAP</th>
               <th>From</th>
               <th>To</th>
               <th>Time</th>
-              <th>Transfer count</th>
+              <th>Transfer count <FontAwesomeIcon icon={faQuestionCircle} data-tip="The amount of transactions this POAP has done since it the day it been claimed." /> <ReactTooltip /> </th>
               <th>POAP Image</th>
             </tr>
-            <tr> 
+            <tr>
               <td>1</td>
               <td>ABC </td>
               <td>0xb4367dc4d2</td>
@@ -27,7 +64,7 @@ export default function activity() {
               <td> 900</td>
               <td> img</td>
             </tr>
-            <tr> 
+            <tr>
               <td>2</td>
               <td>ABC POAP</td>
               <td>0xb4367dc4de</td>
@@ -36,7 +73,7 @@ export default function activity() {
               <td> 0</td>
               <td> img</td>
             </tr>
-            <tr> 
+            <tr>
               <td>3</td>
               <td>ABC PP3</td>
               <td>0xb4367dc4de</td>
@@ -45,7 +82,7 @@ export default function activity() {
               <td> 10,000</td>
               <td> img</td>
             </tr>
-            <tr> 
+            <tr>
               <td>4</td>
               <td>ABC 1</td>
               <td>Max.eth</td>
@@ -54,10 +91,61 @@ export default function activity() {
               <td> 10,000</td>
               <td> img</td>
             </tr>
-        </table>
-  
+          </table>
+
         </div>
-</div>
+      </div>
     </main>
+  )
+}
+
+function TokenCard({ event }) {
+  return (
+    <div className="gallery-card">
+      <div className="place"></div>
+      <div
+        style={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          display: 'flex',
+          width: '75px',
+          height: '75px',
+        }}
+      >
+        <img
+          style={{
+            width: 'auto',
+            height: '100%',
+            borderRadius: '50%',
+          }}
+          src={event.image_url}
+          alt="POAP"
+        />
+      </div>
+      <div
+        style={{
+          overflow: 'auto',
+          width: '100%',
+        }}
+      >
+        <h3
+          title={event.name}
+          className="h4"
+          style={{
+            fontSize: '1rem',
+            textAlign: 'center',
+            margin: '.8rem 0',
+            overflowWrap: 'anywhere',
+          }}
+        >
+          {event.name}
+        </h3>
+      </div>
+      <div>
+        <p>{event.city || 'virtual'}</p>
+        <p>{event.start_date}</p>
+        <p>Circulating supply X</p>
+      </div>
+    </div>
   )
 }

@@ -131,6 +131,9 @@ export default function Gallery() {
                         <option value="date">Release</option>
                         <option value="holders">Holders</option>
                         <option value="transactions">Transactions</option>
+                        <option value="country">Country (A-Z)</option>
+                        <option value="poapPower">Poap Power</option>
+
                       </select>
                     </div>
                   </div>
