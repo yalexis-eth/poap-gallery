@@ -63,11 +63,14 @@ export default function Gallery() {
   
   return (
     <main id="site-main" role="main" className="app-content">
-      <div className="container" style={{ padding: '1rem' }}>
+      <div className="container" style={{padding: '1rem' }}> 
         <div>
           {' '}
           link to activity view: <Link to="/activity">Activity link</Link>
-        </div>
+        </div>  
+
+        <div className="feed"> <h5> feed text </h5> </div> 
+
         <div className="gallery-grid">
           <div className="gallery-search">
             <input onChange={handleSearch} type="text" placeholder="Search.." />{' '}
@@ -78,8 +81,7 @@ export default function Gallery() {
                 right: '0',
                 color: '#66666688',
                 fontSize: '.8rem',
-              }}
-            >
+              }}>  
               {search.length} result(s)
             </span>
           </div>
@@ -92,7 +94,10 @@ export default function Gallery() {
                 marginRight: '-.3rem',
               }}
               className="gallery-sort"
-            >
+
+            >      
+     
+
               <span
                 style={{
                   padding: '.2rem',
@@ -100,7 +105,7 @@ export default function Gallery() {
                   textAlign: 'right',
                   marginRight: '1rem',
                 }}
-              >
+              > 
                 Sort by{' '}
               </span>
               <div style={{ flex: '2 1 160px' }} className="sort-options">
