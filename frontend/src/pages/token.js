@@ -6,6 +6,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons'
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
+import { faGlasses } from '@fortawesome/free-solid-svg-icons'
+
 
 
 export default function Tokens() {
@@ -194,6 +196,9 @@ function tokenDetails(event) {
   let array2 = [];
 
   for (let i = 0; i < array1.length; i++) {
+    if(array1[0].value == ''){
+      array1[0].value = <span> Virtual event  <FontAwesomeIcon icon={faGlasses}></FontAwesomeIcon> </span>
+    }
     if(array1[1].value == array1[2].value){
       array1[1].value = null;
       array1[2] = {value: event.end_date, key: 'Date'} 

@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { InView } from 'react-intersection-observer'
 import { Link } from 'react-router-dom'
+import ReactTooltip from 'react-tooltip';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faGlasses } from '@fortawesome/free-solid-svg-icons'
 
 export default function Gallery() {
   const [error, setError] = useState(null)
@@ -69,7 +72,7 @@ export default function Gallery() {
           link to activity view: <Link to="/activity">Activity link</Link>
         </div>  
 
-        <div className="feed"> <h5> "timestamp" The Medalla Launch POAP has been transfered from 0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c to 0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c at </h5> </div> 
+        <div className="feed"> <h5> timestamp" The Medalla Launch POAP has been transfered from 0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c to 0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c at </h5> </div> 
 
         <div className="gallery-grid">
           <div className="gallery-search">
@@ -259,7 +262,8 @@ function TokenCard({ event }) {
         </h3>
       </div>
       <div>
-        <p>{event.city || 'virtual'}</p>
+      
+        <p>{event.city ||  <p> <FontAwesomeIcon icon={faGlasses} data-tip="This is a virtual event" /> <ReactTooltip /> </p>} </p>
         <p>{event.start_date}</p>
         <p>Circulating supply X</p>
       </div>
