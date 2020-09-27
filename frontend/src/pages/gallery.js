@@ -5,7 +5,7 @@ import ReactTooltip from 'react-tooltip';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGlasses } from '@fortawesome/free-solid-svg-icons'
 
-//just a comment to test git
+//just a comment to test git1
 
 export default function Gallery() {
   const [error, setError] = useState(null)
