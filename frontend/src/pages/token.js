@@ -80,8 +80,10 @@ export function Token() {
             {tokenDetails(event)}
           </div>
         </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', margin: '2rem 0' }}>
+      <div style={{display: 'flex', justifyContent:'center',textAlign: 'center', margin: '0 1rem'}}>
+        <div style={{maxWidth: '50rem'}}>{event.description}</div> 
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', margin: '2rem 1rem' }}>
           <table className="activityTable" style={{ width: '100%', border: 'none' }}>
             <thead>
               <tr>
@@ -189,7 +191,7 @@ function tokenDetails(event) {
       <a href={value} className="href">{host}</a>
       )
     } },
-    { value: event.description, key: 'Description' },
+    // { value: event.description, key: 'Description' },
   ];
   let array2 = [];
 
@@ -202,7 +204,7 @@ function tokenDetails(event) {
       let e = (
         <div style={{ display: 'flex'}}>
           <h4 style={{ flex: '0 0 120px'}}> {array1[i].key} </h4>
-          <div style={{ flex: '1 1'}}> {array1[i].render ? array1[i].render(array1[i].value) : array1[i].value} </div>
+          <div style={{ flex: '1 1', minWidth: '220px'}}> {array1[i].render ? array1[i].render(array1[i].value) : array1[i].value} </div>
         </div>
       );
       array2.push(e);
