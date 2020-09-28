@@ -13,7 +13,6 @@ import {
   ApprovalForAll
 } from "../generated/Contract/Contract"
 import { PoapToken, PoapEvent } from "../generated/schema"
-import { fetch } from 'node-fetch'
 
 export function handleEventToken(event: EventToken): void {
   // Entities can be loaded from the store using a string ID; this ID
