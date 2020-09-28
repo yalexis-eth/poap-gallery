@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { InView } from 'react-intersection-observer'
 import { Link } from 'react-router-dom'
+import ReactTooltip from 'react-tooltip';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faGlasses } from '@fortawesome/free-solid-svg-icons'
+
 
 export default function Gallery() {
   const [error, setError] = useState(null)
@@ -63,11 +67,14 @@ export default function Gallery() {
   
   return (
     <main id="site-main" role="main" className="app-content">
-      <div className="container" style={{ padding: '1rem' }}>
+      <div className="container" style={{padding: '1rem' }}> 
         <div>
           {' '}
           link to activity view: <Link to="/activity">Activity link</Link>
-        </div>
+        </div>  
+
+        <div className="feed"> <h5> "timestamp" The Medalla Launch POAP has been transfered from 0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c to 0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c</h5> </div> 
+
         <div className="gallery-grid">
           <div className="gallery-search">
             <input onChange={handleSearch} type="text" placeholder="Search.." />{' '}
@@ -78,8 +85,7 @@ export default function Gallery() {
                 right: '0',
                 color: '#66666688',
                 fontSize: '.8rem',
-              }}
-            >
+              }}>  
               {search.length} result(s)
             </span>
           </div>
@@ -92,7 +98,10 @@ export default function Gallery() {
                 marginRight: '-.3rem',
               }}
               className="gallery-sort"
-            >
+
+            >      
+     
+
               <span
                 style={{
                   padding: '.2rem',
@@ -100,7 +109,7 @@ export default function Gallery() {
                   textAlign: 'right',
                   marginRight: '1rem',
                 }}
-              >
+              > 
                 Sort by{' '}
               </span>
               <div style={{ flex: '2 1 160px' }} className="sort-options">
@@ -254,7 +263,8 @@ function TokenCard({ event }) {
         </h3>
       </div>
       <div>
-        <p>{event.city || 'virtual'}</p>
+      
+        <p>{event.city ||  <p> <FontAwesomeIcon icon={faGlasses} data-tip="This is a virtual event" /> <ReactTooltip /> </p>} </p>
         <p>{event.start_date}</p>
         <p>Circulating supply X</p>
       </div>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import ReactTooltip from 'react-tooltip';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons'
+import { faGlasses } from '@fortawesome/free-solid-svg-icons'
 import { Token } from './token';
 import PoapLogo from '../assets/images/POAP.svg';
 
@@ -142,7 +143,7 @@ function TokenCard({ event }) {
         </h3>
       </div>
       <div>
-        <p>{event.city || 'virtual'}</p>
+        <p>{event.city || <p> <FontAwesomeIcon icon={faGlasses} data-tip="This is a virtual event" /> <ReactTooltip /> </p>}</p>
         <p>{event.start_date}</p>
         <p>Circulating supply X</p>
       </div>
