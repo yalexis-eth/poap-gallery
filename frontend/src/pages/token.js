@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import ReactTooltip from 'react-tooltip';
-import PoapLogo from '../assets/images/POAP.svg';
 import { Switch, Route, useRouteMatch, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons'
@@ -33,6 +32,7 @@ export function Token() {
   const [event, setEvent] = useState({});
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [tokens, setTokens] = useState([])
 
   useEffect(() => {
     fetch('https://api.poap.xyz/events')
@@ -49,6 +49,38 @@ export function Token() {
         (error) => {
           setIsLoaded(true);
           setError(error);
+        },
+      );
+  }, []);
+
+  useEffect(() => {
+    fetch('https://api.thegraph.com/subgraphs/name/qu0b/poap', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      
+      body: JSON.stringify({
+        query: `
+        {
+          poapTokens(where: { eventId: 350 }) {
+            id
+            tokenId
+            eventId
+            owner
+          }
+        }
+        `
+      })
+    })
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          console.log('result', result)
+          setTokens(result.data.poapTokens)
+        },
+        (error) => {
+          console.log('failed to query the graph',error)
         },
       );
   }, []);
@@ -86,7 +118,36 @@ export function Token() {
         <div style={{maxWidth: '50rem'}}>{event.description}</div> 
         </div>
         <div style={{ display: 'flex', alignItems: 'center', margin: '2rem 1rem' }}>
-          <table className="activityTable" style={{ width: '100%', border: 'none' }}>
+          <CreateTable tokens={tokens} ></CreateTable>
+        </div>
+      </div>
+    </main>
+  );
+}
+
+function TokenRow({token}) {
+  return (
+    <tr>
+      <td>{token.tokenId}</td>
+      <td>ABC2 </td>
+  <td>{token.owner}</td>
+      <td> Inan</td>
+      <td> 100 </td>
+    </tr>
+  )
+}
+
+
+function CreateTable({tokens}) {
+  const tkns = []
+  for (let i = 0; i < tokens.length; i++) {
+    const t = tokens[i];
+    tkns.push(<TokenRow key={i} token={t}></TokenRow>)
+    
+  }
+
+  return (
+    <table className="activityTable" style={{ width: '100%', border: 'none' }}>
             <thead>
               <tr>
                 <th>#</th>
@@ -97,40 +158,10 @@ export function Token() {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>1</td>
-                <td>ABC2 </td>
-                <td>0xb4367dc4d2</td>
-                <td> Inan</td>
-                <td> 100 </td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>ABC POAP</td>
-                <td>0xb4367dc4de</td>
-                <td>0xb4367dc4d2</td>
-                <td> 100 </td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>ABC PP3</td>
-                <td>0xb4367dc4de</td>
-                <td>Stefan.eth</td>
-                <td> 100 </td>
-              </tr>
-              <tr>
-                <td>4</td>
-                <td>ABC 1</td>
-                <td>Max.eth</td>
-                <td>Alexander.eth</td>
-                <td> 100 </td>
-              </tr>
+              {tkns}
             </tbody>
-          </table>
-        </div>
-      </div>
-    </main>
-  );
+    </table>
+  )
 }
 
 function TokenCard({ event }) {
@@ -207,7 +238,7 @@ function tokenDetails(event) {
     } //todo: if 1 == 2 , it pushes the the table down
     if(array1[i].value){
       let e = (
-        <div style={{ display: 'flex'}}>
+        <div key={i} style={{ display: 'flex'}}>
           <h4 style={{ flex: '0 0 120px'}}> {array1[i].key} </h4>
           <div style={{ flex: '1 1', minWidth: '220px'}}> {array1[i].render ? array1[i].render(array1[i].value) : array1[i].value} </div>
         </div>

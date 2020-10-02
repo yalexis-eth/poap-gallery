@@ -264,9 +264,9 @@ function TokenCard({ event }) {
       </div>
       <div>
       
-        <p>{event.city ||  <p> <FontAwesomeIcon icon={faGlasses} data-tip="This is a virtual event" /> <ReactTooltip /> </p>} </p>
-        <p>{event.start_date}</p>
-        <p>Circulating supply X</p>
+        <div>{event.city ||  <div> <FontAwesomeIcon icon={faGlasses} data-tip="This is a virtual event" /> <ReactTooltip /> </div>} </div>
+        <div>{event.start_date}</div>
+        <div>Circulating supply X</div>
       </div>
     </Link>
   )
