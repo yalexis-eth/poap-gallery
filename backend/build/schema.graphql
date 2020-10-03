@@ -1,50 +1,38 @@
 type PoapToken @entity {
   id: ID!
-  tokenId: BigInt!
-  eventId: BigInt!
-  owner: String!
+  event: PoapEvent
+  currentOwner: PoapOwner!
+  claimedBy: PoapOwner!
+  transferCount: BigInt!
+  created: BigInt!
+  #image: String! #https://api.poap.xyz/token/<tokenid>/image
+  #eventDetails: #https://api.poap.xyz/metadata/<eventid>/<tokenid>
+}
+
+# supply of all poaps
+#type PoapStatistics @entity {
+
+#}
+
+type PoapOwner @entity {
+  id: ID!
+  #ens: String
+  tokensOwned: BigInt!
+  tokensMinted: BigInt!
+  tokens: [PoapToken!] @derivedFrom(field: "currentOwner")
 }
 
 type PoapEvent @entity {
   id: ID!
-  eventId: BigInt!
-  # tokens: [BigInt]!
-  tokenCount: BigInt!
+  tokenCount: BigInt! # How many tokens does the PoapEvent have i.e. how many have been claimed
+  created: BigInt!
+  tokens: [PoapToken!] @derivedFrom(field: "event")
 }
 
-# type User @entity {
-#   id: ID!
-#   address: String!
-#   balance: BigInt!
-#   transactionCount: Int!
-# }
-
-# type Minter @entity {
-#   id: ID!
-#   address: String!
-#   totalMinted: BigInt!
-#   totalBurned: BigInt!
-# }
-
-# type UserCounter @entity {
-#   id: ID!
-#   count: Int!
-# }
-
-# type MinterCounter @entity {
-#   id: ID!
-#   count: Int!
-# }
-
-# type TransferCounter @entity {
-#   id: ID!
-#   count: Int!
-#   totalTransferred: BigInt!
-# }
-
-# type TotalSupply @entity {
-#   id: ID!
-#   supply: BigInt!
-#   minted: BigInt!
-#   burned: BigInt!
-# }
+type PoapTransfer @entity {
+   id: ID!
+   token: PoapToken!
+   from: PoapOwner!
+   to: PoapOwner!
+   time: BigInt!
+}

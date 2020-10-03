@@ -85,6 +85,38 @@ export function Token() {
       );
   }, []);
 
+  const addresses = ["0x0000044a32f0964f4bf8fb4d017e230ad33595c0e149b6b2d0c34b733dcf906a", "0x1000044a32f0964f4bf8fb4d017e230ad33595c0e149b6b2d0c34b733dcf906a"]
+  // fetch ens names
+  useEffect(() => {
+    fetch('https://api.thegraph.com/subgraphs/name/ensdomains/ens', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      
+      body: JSON.stringify({
+        query: `
+        {
+          domains(where: { id_in: [${addresses}]}) {
+            name
+            id
+          }
+        }        
+        `
+      })
+    })
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          console.log('result', result)
+          // setTokens(result.data)
+        },
+        (error) => {
+          console.log('failed to query the graph',error)
+        },
+      );
+  }, []);
+
   return (
     <main id="site-main" role="main" className="app-content">
       <div

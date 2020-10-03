@@ -42,13 +42,21 @@ export class PoapToken extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get eventId(): BigInt {
-    let value = this.get("eventId");
-    return value.toBigInt();
+  get event(): string | null {
+    let value = this.get("event");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toString();
+    }
   }
 
-  set eventId(value: BigInt) {
-    this.set("eventId", Value.fromBigInt(value));
+  set event(value: string | null) {
+    if (value === null) {
+      this.unset("event");
+    } else {
+      this.set("event", Value.fromString(value as string));
+    }
   }
 
   get currentOwner(): string {
@@ -67,15 +75,6 @@ export class PoapToken extends Entity {
 
   set claimedBy(value: string) {
     this.set("claimedBy", Value.fromString(value));
-  }
-
-  get ens(): string {
-    let value = this.get("ens");
-    return value.toString();
-  }
-
-  set ens(value: string) {
-    this.set("ens", Value.fromString(value));
   }
 
   get transferCount(): BigInt {
@@ -127,30 +126,39 @@ export class PoapOwner extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get ens(): string | null {
-    let value = this.get("ens");
-    if (value === null) {
-      return null;
-    } else {
-      return value.toString();
-    }
-  }
-
-  set ens(value: string | null) {
-    if (value === null) {
-      this.unset("ens");
-    } else {
-      this.set("ens", Value.fromString(value as string));
-    }
-  }
-
-  get tokenCount(): BigInt {
-    let value = this.get("tokenCount");
+  get tokensOwned(): BigInt {
+    let value = this.get("tokensOwned");
     return value.toBigInt();
   }
 
-  set tokenCount(value: BigInt) {
-    this.set("tokenCount", Value.fromBigInt(value));
+  set tokensOwned(value: BigInt) {
+    this.set("tokensOwned", Value.fromBigInt(value));
+  }
+
+  get tokensMinted(): BigInt {
+    let value = this.get("tokensMinted");
+    return value.toBigInt();
+  }
+
+  set tokensMinted(value: BigInt) {
+    this.set("tokensMinted", Value.fromBigInt(value));
+  }
+
+  get tokens(): Array<string> | null {
+    let value = this.get("tokens");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set tokens(value: Array<string> | null) {
+    if (value === null) {
+      this.unset("tokens");
+    } else {
+      this.set("tokens", Value.fromStringArray(value as Array<string>));
+    }
   }
 }
 
@@ -184,15 +192,6 @@ export class PoapEvent extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get eventId(): BigInt {
-    let value = this.get("eventId");
-    return value.toBigInt();
-  }
-
-  set eventId(value: BigInt) {
-    this.set("eventId", Value.fromBigInt(value));
-  }
-
   get tokenCount(): BigInt {
     let value = this.get("tokenCount");
     return value.toBigInt();
@@ -209,6 +208,23 @@ export class PoapEvent extends Entity {
 
   set created(value: BigInt) {
     this.set("created", Value.fromBigInt(value));
+  }
+
+  get tokens(): Array<string> | null {
+    let value = this.get("tokens");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set tokens(value: Array<string> | null) {
+    if (value === null) {
+      this.unset("tokens");
+    } else {
+      this.set("tokens", Value.fromStringArray(value as Array<string>));
+    }
   }
 }
 
