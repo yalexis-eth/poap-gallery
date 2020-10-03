@@ -239,7 +239,7 @@ function TokenCard({ event }) {
         <img
           style={{
             width: 'auto',
-            height: '100%',
+            height: '100%%',
             borderRadius: '50%',
           }}
           src={event.image_url}

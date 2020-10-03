@@ -154,7 +154,7 @@ function CreateTable({tokens}) {
 
 function TokenCard({ event }) {
   return (
-    <div className="gallery-card" style={{display: "flex"}}>
+    <div className="activity-card" style={{display: "flex"}}>
       <div className="place"></div>
       <div
         style={{
