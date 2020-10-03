@@ -92,6 +92,8 @@
 
 .gallery-card {
   cursor: pointer;
+  margin: 1rem;
+  width: 25%;
   box-shadow: 0 5px 16px rgba(100,100,100, 0.3);
   transition: box-shadow .2s ease;
   border-radius: .5rem;
@@ -130,7 +132,9 @@ a.gallery-card:hover {
   box-shadow: 0 5px 16px rgba(100,100,100, 0.3), 0 5px 22px rgba(100,100,100, 0.2);
 }
 
+
 @media (min-width: $bp-m){ // 479 px
+ 
   .gallery-grid{
     //background: orange;
     grid-template-columns: repeat(3, 1fr);
@@ -150,6 +154,8 @@ a.gallery-card:hover {
 }
 
 @media (min-width: $bp-l){ //1140 px
+  
+
   .gallery-grid{
     //background: blue;
     grid-template-columns: repeat(4, 1fr);
@@ -166,10 +172,23 @@ a.gallery-card:hover {
       grid-column: 1 / 5;
     }
   }
-
-
 }
 
+@media (max-width: $bp-m){ // 479 px
+
+  .activitycards{
+    flex-direction: column; 
+  }
+
+  .gallery-card{
+   // background-color: #6534ff;
+    width: 100%;
+    margin: 0rem;
+    
+    
+  }
+  
+}
 
 .poap-app {
   header {
@@ -397,3 +416,4 @@ a.gallery-card:hover {
     max-width: 38px;
   }
 }
+
