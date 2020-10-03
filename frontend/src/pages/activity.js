@@ -33,14 +33,14 @@ export default function Activity() {
         }
       )
   }, [])
-  
+
   return (
     <main id="site-main" role="main" className="app-content">
-      <div className="container" style={{
+      <div className="activityContainer" style={{
         padding: '0rem',
       }}>
 
-        <div className="activitycards" style={{ display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
+        <div className="activitycards" style={{ display: "flex", justifyContent: "space-between"}}>
           {items && items.length ? <TokenCard event={items[0]} /> : null}
           {items && items.length ? <TokenCard event={items[1]} /> : null}
           {items && items.length ? <TokenCard event={items[2]} /> : null}
@@ -154,7 +154,7 @@ function CreateTable({tokens}) {
 
 function TokenCard({ event }) {
   return (
-    <div className="gallery-card" style={{width: "25%", margin: "1rem"}}>
+    <div className="gallery-card" style={{display: "flex"}}>
       <div className="place"></div>
       <div
         style={{
