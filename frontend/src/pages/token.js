@@ -130,10 +130,10 @@ export function Token() {
 function TokenRow({token}) {
   return (
     <tr>
-      <td>{token.tokenId}</td>
-      <td>{token.owner}</td>
-      <td>ABC2 </td>
-      <td> Inan</td>
+      <td><a href={"https://app.poap.xyz/token/" + token.tokenId}>{token.tokenId}</a></td>
+      <td><a href={"https://app.poap.xyz/scan/" + token.owner}> {token.owner} </a></td>
+      <td> 20.01.2020 </td>
+      <td> 23</td>
       <td> 100 </td>
     </tr>
   )
@@ -152,7 +152,7 @@ function CreateTable({tokens}) {
     <table className="activityTable" style={{ width: '100%', border: 'none' }}>
             <thead>
               <tr>
-                <th>#</th>
+                <th>ID</th>
                 <th>Owner</th>
                 <th>Claim date</th>
                 <th>Transfer count</th>

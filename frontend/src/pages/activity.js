@@ -15,6 +15,8 @@ export default function Activity() {
   const [sortOrder, setSortOrder] = useState(false)
   const [sortVariable, setSortVariable] = useState('date')
 
+  
+
 
   useEffect(() => {
     fetch('https://api.poap.xyz/events')
@@ -31,13 +33,14 @@ export default function Activity() {
         }
       )
   }, [])
+  
   return (
     <main id="site-main" role="main" className="app-content">
       <div className="container" style={{
         padding: '0rem',
       }}>
 
-        <div className="activitycards" style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+        <div className="activitycards" style={{ display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
           {items && items.length ? <TokenCard event={items[0]} /> : null}
           {items && items.length ? <TokenCard event={items[1]} /> : null}
           {items && items.length ? <TokenCard event={items[2]} /> : null}
@@ -47,7 +50,11 @@ export default function Activity() {
 
         <div style={{ display: "flex", alignItems: "center", margin: "0rem 0", }}>
           <table className="activityTable" style={{ width: "100%", border: "none" }}>
-            <tr>
+
+
+                       {/* <CreateTable tokens={tokens} ></CreateTable> */}
+           
+            <tr> 
               <th>#</th>
               <th>Name of POAP</th>
               <th>From</th>
@@ -91,7 +98,7 @@ export default function Activity() {
               <td> 10.10.10</td>
               <td> 10,000</td>
               <td> img</td>
-            </tr>
+            </tr>  
           </table>
 
         </div>
@@ -100,16 +107,61 @@ export default function Activity() {
   )
 }
 
+function TokenRow({token}) {
+  return (
+    <tr>
+      <td><a href={"https://app.poap.xyz/token/" + token.tokenId}>{token.id}</a></td>
+      <td><a href={"https://app.poap.xyz/token/" + token.tokenId}>{token.name}</a></td>
+      <td><a href={"https://app.poap.xyz/scan/" + token.owner}> {token.owner} </a></td>
+      <td> 20.01.2020 </td>
+      <td> 23</td>
+      <td> 100 </td>
+      <td> img </td>
+    </tr>
+  )
+}
+
+function CreateTable({tokens}) {
+  const tkns = []
+  for (let i = 0; i < tokens.length; i++) {
+    const t = tokens[i];
+    tkns.push(<TokenRow key={i} token={t}></TokenRow>)
+    
+  }
+
+  return (
+    <table className="activityTable" style={{ width: '100%', border: 'none' }}>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name of POAP</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Time</th>
+                <th>Transfer count <FontAwesomeIcon icon={faQuestionCircle} data-tip="The amount of transactions this POAP has done since it the day it been claimed." /> <ReactTooltip /> </th>
+                <th>POAP Image</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tkns && tkns.length? tkns : (<tr><td style={{textAlign: 'center'}} colSpan="5">No Tokens Claimed</td></tr>)}
+            </tbody>
+    </table>
+  )
+}
+
+
+
+
 function TokenCard({ event }) {
   return (
-    <div className="gallery-card">
+    <div className="gallery-card" style={{width: "25%", margin: "1rem"}}>
       <div className="place"></div>
       <div
         style={{
           justifyContent: 'center',
           alignItems: 'center',
           display: 'flex',
-          width: '75px',
+          width: "75px",
           height: '75px',
         }}
       >
