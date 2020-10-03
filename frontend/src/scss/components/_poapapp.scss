@@ -93,7 +93,20 @@
 .gallery-card {
   cursor: pointer;
   margin: 1rem;
+  box-shadow: 0 5px 16px rgba(100,100,100, 0.3);
+  transition: box-shadow .2s ease;
+  border-radius: .5rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center; 
+}
+
+.activity-card {
+  cursor: pointer;
   width: 25%;
+  margin: 1rem;
   box-shadow: 0 5px 16px rgba(100,100,100, 0.3);
   transition: box-shadow .2s ease;
   border-radius: .5rem;
