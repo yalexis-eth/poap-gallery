@@ -14,7 +14,7 @@ export default function Activity() {
   // false is descending true is ascending
   const [sortOrder, setSortOrder] = useState(false)
   const [sortVariable, setSortVariable] = useState('date')
-
+  const [transfers, setTransfers] = useState([])
   
 
 
@@ -34,9 +34,61 @@ export default function Activity() {
       )
   }, [])
 
+  function getRecentTransfers() {
+    
+  }
+
+  useEffect(() => {
+    function fetchTransfers() {
+      // fetch('https://api.thegraph.com/subgraphs/name/qu0b/poap', {
+      fetch('https://api.thegraph.com/subgraphs/name/qu0b/poap', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        
+        body: JSON.stringify({
+          query: `
+          {
+            poapTransfers(first: 15, orderBy: time, orderDirection: desc) {
+              id
+              token {
+                id
+                transferCount
+              }
+              from {
+                id
+              }
+              to {
+                id
+              }
+              time
+            }
+          }
+          `
+        })
+      })
+        .then((res) => res.json())
+        .then(
+          (result) => {
+            console.log('result', result)
+            setTransfers(result.data.poapTransfers)
+          },
+          (error) => {
+            console.log('failed to query the graph',error)
+          },
+        );
+    }
+    fetchTransfers()
+    const intervalId = setInterval(() => {
+     fetchTransfers()
+    }, 15000)
+    return () => clearInterval(intervalId)
+  }, []);
+
   return (
     <main id="site-main" role="main" className="app-content">
-      <div className="activityContainer" style={{
+      <div className="activityContainer container" style={{
         padding: '0rem',
       }}>
 
@@ -48,93 +100,42 @@ export default function Activity() {
 
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", margin: "0rem 0", }}>
-          <table className="activityTable" style={{ width: "100%", border: "none" }}>
-
-
-                       {/* <CreateTable tokens={tokens} ></CreateTable> */}
-           
-            <tr> 
-              <th>#</th>
-              <th>Name of POAP</th>
-              <th>From</th>
-              <th>To</th>
-              <th>Time</th>
-              <th>Transfer count <FontAwesomeIcon icon={faQuestionCircle} data-tip="The amount of transactions this POAP has done since it the day it been claimed." /> <ReactTooltip /> </th>
-              <th>POAP Image</th>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>ABC </td>
-              <td>0xb4367dc4d2</td>
-              <td> Inan</td>
-              <td> 10.10.10</td>
-              <td> 900</td>
-              <td> img</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>ABC POAP</td>
-              <td>0xb4367dc4de</td>
-              <td>0xb4367dc4d2</td>
-              <td> 10.10.10</td>
-              <td> 0</td>
-              <td> img</td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>ABC PP3</td>
-              <td>0xb4367dc4de</td>
-              <td>Stefan.eth</td>
-              <td> 10.10.10</td>
-              <td> 10,000</td>
-              <td> img</td>
-            </tr>
-            <tr>
-              <td>4</td>
-              <td>ABC 1</td>
-              <td>Max.eth</td>
-              <td>Alexander.eth</td>
-              <td> 10.10.10</td>
-              <td> 10,000</td>
-              <td> img</td>
-            </tr>  
-          </table>
-
+        <div style={{ display: 'flex', alignItems: 'center', margin: '2rem 1rem' }}>
+          <CreateTable transfers={transfers} ></CreateTable>
         </div>
       </div>
     </main>
   )
 }
 
-function TokenRow({token}) {
+function TokenRow({transfer}) {
   return (
     <tr>
-      <td><a href={"https://app.poap.xyz/token/" + token.tokenId}>{token.id}</a></td>
-      <td><a href={"https://app.poap.xyz/token/" + token.tokenId}>{token.name}</a></td>
-      <td><a href={"https://app.poap.xyz/scan/" + token.owner}> {token.owner} </a></td>
-      <td> 20.01.2020 </td>
-      <td> 23</td>
-      <td> 100 </td>
-      <td> img </td>
+      {/* <td><a href={"https://app.poap.xyz/token/" + transfer.id}>{transfer.id}</a></td> */}
+      <td><a href={"https://app.poap.xyz/token/" + transfer.token.id}>{transfer.token.id}</a></td>
+      <td><a href={"https://app.poap.xyz/scan/" + transfer.from.id}> {transfer.from.id} </a></td>
+      <td><a href={"https://app.poap.xyz/scan/" + transfer.to.id}> {transfer.to.id} </a></td>
+      {/* <td> {("0" + new Date(transfer.time * 1000).getHours()).substr(-2) + ':' +("0"+ new Date(transfer.time * 1000).getMinutes()).substr(-2) + ":"+("0"+new Date(transfer.time * 1000).getSeconds()).substr(-2)} </td> */}
+      <td> { new Date(transfer.time * 1000).toLocaleDateString('en-UK') } </td>
+      <td> {transfer.token.transferCount} </td>
+      <td> <img src={"https://api.poap.xyz/token/"+transfer.token.id+"/image"} alt=""/> </td>
     </tr>
   )
 }
 
-function CreateTable({tokens}) {
-  const tkns = []
-  for (let i = 0; i < tokens.length; i++) {
-    const t = tokens[i];
-    tkns.push(<TokenRow key={i} token={t}></TokenRow>)
-    
+function CreateTable({transfers}) {
+  const tfers = []
+  for (let i = 0; i < transfers.length; i++) {
+    const t = transfers[i];
+    tfers.push(<TokenRow key={t.id} transfer={t}></TokenRow>)
   }
 
   return (
     <table className="activityTable" style={{ width: '100%', border: 'none' }}>
             <thead>
               <tr>
-                <th>#</th>
-                <th>Name of POAP</th>
+                {/* <th>#</th> */}
+                <th>Token Id</th>
                 <th>From</th>
                 <th>To</th>
                 <th>Time</th>
@@ -143,7 +144,7 @@ function CreateTable({tokens}) {
               </tr>
             </thead>
             <tbody>
-              {tkns && tkns.length? tkns : (<tr><td style={{textAlign: 'center'}} colSpan="5">No Tokens Claimed</td></tr>)}
+              {tfers && tfers.length? tfers : (<tr><td style={{textAlign: 'center'}} colSpan="7">No Tokens Transferred</td></tr>)}
             </tbody>
     </table>
   )
@@ -195,9 +196,9 @@ function TokenCard({ event }) {
         </h3>
       </div>
       <div>
-        <p>{event.city || <p> <FontAwesomeIcon icon={faLaptop} data-tip="This is a virtual event" /> <ReactTooltip /> </p>}</p>
-        <p>{event.start_date}</p>
-        <p>Circulating supply X</p>
+        <div>{event.city || <div> <FontAwesomeIcon icon={faLaptop} data-tip="This is a virtual event" /> <ReactTooltip /> </div>}</div>
+        <div>{event.start_date}</div>
+        <div>Circulating supply X</div>
       </div>
     </div>
   )
