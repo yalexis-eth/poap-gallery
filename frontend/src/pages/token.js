@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons'
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
-import { faGlasses } from '@fortawesome/free-solid-svg-icons'
+import { faLaptop } from '@fortawesome/free-solid-svg-icons'
 
 
 
@@ -103,9 +103,11 @@ export function Token() {
       
           <div style={{display: 'flex', flexDirection: "column", justifyContent: "space-between"}}>
           <div style={{display: 'flex', flexDirection: "row", justifyContent: "space-between"}}> 
-          <FontAwesomeIcon icon={faAngleLeft}> </FontAwesomeIcon> 
-          <h4> Event Id: {tokenId}   </h4>
-          <FontAwesomeIcon icon={faAngleRight}> </FontAwesomeIcon>
+          
+          <a href={parseInt(tokenId)-1} ><FontAwesomeIcon icon={faAngleLeft}> </FontAwesomeIcon> </a>
+          <h4> Event Id: {tokenId} </h4>
+          <a href={parseInt(tokenId)+1} ><FontAwesomeIcon icon={faAngleRight}> </FontAwesomeIcon></a>
+          
           </div>
           <div style = {{display: 'flex', flexDirection: "row", justifyContent: "space-between"}}> <TokenCard event={event} />  </div>
 
@@ -174,7 +176,7 @@ function TokenCard({ event }) {
         justifyContent: 'center',
         alignItems: 'center',
         padding: '1rem 0rem',
-        maxWidth: '300px',
+        width: '300px',
       }}
     > 
       <div 
@@ -230,9 +232,10 @@ function tokenDetails(event) {
 
   for (let i = 0; i < array1.length; i++) {
     if(array1[0].value == ''){
-      array1[0].value = <span> Virtual event  <FontAwesomeIcon icon={faGlasses}></FontAwesomeIcon> </span>
+      array1[0].value = <span> Virtual event  <FontAwesomeIcon icon={faLaptop}></FontAwesomeIcon> </span>
     }
     if(array1[1].value == array1[2].value){
+      //array1.shift();
       array1[1].value = null;
       array1[2] = {value: event.end_date, key: 'Date'} 
     } //todo: if 1 == 2 , it pushes the the table down

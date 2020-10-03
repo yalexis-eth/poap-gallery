@@ -3,7 +3,7 @@ import { InView } from 'react-intersection-observer'
 import { Link } from 'react-router-dom'
 import ReactTooltip from 'react-tooltip';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faGlasses } from '@fortawesome/free-solid-svg-icons'
+import { faLaptop } from '@fortawesome/free-solid-svg-icons'
 
 
 export default function Gallery() {
@@ -264,7 +264,7 @@ function TokenCard({ event }) {
       </div>
       <div>
       
-        <div>{event.city ||  <div> <FontAwesomeIcon icon={faGlasses} data-tip="This is a virtual event" /> <ReactTooltip /> </div>} </div>
+        <div>{event.city ||  <div> <FontAwesomeIcon icon={faLaptop} data-tip="This is a virtual event" /> <ReactTooltip /> </div>} </div>
         <div>{event.start_date}</div>
         <div>Circulating supply X</div>
       </div>
