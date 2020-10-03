@@ -11,15 +11,14 @@ import { faLaptop } from '@fortawesome/free-solid-svg-icons'
 
 export default function Tokens() {
   let match = useRouteMatch();
-  console.log('matched route:', match);
 
   return (
     <Switch>
-      <Route path={`${match.path}/:tokenId`}>
+      <Route path={`${match.path}/:eventId`}>
         <Token />
       </Route>
       <Route path={match.path}>
-        <h3>No token Selected</h3>
+        <h3>No event Selected</h3>
       </Route>
     </Switch>
   );
@@ -27,7 +26,7 @@ export default function Tokens() {
 
 export function Token() {
   const params = useParams();
-  let { tokenId } = params;
+  let { eventId } = params;
 
   const [event, setEvent] = useState({});
   const [error, setError] = useState(null);
@@ -39,7 +38,7 @@ export function Token() {
       .then((res) => res.json())
       .then(
         (result) => {
-          result = result.filter((event) => event.id + '' === tokenId);
+          result = result.filter((event) => event.id + '' === eventId);
 
           setIsLoaded(true);
           if (result && result.length) {
@@ -63,11 +62,17 @@ export function Token() {
       body: JSON.stringify({
         query: `
         {
-          poapTokens(where: { eventId: ${tokenId} }) {
+          poapEvents(where:{ id: ${eventId} }) {
             id
-            tokenId
-            eventId
-            owner
+            tokens {
+              id
+              transferCount
+              created
+              currentOwner {
+                id
+                tokensOwned
+              }
+            }
           }
         }
         `
@@ -77,7 +82,15 @@ export function Token() {
       .then(
         (result) => {
           console.log('result', result)
-          setTokens(result.data.poapTokens)
+          if(result && result.data && result.data.poapEvents && result.data.poapEvents.length) {
+            
+            setTokens(result.data.poapEvents[0].tokens)
+            const owners = []
+            for (let i = 0; i < result.data.poapEvents[0].tokens.length; i++) {
+              const element = result.data.poapEvents[0].tokens[i];
+              owners.push(element.currentOwner.id)
+            }
+          }
         },
         (error) => {
           console.log('failed to query the graph',error)
@@ -119,39 +132,32 @@ export function Token() {
 
   return (
     <main id="site-main" role="main" className="app-content">
-      <div
-        className="container"
-        style={{
-          padding: '0rem',
-        }}>
+      <div className="container">
         <div style={{ 
           display: 'flex', 
           alignItems: 'center',
           flexWrap: 'wrap',
-          margin: '0 2rem',
           alignContent: 'space-around',
           justifyContent: 'space-around',
-        }}> 
-      
-          <div style={{display: 'flex', flexDirection: "column", justifyContent: "space-between"}}>
-          <div style={{display: 'flex', flexDirection: "row", justifyContent: "space-between"}}> 
-          
-          <a href={parseInt(tokenId)-1} ><FontAwesomeIcon icon={faAngleLeft}> </FontAwesomeIcon> </a>
-          <h4> Event Id: {tokenId} </h4>
-          <a href={parseInt(tokenId)+1} ><FontAwesomeIcon icon={faAngleRight}> </FontAwesomeIcon></a>
-          
+        }}>
+          <div style={{minWidth: '18rem', display: 'flex', flexDirection: "column", justifyContent: "center"}}>
+            <div style={{display: 'flex', justifyContent: "space-between"}}> 
+              <a href={parseInt(eventId)-1} ><FontAwesomeIcon icon={faAngleLeft}> </FontAwesomeIcon> </a>
+              <h4 style={{marginBottom: '0'}}> Event Id: {eventId} </h4>
+              <a href={parseInt(eventId)+1} ><FontAwesomeIcon icon={faAngleRight}> </FontAwesomeIcon></a>
+            </div>
+            <div style={{minHeight: '200px', margin: '0 auto'}}>
+              <TokenCard event={event} />
+            </div>
           </div>
-          <div style = {{display: 'flex', flexDirection: "row", justifyContent: "space-between"}}> <TokenCard event={event} />  </div>
-
-          </div>
-          <div style={{maxWidth: '500px', overflowWrap: 'anywhere'}}>
+          <div style={{minWidth: '18rem', maxWidth: '500px', overflowWrap: 'anywhere'}}>
             {tokenDetails(event)}
           </div>
         </div>
-      <div style={{display: 'flex', justifyContent:'center',textAlign: 'center', margin: '0 1rem'}}>
-        <div style={{maxWidth: '50rem'}}>{event.description}</div> 
+        <div style={{display: 'flex', justifyContent:'center',textAlign: 'center'}}>
+          <div style={{maxWidth: '50rem'}}>{event.description}</div> 
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', margin: '2rem 1rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', overflow: 'auto' }}>
           <CreateTable tokens={tokens} ></CreateTable>
         </div>
       </div>
@@ -162,11 +168,11 @@ export function Token() {
 function TokenRow({token}) {
   return (
     <tr>
-      <td><a href={"https://app.poap.xyz/token/" + token.tokenId}>{token.tokenId}</a></td>
-      <td><a href={"https://app.poap.xyz/scan/" + token.owner}> {token.owner} </a></td>
-      <td> 20.01.2020 </td>
-      <td> 23</td>
-      <td> 100 </td>
+      <td><a href={"https://app.poap.xyz/token/" + token.id}>{token.id}</a></td>
+      <td><a href={"https://app.poap.xyz/scan/" + token.currentOwner.id}> {token.currentOwner.id} </a></td>
+      <td> {new Date(token.created * 1000).toLocaleDateString()} </td>
+      <td> {token.transferCount}</td>
+      <td> {token.currentOwner.tokensOwned} </td>
     </tr>
   )
 }
@@ -188,7 +194,7 @@ function CreateTable({tokens}) {
                 <th>Owner</th>
                 <th>Claim date</th>
                 <th>Transfer count</th>
-                <th>POAP Power <FontAwesomeIcon icon={faQuestionCircle} data-tip="Total amount of unique POAPs held by this address" /> <ReactTooltip /> </th>
+                <th>POAP Power <FontAwesomeIcon icon={faQuestionCircle} data-tip="Total amount of POAPs held by this address" /> <ReactTooltip /> </th>
               </tr>
             </thead>
             <tbody>
@@ -273,15 +279,14 @@ function tokenDetails(event) {
     } //todo: if 1 == 2 , it pushes the the table down
     if(array1[i].value){
       let e = (
-        <div key={i} style={{ display: 'flex'}}>
-          <h4 style={{ flex: '0 0 120px'}}> {array1[i].key} </h4>
-          <div style={{ flex: '1 1', minWidth: '220px'}}> {array1[i].render ? array1[i].render(array1[i].value) : array1[i].value} </div>
+        <div key={i} style={{ display: 'flex', padding: '0 1rem'}}>
+          <h4 style={{ flex: '0 0 7rem'}}> {array1[i].key} </h4>
+          <div style={{ flex: '1 1 8rem'}}> {array1[i].render ? array1[i].render(array1[i].value) : array1[i].value} </div>
         </div>
       );
       array2.push(e);
     }
   }
-  console.log(array2);
   return array2;
 }
 
