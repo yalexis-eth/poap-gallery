@@ -111,8 +111,14 @@ export function handleEventMinterAdded(event: EventMinterAdded): void {}
 
 export function handleEventMinterRemoved(event: EventMinterRemoved): void {}
 
-export function handleTransfer(event: Transfer): void {}
+export function handleTransfer(event: Transfer): void {
+  
+}
 
-export function handleApproval(event: Approval): void {}
+export function handleApproval(event: Approval): void {
 
-export function handleApprovalForAll(event: ApprovalForAll): void {}
+}
+
+export function handleApprovalForAll(event: ApprovalForAll): void {
+
+}

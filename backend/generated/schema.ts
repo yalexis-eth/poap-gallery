@@ -42,15 +42,6 @@ export class PoapToken extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get tokenId(): BigInt {
-    let value = this.get("tokenId");
-    return value.toBigInt();
-  }
-
-  set tokenId(value: BigInt) {
-    this.set("tokenId", Value.fromBigInt(value));
-  }
-
   get eventId(): BigInt {
     let value = this.get("eventId");
     return value.toBigInt();
@@ -60,13 +51,106 @@ export class PoapToken extends Entity {
     this.set("eventId", Value.fromBigInt(value));
   }
 
-  get owner(): string {
-    let value = this.get("owner");
+  get currentOwner(): string {
+    let value = this.get("currentOwner");
     return value.toString();
   }
 
-  set owner(value: string) {
-    this.set("owner", Value.fromString(value));
+  set currentOwner(value: string) {
+    this.set("currentOwner", Value.fromString(value));
+  }
+
+  get claimedBy(): string {
+    let value = this.get("claimedBy");
+    return value.toString();
+  }
+
+  set claimedBy(value: string) {
+    this.set("claimedBy", Value.fromString(value));
+  }
+
+  get ens(): string {
+    let value = this.get("ens");
+    return value.toString();
+  }
+
+  set ens(value: string) {
+    this.set("ens", Value.fromString(value));
+  }
+
+  get transferCount(): BigInt {
+    let value = this.get("transferCount");
+    return value.toBigInt();
+  }
+
+  set transferCount(value: BigInt) {
+    this.set("transferCount", Value.fromBigInt(value));
+  }
+
+  get created(): BigInt {
+    let value = this.get("created");
+    return value.toBigInt();
+  }
+
+  set created(value: BigInt) {
+    this.set("created", Value.fromBigInt(value));
+  }
+}
+
+export class PoapOwner extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save PoapOwner entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save PoapOwner entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("PoapOwner", id.toString(), this);
+  }
+
+  static load(id: string): PoapOwner | null {
+    return store.get("PoapOwner", id) as PoapOwner | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get ens(): string | null {
+    let value = this.get("ens");
+    if (value === null) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set ens(value: string | null) {
+    if (value === null) {
+      this.unset("ens");
+    } else {
+      this.set("ens", Value.fromString(value as string));
+    }
+  }
+
+  get tokenCount(): BigInt {
+    let value = this.get("tokenCount");
+    return value.toBigInt();
+  }
+
+  set tokenCount(value: BigInt) {
+    this.set("tokenCount", Value.fromBigInt(value));
   }
 }
 
@@ -116,5 +200,81 @@ export class PoapEvent extends Entity {
 
   set tokenCount(value: BigInt) {
     this.set("tokenCount", Value.fromBigInt(value));
+  }
+
+  get created(): BigInt {
+    let value = this.get("created");
+    return value.toBigInt();
+  }
+
+  set created(value: BigInt) {
+    this.set("created", Value.fromBigInt(value));
+  }
+}
+
+export class PoapTransfer extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save PoapTransfer entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save PoapTransfer entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("PoapTransfer", id.toString(), this);
+  }
+
+  static load(id: string): PoapTransfer | null {
+    return store.get("PoapTransfer", id) as PoapTransfer | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get token(): string {
+    let value = this.get("token");
+    return value.toString();
+  }
+
+  set token(value: string) {
+    this.set("token", Value.fromString(value));
+  }
+
+  get from(): string {
+    let value = this.get("from");
+    return value.toString();
+  }
+
+  set from(value: string) {
+    this.set("from", Value.fromString(value));
+  }
+
+  get to(): string {
+    let value = this.get("to");
+    return value.toString();
+  }
+
+  set to(value: string) {
+    this.set("to", Value.fromString(value));
+  }
+
+  get time(): BigInt {
+    let value = this.get("time");
+    return value.toBigInt();
+  }
+
+  set time(value: BigInt) {
+    this.set("time", Value.fromBigInt(value));
   }
 }

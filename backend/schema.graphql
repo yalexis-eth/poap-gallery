@@ -1,16 +1,36 @@
 type PoapToken @entity {
   id: ID!
-  tokenId: BigInt!
-  eventId: BigInt!
-  owner: String!
+  eventId: BigInt! #it does not make sense to reference event here as all of the event details are stored in the postgresdb
+  currentOwner: String!
+  claimedBy: String!
+  ens: String!
+  transferCount: BigInt!
+  created: BigInt!
+  #image: String! #https://api.poap.xyz/token/<tokenid>/image
+  #eventDetails: #https://api.poap.xyz/metadata/<eventid>/<tokenid>
+}
+
+type PoapOwner @entity {
+  id: ID!
+  ens: String
+  tokenCount: BigInt!
 }
 
 type PoapEvent @entity {
   id: ID!
   eventId: BigInt!
-  # tokens: [BigInt]!
-  tokenCount: BigInt!
+  tokenCount: BigInt! # How many tokens does the PoapEvent have i.e. how many have been claimed
+  created: BigInt!
 }
+
+type PoapTransfer @entity {
+   id: ID!
+   token: PoapToken!
+   from: PoapOwner!
+   to: PoapOwner!
+   time: BigInt!
+}
+
 
 # type User @entity {
 #   id: ID!
