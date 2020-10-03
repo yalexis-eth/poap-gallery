@@ -68,12 +68,15 @@ export default function Gallery() {
   return (
     <main id="site-main" role="main" className="app-content">
       <div className="container" style={{padding: '1rem' }}> 
-        <div>
+        {/* <div>
           {' '}
           link to activity view: <Link to="/activity">Activity link</Link>
-        </div>  
+        </div>   */}
 
-        <div className="feed"> <h5> "timestamp" The Medalla Launch POAP has been transfered from 0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c to 0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c</h5> </div> 
+        <div className="feed" style={{display: "flex", flexDirection : "column" , justifyContent: "space-between"}}> <h5> "timestamp" The Medalla Launch POAP has been transfered from 0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c to 0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c</h5>  
+          <div style={{display: "flex" , justifyContent: "center"}}> <Link to="/activity">Activity view</Link> </div>
+
+        </div> 
 
         <div className="gallery-grid">
           <div className="gallery-search">
@@ -263,10 +266,9 @@ function TokenCard({ event }) {
         </h3>
       </div>
       <div>
-      
-        <div>{event.city ||  <div> <FontAwesomeIcon icon={faLaptop} data-tip="This is a virtual event" /> <ReactTooltip /> </div>} </div>
-        <div>{event.start_date}</div>
-        <div>Circulating supply X</div>
+        <div style={{marginTop: "5px"}}> {event.city ||  <div> <FontAwesomeIcon icon={faLaptop} data-tip="This is a virtual event" /> <ReactTooltip /> </div>} </div>
+        <div style={{marginTop: "5px"}}>{event.start_date}</div>
+        <div style={{marginTop: "5px"}}>Circulating supply X</div>
       </div>
     </Link>
   )
