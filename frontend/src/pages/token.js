@@ -63,7 +63,7 @@ export function Token() {
       body: JSON.stringify({
         query: `
         {
-          poapTokens(where: { eventId: 350 }) {
+          poapTokens(where: { eventId: ${tokenId} }) {
             id
             tokenId
             eventId
@@ -129,8 +129,8 @@ function TokenRow({token}) {
   return (
     <tr>
       <td>{token.tokenId}</td>
+      <td>{token.owner}</td>
       <td>ABC2 </td>
-  <td>{token.owner}</td>
       <td> Inan</td>
       <td> 100 </td>
     </tr>
@@ -158,7 +158,7 @@ function CreateTable({tokens}) {
               </tr>
             </thead>
             <tbody>
-              {tkns}
+              {tkns && tkns.length? tkns : (<tr><td style={{textAlign: 'center'}} colSpan="5">No Tokens Claimed</td></tr>)}
             </tbody>
     </table>
   )
