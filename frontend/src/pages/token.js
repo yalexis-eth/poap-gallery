@@ -84,12 +84,22 @@ export function Token() {
           console.log('result', result)
           if(result && result.data && result.data.poapEvents && result.data.poapEvents.length) {
             
-            setTokens(result.data.poapEvents[0].tokens)
-            const owners = []
+            let tkns = result.data.poapEvents[0].tokens
+            
             for (let i = 0; i < result.data.poapEvents[0].tokens.length; i++) {
               const element = result.data.poapEvents[0].tokens[i];
-              owners.push(element.currentOwner.id)
+              // owners.push(element.currentOwner.id)
+              fetch("https://api.poap.xyz/actions/ens_lookup/"+element.currentOwner.id)
+              .then(res => res.json())
+              .then(({ens}) => {
+                if(ens) {
+                  tkns[i].ens = ens
+                  setTokens(tkns)
+                }
+              })
             }
+
+
           }
         },
         (error) => {
@@ -98,37 +108,37 @@ export function Token() {
       );
   }, []);
 
-  const addresses = ["0x0000044a32f0964f4bf8fb4d017e230ad33595c0e149b6b2d0c34b733dcf906a", "0x1000044a32f0964f4bf8fb4d017e230ad33595c0e149b6b2d0c34b733dcf906a"]
-  // fetch ens names
-  useEffect(() => {
-    fetch('https://api.thegraph.com/subgraphs/name/ensdomains/ens', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+  // const addresses = ["0xf6b6f07862a02c85628b3a9688beae07fea9c863"]
+  // // fetch ens names
+  // useEffect(() => {
+  //   fetch('https://api.thegraph.com/subgraphs/name/ensdomains/ens', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
       
-      body: JSON.stringify({
-        query: `
-        {
-          domains(where: { id_in: [${addresses}]}) {
-            name
-            id
-          }
-        }        
-        `
-      })
-    })
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          console.log('result', result)
-          // setTokens(result.data)
-        },
-        (error) => {
-          console.log('failed to query the graph',error)
-        },
-      );
-  }, []);
+  //     body: JSON.stringify({
+  //       query: `
+  //       {
+  //         domains(where: { id_in: ["0xf6b6f07862a02c85628b3a9688beae07fea9c863"]}) {
+  //           name
+  //           id
+  //         }
+  //       }        
+  //       `
+  //     })
+  //   })
+  //     .then((res) => res.json())
+  //     .then(
+  //       (result) => {
+  //         console.log('result', result)
+  //         // setTokens(result.data)
+  //       },
+  //       (error) => {
+  //         console.log('failed to query the graph',error)
+  //       },
+  //     );
+  // }, []);
 
   return (
     <main id="site-main" role="main" className="app-content">
@@ -169,7 +179,7 @@ function TokenRow({token}) {
   return (
     <tr>
       <td><a href={"https://app.poap.xyz/token/" + token.id}>{token.id}</a></td>
-      <td><a href={"https://app.poap.xyz/scan/" + token.currentOwner.id}> {token.currentOwner.id} </a></td>
+      <td><a href={"https://app.poap.xyz/scan/" + token.currentOwner.id}> {token.ens ? token.ens : token.currentOwner.id} </a></td>
       <td> {new Date(token.created * 1000).toLocaleDateString()} </td>
       <td> {token.transferCount}</td>
       <td> {token.currentOwner.tokensOwned} </td>
@@ -280,8 +290,8 @@ function tokenDetails(event) {
     if(array1[i].value){
       let e = (
         <div key={i} style={{ display: 'flex', padding: '0 1rem'}}>
-          <h4 style={{ flex: '0 0 7rem'}}> {array1[i].key} </h4>
-          <div style={{ flex: '1 1 8rem'}}> {array1[i].render ? array1[i].render(array1[i].value) : array1[i].value} </div>
+          <h4 style={{ flex: '0 0 6rem'}}> {array1[i].key} </h4>
+          <div style={{ flex: '1 1 9rem'}}> {array1[i].render ? array1[i].render(array1[i].value) : array1[i].value} </div>
         </div>
       );
       array2.push(e);
