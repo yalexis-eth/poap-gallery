@@ -22,14 +22,14 @@ export default function Gallery() {
   const [search, setSearch] = useState([])
   const [length, setLength] = useState(50)
   // false is descending true is ascending
-  const [sortOrder, setSortOrder] = useState(false)
+  const [sortOrder, setSortOrder] = useState('desc')
   const [sortVariable, setSortVariable] = useState('date')
 
   const handleSearch = (event) => {
     const value = event.target.value
     if (value && value.length) {
       const filteredItems = items.filter((item) => {
-        return item.name.slice(0, value.length).toLowerCase() === value.toLowerCase()
+        return item.name.toLowerCase().indexOf(value.toLowerCase()) !== -1
       })
       setSearch(filteredItems)
     } else {
@@ -37,15 +37,75 @@ export default function Gallery() {
     }
   }
 
-  const handleFilter = () => {
-    const sortedItems = items.sort((a, b) => {
-      if(new Date(a.start_date).getTime() >  new Date(b.start_date).getTime()) {
-        return sortOrder
-      } else {
-        return !sortOrder
-      }
-    })
+ const filterDirection = (ev) => {
+  setSortOrder(ev.target.value)
+  handleFilter(sortVariable, ev.target.value)
+ }
+
+const filterType = (ev) => {
+  setSortVariable(ev.target.value)
+  handleFilter(ev.target.value, sortOrder)
+}
+
+  const handleFilter = (type, direction) => {
+    console.log('filtering according to type:', type, 'direction', direction)
+    let sortedItems = items
+    if(type === 'date') {
+      sortedItems = items.sort((a, b) => {
+        return direction === 'asc' ? new Date(a.start_date).getTime() - new Date(b.start_date).getTime() :  new Date(b.start_date).getTime() - new Date(a.start_date).getTime() 
+      })
+    } else if (type === 'holders') {
+      sortedItems = sortedItems.sort((a, b) => {
+        return direction === 'asc' ? a.tokenCount - b.tokenCount : b.tokenCount - a.tokenCount
+      })
+    } else if (sortVariable === 'transactions') {
+    } else if (sortVariable === 'country') {
+      sortedItems = sortedItems.sort((a, b) => {
+        if(a.country.toLowerCase() === b.country.toLowerCase()) {
+          return 0
+        }
+        return direction === 'asc' ? a.country.toLowerCase() > b.country.toLowerCase() ? -1 : 1 : b.country.toLowerCase() > a.country.toLowerCase() ? -1 : 1
+      })
+    } else if (sortVariable === 'power') {      
+    }
+
     setItems(sortedItems)
+
+    // const order = sortOrder === 'asc' ? true : false
+    // let sortedItems = items
+    // if(sortVariable === 'date') {
+    //   console.log('before', sortedItems)
+    //   sortedItems = sortedItems.sort((a, b) => {
+    //     return a.id > b.id ? true : false
+    //     // if(new Date(a.start_date).getTime() > new Date(b.start_date).getTime()) {
+    //     //   return order
+    //     // } else {
+    //     //   return !order
+    //     // }
+    //   })
+    //   console.log('after', sortedItems)
+    // } else if (sortVariable === 'holders') {
+    //   console.log('before', sortedItems)
+    //   sortedItems = sortedItems.sort((a, b) => {
+    //     if( a.tokenCount > b.tokenCount ) {
+    //       return order
+    //     } else {
+    //       return !order
+    //     }
+    //   })
+    //   console.log('after', sortedItems)
+    // } else if (sortVariable === 'transactions') {
+    // } else if (sortVariable === 'country') {
+    //   sortedItems = sortedItems.sort((a, b) => {
+    //     if( a.country > b.country ) {
+    //       return order
+    //     } else {
+    //       return !order
+    //     }
+    //   })
+    // } else if (sortVariable === 'power') {      
+    // }
+    // setItems(sortedItems)
   }
 
   useEffect(() => {
@@ -53,8 +113,38 @@ export default function Gallery() {
       .then((res) => res.json())
       .then(
         (result) => {
-          setIsLoaded(true)
-          setItems(result)
+          fetch('https://api.thegraph.com/subgraphs/name/qu0b/poap', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            
+            body: JSON.stringify({
+              query: `
+              {
+                poapEvents(orderBy: id, orderDirection: desc) {
+                  id
+                   tokenCount
+                }
+              }
+              `
+            })
+          }).then(res => res.json())
+          .then(({data}) => {            
+            console.log('data', data)
+            for (let i = 0; i < result.length; i++) {
+              const ev = result[i];
+              for (let j = 0; j < data.poapEvents.length; j++) {
+                const el = data.poapEvents[j];
+                if(ev.id === parseInt(el.id)) {
+                  ev.tokenCount = el.tokenCount
+                }
+              }
+            }
+
+            setIsLoaded(true)
+            setItems(result)
+          })
           // localStorage.setItem('poap_events', JSON.stringify(result))
         },
         (error) => {
@@ -63,6 +153,7 @@ export default function Gallery() {
         }
       )
   }, [])
+
 
   
   return (
@@ -139,13 +230,12 @@ export default function Gallery() {
                       className="gallery-select-container"
                       role="menu"
                     >
-                      <select name="sort-by" id="" className="select">
+                      <select onChange={filterType} value={sortVariable} name="sort-by" id="" className="select">
                         <option value="date">Release</option>
                         <option value="holders">Holders</option>
                         <option value="transactions">Transactions</option>
                         <option value="country">Country (A-Z)</option>
                         <option value="poapPower">Poap Power</option>
-
                       </select>
                     </div>
                   </div>
@@ -164,9 +254,8 @@ export default function Gallery() {
                       className="gallery-select-container"
                       role="menu"
                     >
-                      <select style={{ padding: '0 1rem' }} name="sort-by" id="" className="select">
+                      <select style={{ padding: '0 1rem' }} onChange={filterDirection} value={sortOrder} name="sort-by" id="" className="select">
                         <option value="desc">High to Low</option>
-                        
                         <option value="asc">Low to High</option>
                       </select>
                     </div>
@@ -268,7 +357,7 @@ function TokenCard({ event }) {
       <div>
         <div style={{marginTop: "5px"}}> {event.city ||  <div> <FontAwesomeIcon icon={faLaptop} data-tip="This is a virtual event" /> <ReactTooltip /> </div>} </div>
         <div style={{marginTop: "5px"}}>{event.start_date}</div>
-        <div style={{marginTop: "5px"}}>Circulating supply X</div>
+        <div style={{marginTop: "5px"}}>{event.tokenCount ? "Circulating supply " + event.tokenCount : "No Tokens Claimed"}</div>
       </div>
     </Link>
   )
