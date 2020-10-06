@@ -52,11 +52,11 @@ const filterType = (ev) => {
     let sortedItems = items
     if(type === 'date') {
       sortedItems = items.sort((a, b) => {
-        return direction === 'asc' ? new Date(a.start_date).getTime() - new Date(b.start_date).getTime() :  new Date(b.start_date).getTime() - new Date(a.start_date).getTime() 
+        return direction === 'desc' ? new Date(a.start_date).getTime() - new Date(b.start_date).getTime() :  new Date(b.start_date).getTime() - new Date(a.start_date).getTime() 
       })
     } else if (type === 'holders') {
       sortedItems = sortedItems.sort((a, b) => {
-        return direction === 'asc' ? a.tokenCount - b.tokenCount : b.tokenCount - a.tokenCount
+        return direction === 'desc' ? a.tokenCount - b.tokenCount : b.tokenCount - a.tokenCount
       })
     } else if (sortVariable === 'transactions') {
     } else if (sortVariable === 'country') {
@@ -164,7 +164,8 @@ const filterType = (ev) => {
           link to activity view: <Link to="/activity">Activity link</Link>
         </div>   */}
 
-        <div className="feed" style={{display: "flex", flexDirection : "column" , justifyContent: "space-between"}}> <h5> "timestamp" The Medalla Launch POAP has been transfered from 0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c to 0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c</h5>  
+        <div className="feed" style={{display: "flex", flexDirection : "column" , justifyContent: "space-between"}}> 
+        <h5> "timestamp" The Medalla Launch POAP has been transfered from 0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c to 0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c</h5>  
           <div style={{display: "flex" , justifyContent: "center"}}> <Link to="/activity">Activity view</Link> </div>
 
         </div> 
