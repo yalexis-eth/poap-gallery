@@ -24,12 +24,16 @@ export default function Activity() {
       .then(
         (result) => {
 
+          result[1].heading = "Most recent Event"
+          result[2].heading = "Upcoming Event"
+          result[23].heading = "Most Claimed Token"
+          result[14].heading = "Highest Poap Power"
+
           setItems(result)
           // localStorage.setItem('poap_events', JSON.stringify(result))
         },
         (error) => {
-
-
+          console.log(error)
         }
       )
   }, [])
@@ -93,10 +97,10 @@ export default function Activity() {
       }}>
 
         <div className="activitycards" style={{ display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-          {items && items.length ? <TokenCard event={items[0]} /> : null} 
-          {items && items.length ? <TokenCard event={items[1]} /> : null}
+          {items && items.length ? <TokenCard event={items[1]} /> : null} 
           {items && items.length ? <TokenCard event={items[2]} /> : null}
-          {items && items.length ? <TokenCard event={items[3]} /> : null}
+          {items && items.length ? <TokenCard event={items[23]} /> : null}
+          {items && items.length ? <TokenCard event={items[14]} /> : null}
 
         </div>
 
@@ -118,13 +122,13 @@ function TokenRow({transfer}) {
       {/* <td> {("0" + new Date(transfer.time * 1000).getHours()).substr(-2) + ':' +("0"+ new Date(transfer.time * 1000).getMinutes()).substr(-2) + ":"+("0"+new Date(transfer.time * 1000).getSeconds()).substr(-2)} </td> */}
       <td> { new Date(transfer.time * 1000).toLocaleDateString('en-UK') } </td>
       <td> {transfer.token.transferCount} </td>
-      <td style={{ 
-          justifyContent: 'center',
-          alignItems: 'center',
-          display: 'flex',
-          width: "75px",
-          height: '75px',
-        }}> <img src={"https://api.poap.xyz/token/"+transfer.token.id+"/image"} alt=""/> </td>
+      <td style={{width:'50px', padding: '0 .5rem', height: '40px'}}>
+        <img style={{
+          width: "100%",
+          height: 'auto',
+          borderRadius: '50%'
+      }} src={"https://api.poap.xyz/token/"+transfer.token.id+"/image"} alt=""/>
+      </td>
     </tr>
   )
 }
@@ -163,6 +167,9 @@ function TokenCard({ event }) {
   return (
     <div className="activity-card" style={{display: "flex"}}>
       <div className="place"></div>
+      <div>
+        <h4>{event.heading}</h4>
+      </div>
       <div
         style={{
           justifyContent: 'center',
@@ -170,6 +177,7 @@ function TokenCard({ event }) {
           display: 'flex',
           width: "75px",
           height: '75px',
+          borderRadius: '50%',
         }}
       >
         <img
