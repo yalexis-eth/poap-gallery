@@ -92,8 +92,8 @@ export default function Activity() {
         padding: '0rem',
       }}>
 
-        <div className="activitycards" style={{ display: "flex", justifyContent: "space-between"}}>
-          {items && items.length ? <TokenCard event={items[0]} /> : null}
+        <div className="activitycards" style={{ display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+          {items && items.length ? <TokenCard event={items[0]} /> : null} 
           {items && items.length ? <TokenCard event={items[1]} /> : null}
           {items && items.length ? <TokenCard event={items[2]} /> : null}
           {items && items.length ? <TokenCard event={items[3]} /> : null}
@@ -113,12 +113,18 @@ function TokenRow({transfer}) {
     <tr>
       {/* <td><a href={"https://app.poap.xyz/token/" + transfer.id}>{transfer.id}</a></td> */}
       <td><a href={"https://app.poap.xyz/token/" + transfer.token.id}>{transfer.token.id}</a></td>
-      <td><a href={"https://app.poap.xyz/scan/" + transfer.from.id}> {transfer.from.id} </a></td>
-      <td><a href={"https://app.poap.xyz/scan/" + transfer.to.id}> {transfer.to.id} </a></td>
+      <td><a href={"https://app.poap.xyz/scan/" + transfer.from.id}> {transfer.from.id.substring(0,16)} </a></td>
+      <td><a href={"https://app.poap.xyz/scan/" + transfer.to.id}> {transfer.to.id.substring(0,16)} </a></td>
       {/* <td> {("0" + new Date(transfer.time * 1000).getHours()).substr(-2) + ':' +("0"+ new Date(transfer.time * 1000).getMinutes()).substr(-2) + ":"+("0"+new Date(transfer.time * 1000).getSeconds()).substr(-2)} </td> */}
       <td> { new Date(transfer.time * 1000).toLocaleDateString('en-UK') } </td>
       <td> {transfer.token.transferCount} </td>
-      <td> <img src={"https://api.poap.xyz/token/"+transfer.token.id+"/image"} alt=""/> </td>
+      <td style={{ 
+          justifyContent: 'center',
+          alignItems: 'center',
+          display: 'flex',
+          width: "75px",
+          height: '75px',
+        }}> <img src={"https://api.poap.xyz/token/"+transfer.token.id+"/image"} alt=""/> </td>
     </tr>
   )
 }
@@ -140,7 +146,7 @@ function CreateTable({transfers}) {
                 <th>To</th>
                 <th>Time</th>
                 <th>Transfer count <FontAwesomeIcon icon={faQuestionCircle} data-tip="The amount of transactions this POAP has done since it the day it been claimed." /> <ReactTooltip /> </th>
-                <th>POAP Image</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
