@@ -1,6 +1,21 @@
 /* ******************************************************
    Main Sections POAP App
    ****************************************************** */
+  
+  .loading {
+    background: linear-gradient(90deg, #e6e6e6 25%, #fff 37%, #e6e6e6 63%);
+    border-radius: 1rem;
+    background-size: 400% 100%;
+    animation: loading 3s ease infinite;
+  }
+  @keyframes loading {
+    0% {
+      background-position: 100% 50%;
+    }
+    to {
+      background-position: 0 50%;
+    }
+  }
 
 .poap-app {
   background-color: $bg-color;
@@ -105,7 +120,6 @@
 
 .activity-card {
   cursor: pointer;
-  width: 25%;
   margin: 1rem;
   box-shadow: 0 5px 16px rgba(100,100,100, 0.3);
   transition: box-shadow .2s ease;
