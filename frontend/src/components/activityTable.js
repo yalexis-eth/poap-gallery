@@ -107,7 +107,6 @@ function Transfers({transfers, loading}) {
   const tfers = []
   for (let i = 0; i < transfers.length; i++) {
     const t = transfers[i];
-    console.log(t)
     if(t.from.id === '0x0000000000000000000000000000000000000000') {
       tfers.push(<Claim key={t.id} transfer={t}></Claim>)
     } else {
