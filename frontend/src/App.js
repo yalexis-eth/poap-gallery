@@ -20,7 +20,7 @@ function App() {
   let it = []
 
   try {
-    // it = JSON.parse(localStorage.getItem('combined_events') || JSON.parse(localStorage.getItem('poap_events'))) || []
+    it = JSON.parse(localStorage.getItem('combined_events') || JSON.parse(localStorage.getItem('poap_events'))) || []
    } catch(e) {
    }
     const [items, setItems] = useState(it);
@@ -136,6 +136,7 @@ function App() {
       if(JSON.parse(localStorage.getItem('poap_events'))) {
         combineEvents()
       } else {
+        setError("Failed to Load poap Events")
         console.log('poapevents not loaded')
       }
     }

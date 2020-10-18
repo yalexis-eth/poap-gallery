@@ -14,6 +14,10 @@ export default function Gallery({ events, error, isLoaded }) {
   const [sortOrder, setSortOrder] = useState('desc');
   const [sortVariable, setSortVariable] = useState('date');
 
+  useEffect(() => {
+    setItems(events)
+  }, [events])
+
 
 
   const handleSearch = (event) => {
@@ -22,10 +26,8 @@ export default function Gallery({ events, error, isLoaded }) {
       const filteredItems = items.filter((item) => {
         return item.name.toLowerCase().indexOf(value.toLowerCase()) !== -1;
       });
-      console.log('setting filtered', filteredItems.length)
       setSearch(filteredItems);
     } else {
-      console.log('no results')
       setSearch([]);
     }
   };
