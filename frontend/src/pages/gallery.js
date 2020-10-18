@@ -47,7 +47,7 @@ export default function Gallery({ events, error, isLoaded }) {
     let sortedItems = [...items]
     if (type === 'date') {
       sortedItems.sort((a, b) => {
-        return !isAsc
+        return isAsc
           ? new Date(a.start_date).getTime() - new Date(b.start_date).getTime()
           : new Date(b.start_date).getTime() - new Date(a.start_date).getTime();
       });
