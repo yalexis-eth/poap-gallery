@@ -110,10 +110,13 @@ export function handleEventToken(event: EventToken): void {
 
   if (poapEvent === null) {
     poapEvent = new PoapEvent(event.params.eventId.toString())
+    poapEvent.eventId = event.params.eventId
     poapEvent.tokenCount = BigInt.fromI32(0)
+    poapEvent.transferCount = BigInt.fromI32(0)
+    poapEvent.power = BigInt.fromI32(0)
     poapEvent.created = event.block.timestamp
   }
-
+  
   poapEvent.tokenCount += BigInt.fromI32(1)
   poapEvent.save()
 
@@ -159,16 +162,36 @@ export function handleTransfer(event: Transfer): void {
 
   if (token === null) {
         token = new PoapToken(event.params.tokenId.toString())
-        token.transferCount = BigInt.fromI32(0)
+        token.transferCount = BigInt.fromI32(1)
         
       // should not have to check this
         token.claimedBy = ownerTo.id
         token.created = event.block.timestamp
+
   } else {
-    token.transferCount += BigInt.fromI32(1)
-  }
+      token.transferCount += BigInt.fromI32(1)
+      let poapEvent = PoapEvent.load(token.event.toString())
+      poapEvent.transferCount += BigInt.fromI32(1)
+      poapEvent.save()
+      
+      // for (let i = 0; i < ownerTo.tokens.length; i++) {
+      //   ownerTo.tokens[i]
+      //   let ev = PoapEvent.load(PoapToken.load(ownerTo.tokens[i]).event.toString());
+      //   ev.power += BigInt.fromI32(1)
+      //   ev.save()
+      // }
+      
+      // for (let i = 0; i < ownerFrom.tokens.length; i++) {
+      //   let ev = PoapEvent.load(PoapToken.load(ownerTo.tokens[i]).event.toString());
+      //   ev.power -= BigInt.fromI32(1)
+      //   ev.save()
+      // }
+    }
+    
   token.currentOwner = ownerTo.id
   token.save()
+  
+  
 
   let transfer = PoapTransfer.load(event.transaction.hash.toHex())
   if (transfer === null) {

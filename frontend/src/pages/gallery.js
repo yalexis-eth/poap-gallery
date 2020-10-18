@@ -9,7 +9,13 @@ export default function Gallery() {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(true);
  //JSON.parse(localStorage.getItem('poap_events')) ||
-  const [items, setItems] = useState(JSON.parse(localStorage.getItem('combined_events') || JSON.parse(localStorage.getItem('poap_events'))) || []);
+ 
+ let it = []
+ try {
+  it = JSON.parse(localStorage.getItem('combined_events') || JSON.parse(localStorage.getItem('poap_events'))) || []
+ } catch(e) {
+ }
+  const [items, setItems] = useState(it);
   // const [items, setItems] = useState([]);
   const [search, setSearch] = useState([]);
   const [length, setLength] = useState(50);
@@ -50,8 +56,10 @@ export default function Gallery() {
       const filteredItems = items.filter((item) => {
         return item.name.toLowerCase().indexOf(value.toLowerCase()) !== -1;
       });
+      console.log('setting filtered', filteredItems.length)
       setSearch(filteredItems);
     } else {
+      console.log('no results')
       setSearch([]);
     }
   };
@@ -151,66 +159,9 @@ export default function Gallery() {
       });
     }
     setItems(sortedItems)
-     // } else if (sortVariable === 'transactions') {
-    // } else if (sortVariable === 'country') {
-    //   sortedItems = sortedItems.sort((a, b) => {
-    //     if (a.country.toLowerCase() === b.country.toLowerCase()) {
-    //       return 0;
-    //     }
-    //     return direction === 'asc'
-    //       ? a.country.toLowerCase() > b.country.toLowerCase()
-    //         ? -1
-    //         : 1
-    //       : b.country.toLowerCase() > a.country.toLowerCase()
-    //       ? -1
-    //       : 1;
-    //   });
-    
-    
-    // } else if (sortVariable === 'power') {
-    // }
-
-    // setItems(sortedItems);
-
-    // const order = sortOrder === 'asc' ? true : false
-    // let sortedItems = items
-    // if(sortVariable === 'date') {
-    //   console.log('before', sortedItems)
-    //   sortedItems = sortedItems.sort((a, b) => {
-    //     return a.id > b.id ? true : false
-    //     // if(new Date(a.start_date).getTime() > new Date(b.start_date).getTime()) {
-    //     //   return order
-    //     // } else {
-    //     //   return !order
-    //     // }
-    //   })
-    //   console.log('after', sortedItems)
-    // } else if (sortVariable === 'holders') {
-    //   console.log('before', sortedItems)
-    //   sortedItems = sortedItems.sort((a, b) => {
-    //     if( a.tokenCount > b.tokenCount ) {
-    //       return order
-    //     } else {
-    //       return !order
-    //     }
-    //   })
-    //   console.log('after', sortedItems)
-    // } else if (sortVariable === 'transactions') {
-    // } else if (sortVariable === 'country') {
-    //   sortedItems = sortedItems.sort((a, b) => {
-    //     if( a.country > b.country ) {
-    //       return order
-    //     } else {
-    //       return !order
-    //     }
-    //   })
-    // } else if (sortVariable === 'power') {
-    // }
-    // setItems(sortedItems)
   };
 
   useEffect(() => {
-      console.log(isLoaded)
       fetch('https://api.thegraph.com/subgraphs/name/qu0b/poap', {
       method: 'POST',
       headers: {
@@ -236,7 +187,6 @@ export default function Gallery() {
     })
     .then(res => res.json())
     .then(({data}) => {
-      console.log('dataa',data)
       let oldItems = JSON.parse(localStorage.getItem('graph_events')) || []
       if(data && data.poapEvents) {
         localStorage.setItem('graph_events', JSON.stringify(data.poapEvents))
@@ -387,8 +337,9 @@ export default function Gallery() {
             >
               <span>Could not load gallery, check your connection and try again</span>
             </div>
+            
           ) : isLoaded ? (
-            <Cards events={search && search.length ? search : items} length={length} />
+            <Cards events={search && search.length ? search : items} length={search.length || length} />
           ) : (
             <div className="spinner">
               <div className="cube1"></div>
@@ -420,6 +371,10 @@ function Cards({ events, length }) {
   if (events && events.length && length <= events.length) {
     for (let i = 0; i < length; i++) {
       cards.push(<TokenCard key={i} event={events[i]} />);
+    }
+  } else if(events && events.length) {
+    for (let i = 0; i < events.length; i++) {
+      cards.push(<TokenCard key={i} event={events[i]} />)
     }
   }
   return cards;

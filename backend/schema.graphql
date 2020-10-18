@@ -24,9 +24,12 @@ type PoapOwner @entity {
 
 type PoapEvent @entity {
   id: ID!
+  eventId: BigInt!
   tokenCount: BigInt! # How many tokens does the PoapEvent have i.e. how many have been claimed
   created: BigInt!
   tokens: [PoapToken!] @derivedFrom(field: "event")
+  # transferCount: BigInt!
+  # power: BigInt!
 }
 
 type PoapTransfer @entity {

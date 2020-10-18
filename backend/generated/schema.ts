@@ -192,6 +192,15 @@ export class PoapEvent extends Entity {
     this.set("id", Value.fromString(value));
   }
 
+  get eventId(): BigInt {
+    let value = this.get("eventId");
+    return value.toBigInt();
+  }
+
+  set eventId(value: BigInt) {
+    this.set("eventId", Value.fromBigInt(value));
+  }
+
   get tokenCount(): BigInt {
     let value = this.get("tokenCount");
     return value.toBigInt();
@@ -225,6 +234,24 @@ export class PoapEvent extends Entity {
     } else {
       this.set("tokens", Value.fromStringArray(value as Array<string>));
     }
+  }
+
+  get transferCount(): BigInt {
+    let value = this.get("transferCount");
+    return value.toBigInt();
+  }
+
+  set transferCount(value: BigInt) {
+    this.set("transferCount", Value.fromBigInt(value));
+  }
+
+  get power(): BigInt {
+    let value = this.get("power");
+    return value.toBigInt();
+  }
+
+  set power(value: BigInt) {
+    this.set("power", Value.fromBigInt(value));
   }
 }
 
