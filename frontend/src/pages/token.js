@@ -85,8 +85,14 @@ export function Token() {
           if(result && result.data && result.data.poapEvents && result.data.poapEvents.length) {
             
             let tkns = result.data.poapEvents[0].tokens
+
+            let length = result.data.poapEvents[0].tokens.length
+
+            if (length > 10) {
+              length = 10
+            }
             
-            for (let i = 0; i < result.data.poapEvents[0].tokens.length; i++) {
+            for (let i = 0; i < length; i++) {
               const element = result.data.poapEvents[0].tokens[i];
               // owners.push(element.currentOwner.id)
               fetch("https://api.poap.xyz/actions/ens_lookup/"+element.currentOwner.id)
@@ -150,7 +156,7 @@ export function Token() {
           alignContent: 'space-around',
           justifyContent: 'space-around',
         }}>
-          <div style={{minWidth: '18rem', display: 'flex', flexDirection: "column", justifyContent: "center"}}>
+          <div style={{flex: '0 0 18rem', display: 'flex', flexDirection: "column", justifyContent: "center"}}>
             <div style={{display: 'flex', justifyContent: "space-between"}}> 
               <a href={parseInt(eventId)-1} ><FontAwesomeIcon icon={faAngleLeft}> </FontAwesomeIcon> </a>
               <h4 style={{marginBottom: '0'}}> Event Id: {eventId} </h4>
@@ -160,7 +166,7 @@ export function Token() {
               <TokenCard event={event} />
             </div>
           </div>
-          <div style={{minWidth: '18rem', maxWidth: '500px', overflowWrap: 'anywhere'}}>
+          <div style={{flex: '1 1 18rem', maxWidth: '500px', overflowWrap: 'anywhere'}}>
             {tokenDetails(event)}
           </div>
         </div>
@@ -234,11 +240,13 @@ function TokenCard({ event }) {
           display: 'flex',
           width: '150px',
           height: '150px',
+          borderRadius: '50%',
+          overflow: 'hidden'
         }}
       >
         <img
           style={{
-            width: 'auto',
+            width: '100%',
             height: '100%',
             borderRadius: '50%'
           }}
@@ -265,6 +273,7 @@ function TokenCard({ event }) {
 
 function tokenDetails(event) {
   let array1 = [
+    { value: event.city, key: 'City' },
     { value: event.country, key: 'Country' },
     { value: event.start_date, key: 'Start date' },
     { value: event.end_date, key: 'End date' },

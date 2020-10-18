@@ -98,7 +98,6 @@
 }
 
 .gallery-grid {
-  //background: lightblue;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-gap: 1.5rem;
@@ -107,7 +106,7 @@
 
 .gallery-card {
   cursor: pointer;
-  // margin: 1rem;
+  position: relative;
   box-shadow: 0 5px 16px rgba(100,100,100, 0.3);
   transition: box-shadow .2s ease;
   border-radius: .5rem;
@@ -134,8 +133,6 @@
 a.gallery-card:hover {
   text-decoration: none;
 }
-
-
 
 .gallery-search {
   position: relative;
