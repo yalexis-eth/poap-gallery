@@ -117,19 +117,6 @@
   align-items: center; 
 }
 
-.activity-card {
-  cursor: pointer;
-  margin: 1rem;
-  box-shadow: 0 5px 16px rgba(100,100,100, 0.3);
-  transition: box-shadow .2s ease;
-  border-radius: .5rem;
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center; 
-}
-
 a.gallery-card:hover {
   text-decoration: none;
 }
@@ -156,11 +143,16 @@ a.gallery-card:hover {
   box-shadow: 0 5px 16px rgba(100,100,100, 0.3), 0 5px 22px rgba(100,100,100, 0.2);
 }
 
+@media (min-width: $bp-s) {
+  .gallery-grid.activity-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
 
 @media (min-width: $bp-m){ // 479 px
  
-  .gallery-grid{
-    //background: orange;
+  .gallery-grid {
     grid-template-columns: repeat(3, 1fr);
     
     .gallery-search {
@@ -175,13 +167,13 @@ a.gallery-card:hover {
       grid-column: 1 / 4;
     }
   }
+  .gallery-grid.activity-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (min-width: $bp-l){ //1140 px
-  
-
   .gallery-grid{
-    //background: blue;
     grid-template-columns: repeat(4, 1fr);
     
     .gallery-search {
@@ -195,6 +187,9 @@ a.gallery-card:hover {
     .spinner {
       grid-column: 1 / 5;
     }
+  }
+  .gallery-grid.activity-grid {
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 

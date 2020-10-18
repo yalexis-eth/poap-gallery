@@ -54,10 +54,10 @@ export default function Activity({ mostClaimed, mostRecent, highestPoapPower, up
         );
     }
     fetchTransfers()
-    const intervalId = setInterval(() => {
-     fetchTransfers()
-    }, 15000)
-    return () => clearInterval(intervalId)
+    // const intervalId = setInterval(() => {
+    //  fetchTransfers()
+    // }, 15000)
+    // return () => clearInterval(intervalId)
   }, []);
 
 
@@ -65,10 +65,10 @@ export default function Activity({ mostClaimed, mostRecent, highestPoapPower, up
   return (
     <main id="site-main" role="main" className="app-content">
       <div className="activityContainer container" style={{
-        padding: '0rem',
+        padding: '0 1rem',
       }}>
 
-      <div className="gallery-grid">
+      <div className="gallery-grid activity-grid">
 
          <TokenCard event={mostRecent} /> 
          <TokenCard event={upcoming} />
@@ -123,7 +123,7 @@ function CreateTable({transfers, loading}) {
                   <th>From</th>
                   <th>To</th>
                   <th>Time</th>
-                  <th>Transfer count <FontAwesomeIcon icon={faQuestionCircle} data-tip="The amount of transactions this POAP has done since it the day it been claimed." /> </th>
+                  <th>Transfer count <FontAwesomeIcon icon={faQuestionCircle} data-tip="The amount of transactions this POAP has done since it the day it been claimed." /> <ReactTooltip /> </th>
                   <th>Img</th>
                 </tr>
               </thead>

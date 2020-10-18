@@ -20,7 +20,7 @@ function App() {
   let it = []
 
   try {
-    it = JSON.parse(localStorage.getItem('combined_events') || JSON.parse(localStorage.getItem('poap_events'))) || []
+    // it = JSON.parse(localStorage.getItem('combined_events') || JSON.parse(localStorage.getItem('poap_events'))) || []
    } catch(e) {
    }
     const [items, setItems] = useState(it);
@@ -44,6 +44,7 @@ function App() {
       mC = poapEvents[0]
       hPP = poapEvents[0]
     }
+    let isMostRecent = false
 
 
     for (let i = 0; i < poapEvents.length; i++) {
@@ -64,17 +65,19 @@ function App() {
           }
         }
       }
-      if(ev.id > mr.id) {
-        mr = ev
-      }
       let now = new Date().getTime()
-      let evDate = new Date(ev.start_date * 1000).getTime()
-      let current = new Date(mC.start_date * 1000).getTime()
+      let evDate = new Date(ev.start_date).getTime()
       
-      if(evDate - now < current - now) {
+      
+      if(evDate > now) {
         up = ev
       }
 
+      if(evDate < now && isMostRecent === false) {
+        isMostRecent = true
+        mr = ev
+      }
+      
       if(ev.tokenCount > mC.tokenCount) {
         mC = ev
       }
@@ -129,7 +132,7 @@ function App() {
       localStorage.setItem('graph_events', JSON.stringify(data.poapEvents))
     }
 
-    if(oldItems.length !== data.poapEvents) {
+    if(data && oldItems.length !== data.poapEvents) {
       if(JSON.parse(localStorage.getItem('poap_events'))) {
         combineEvents()
       } else {

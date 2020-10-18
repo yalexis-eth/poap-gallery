@@ -38,7 +38,7 @@ export function Token({ events, error, isLoaded }) {
     if(result && result.length) {
       setEvent(result[0]);
     }
-  }, [])
+  }, [events])
 
   useEffect(() => {
     fetch('https://api.thegraph.com/subgraphs/name/qu0b/poap', {
@@ -69,7 +69,6 @@ export function Token({ events, error, isLoaded }) {
       .then((res) => res.json())
       .then(
         (result) => {
-          console.log('result', result)
           if(result && result.data && result.data.poapEvents && result.data.poapEvents.length) {
             
             let tkns = result.data.poapEvents[0].tokens
