@@ -9,13 +9,13 @@ import { faLaptop } from '@fortawesome/free-solid-svg-icons'
 
 
 
-export default function Tokens() {
+export default function Tokens({ events, error, isLoaded }) {
   let match = useRouteMatch();
 
   return (
     <Switch>
       <Route path={`${match.path}/:eventId`}>
-        <Token />
+        <Token error={error} isLoaded={isLoaded} events={events} />
       </Route>
       <Route path={match.path}>
         <h3>No event Selected</h3>
@@ -24,33 +24,21 @@ export default function Tokens() {
   );
 }
 
-export function Token() {
+export function Token({ events, error, isLoaded }) {
   const params = useParams();
   let { eventId } = params;
 
   const [event, setEvent] = useState({});
-  const [error, setError] = useState(null);
-  const [isLoaded, setIsLoaded] = useState(false);
   const [tokens, setTokens] = useState([])
+  
+
 
   useEffect(() => {
-    fetch('https://api.poap.xyz/events')
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          result = result.filter((event) => event.id + '' === eventId);
-
-          setIsLoaded(true);
-          if (result && result.length) {
-            setEvent(result[0]);
-          }
-        },
-        (error) => {
-          setIsLoaded(true);
-          setError(error);
-        },
-      );
-  }, []);
+    let result = events.filter((event) => event.id + '' === eventId);
+    if(result && result.length) {
+      setEvent(result[0]);
+    }
+  }, [])
 
   useEffect(() => {
     fetch('https://api.thegraph.com/subgraphs/name/qu0b/poap', {
@@ -85,8 +73,8 @@ export function Token() {
           if(result && result.data && result.data.poapEvents && result.data.poapEvents.length) {
             
             let tkns = result.data.poapEvents[0].tokens
-
             let length = result.data.poapEvents[0].tokens.length
+            setTokens(tkns)
 
             if (length > 10) {
               length = 10
@@ -104,8 +92,6 @@ export function Token() {
                 }
               })
             }
-
-
           }
         },
         (error) => {
@@ -113,38 +99,6 @@ export function Token() {
         },
       );
   }, []);
-
-  // const addresses = ["0xf6b6f07862a02c85628b3a9688beae07fea9c863"]
-  // // fetch ens names
-  // useEffect(() => {
-  //   fetch('https://api.thegraph.com/subgraphs/name/ensdomains/ens', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-      
-  //     body: JSON.stringify({
-  //       query: `
-  //       {
-  //         domains(where: { id_in: ["0xf6b6f07862a02c85628b3a9688beae07fea9c863"]}) {
-  //           name
-  //           id
-  //         }
-  //       }        
-  //       `
-  //     })
-  //   })
-  //     .then((res) => res.json())
-  //     .then(
-  //       (result) => {
-  //         console.log('result', result)
-  //         // setTokens(result.data)
-  //       },
-  //       (error) => {
-  //         console.log('failed to query the graph',error)
-  //       },
-  //     );
-  // }, []);
 
   return (
     <main id="site-main" role="main" className="app-content">

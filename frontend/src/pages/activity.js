@@ -1,17 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import ReactTooltip from 'react-tooltip';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons'
-import { faLaptop } from '@fortawesome/free-solid-svg-icons'
+import { Link } from 'react-router-dom'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCalendar, faQuestionCircle, faCoins, faFire, faGlobe, faLaptop, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 
-export default function Activity() {
+
+export default function Activity({ mostClaimed, mostRecent, highestPoapPower, upcoming}) {
 
   const [loading, setLoading] = useState(false)
-  const [search, setSearch] = useState([])
-  const [length, setLength] = useState(50)
-  // false is descending true is ascending
-  const [sortOrder, setSortOrder] = useState(false)
-  const [sortVariable, setSortVariable] = useState('date')
   const [transfers, setTransfers] = useState([])
   
 
@@ -64,17 +60,20 @@ export default function Activity() {
     return () => clearInterval(intervalId)
   }, []);
 
+
+
   return (
     <main id="site-main" role="main" className="app-content">
       <div className="activityContainer container" style={{
         padding: '0rem',
       }}>
 
-        <div className="activitycards" style={{ display: "flex", justifyContent: "space-between", alignItems: "stretch", minHeight: '300px'}}>
-         <TokenCard event={{ heading: 'Most recent Event'}} /> 
-         <TokenCard event={{ heading: 'Upcoming Event'}} />
-         <TokenCard event={{ heading: 'Most Claimed Token'}} />
-         <TokenCard event={{ heading: 'Highest Poap Power'}} />
+      <div className="gallery-grid">
+
+         <TokenCard event={mostRecent} /> 
+         <TokenCard event={upcoming} />
+         <TokenCard event={mostClaimed} />
+         <TokenCard event={highestPoapPower} />
 
         </div>
 
@@ -140,8 +139,7 @@ function CreateTable({transfers, loading}) {
 
 function TokenCard({ event }) {
   return (
-    <div className="activity-card" style={{display: "flex"}}>
-      <div className="place"></div>
+    <Link to={'/token/' + event.id} className="gallery-card">
       <div>
         <h4>{event.heading}</h4>
       </div>
@@ -150,15 +148,16 @@ function TokenCard({ event }) {
           justifyContent: 'center',
           alignItems: 'center',
           display: 'flex',
-          width: "75px",
+          width: '75px',
           height: '75px',
+          overflow: 'hidden',
           borderRadius: '50%',
         }}
       >
         <img
           style={{
             width: 'auto',
-            height: '100%',
+            height: '100%%',
             borderRadius: '50%',
           }}
           src={event.image_url}
@@ -185,10 +184,31 @@ function TokenCard({ event }) {
         </h3>
       </div>
       <div>
-        <div>{event.city || <div> <FontAwesomeIcon icon={faLaptop} data-tip="This is a virtual event" /> </div>}</div>
-        <div>{event.start_date}</div>
-        <div>Circulating supply X</div>
+        <div style={{ marginTop: '5px' }}>
+          {event.city ? <FontAwesomeIcon style={{ width: '1rem', marginRight: '.2rem' }} icon={faGlobe} /> : null}
+          {event.city ? ' ' + event.city.length > 15 ? event.city.substr(0, 15) + '…' : event.city : (
+            <div>
+              {' '}
+              <FontAwesomeIcon style={{ width: '1rem', marginRight: '.2rem' }} icon={faLaptop} /> virtual event{' '}
+            </div>
+          )}{' '}
+        </div>
+        <div style={{ marginTop: '5px' }}>
+          <FontAwesomeIcon style={{ width: '1rem', marginRight: '.2rem' }} icon={faCalendar} /> {event.start_date}
+        </div>
+        <div style={{ marginTop: '5px' }}>
+          <FontAwesomeIcon style={{ width: '1rem', marginRight: '.2rem' }} icon={faCoins} />{' '}
+          {event.tokenCount ? event.tokenCount + ' supply ' : ' None Claimed'}
+        </div>
+        <div style={{ marginTop: '5px' }}>
+          <FontAwesomeIcon style={{ width: '1rem', marginRight: '.2rem' }} icon={faFire} />{' '}
+          {event.power ? event.power +' power ' : '0 power'}
+        </div>
+        <div style={{ marginTop: '5px' }}>
+          <FontAwesomeIcon style={{ width: '1rem', marginRight: '.2rem' }} icon={faPaperPlane} />{' '}
+          {event.transferCount ? event.transferCount + ' transfers' : '0' +' transfers '}
+        </div>
       </div>
-    </div>
-  )
+    </Link>
+  );
 }

@@ -4,51 +4,17 @@ import { Link } from 'react-router-dom';
 import ReactTooltip from 'react-tooltip';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendar, faCoins, faFire, faGlobe, faLaptop, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import ActivityTable from '../components/activityTable'
 
-export default function Gallery() {
-  const [error, setError] = useState(null);
-  const [isLoaded, setIsLoaded] = useState(true);
- //JSON.parse(localStorage.getItem('poap_events')) ||
- 
- let it = []
- try {
-  it = JSON.parse(localStorage.getItem('combined_events') || JSON.parse(localStorage.getItem('poap_events'))) || []
- } catch(e) {
- }
-  const [items, setItems] = useState(it);
-  // const [items, setItems] = useState([]);
+export default function Gallery({ events, error, isLoaded }) {
+  
+  const [items, setItems] = useState(events)
   const [search, setSearch] = useState([]);
   const [length, setLength] = useState(50);
-  // false is descending true is ascending
   const [sortOrder, setSortOrder] = useState('desc');
   const [sortVariable, setSortVariable] = useState('date');
 
-  const combineEvents = () => {
-    const poapEvents = JSON.parse(localStorage.getItem('poap_events'))
-    const graphEvents = JSON.parse(localStorage.getItem('graph_events'))
 
-    for (let i = 0; i < poapEvents.length; i++) {
-      const ev = poapEvents[i];
-      for (let j = 0; j < graphEvents.length; j++) {
-        const gev = graphEvents[j];
-        if(ev.id === parseInt(gev.id)) {
-          ev.tokenCount = parseInt(gev.tokenCount)
-          ev.transferCount = 0
-          ev.power = 0
-          for (let k = 0; k < gev.tokens.length; k++) {
-            const t = gev.tokens[k];
-            if (parseInt(t.currentOwner.tokensOwned) < 0) {
-              continue
-            }
-            ev.power += parseInt(t.currentOwner.tokensOwned)
-            ev.transferCount += parseInt(t.transferCount)
-          }
-        }
-      }
-    }
-    localStorage.setItem('combined_events', JSON.stringify(poapEvents))
-    setItems(poapEvents)
-  }
 
   const handleSearch = (event) => {
     const value = event.target.value;
@@ -95,12 +61,9 @@ export default function Gallery() {
         if(a === "") {
           return 1
         }
-
         if (b === "") {
           return -1
-        }
-        
- 
+        } 
         if( a > b ) {
           return isAsc ? 1 : -1
         } else if(b > a) {
@@ -161,80 +124,10 @@ export default function Gallery() {
     setItems(sortedItems)
   };
 
-  useEffect(() => {
-      fetch('https://api.thegraph.com/subgraphs/name/qu0b/poap', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-
-      body: JSON.stringify({
-        query: `
-        {
-          poapEvents(orderBy: id, orderDirection: desc, first: 1000) {
-            id
-            tokenCount
-            tokens {
-              transferCount
-              currentOwner {
-                tokensOwned
-              }
-            }
-          }
-        }
-        `
-      })
-    })
-    .then(res => res.json())
-    .then(({data}) => {
-      let oldItems = JSON.parse(localStorage.getItem('graph_events')) || []
-      if(data && data.poapEvents) {
-        localStorage.setItem('graph_events', JSON.stringify(data.poapEvents))
-      }
-
-      if(oldItems.length !== data.poapEvents) {
-        if(JSON.parse(localStorage.getItem('poap_events'))) {
-          combineEvents()
-        } else {
-          console.log('poapevents not loaded')
-        }
-      }
-    })
-    .catch(err => {
-      setError(err)
-      console.log('could not query thegraph', err)
-    })
-  }, [])
-
-  useEffect(() => {
-      if(!(items && items.length)) {
-        setIsLoaded(false)
-      }
-      fetch('https://api.poap.xyz/events')
-        .then((res) => res.json())
-        .then((result) => {
-          if(result.length > items.length) {
-            setItems(result);
-          }
-          localStorage.setItem('poap_events', JSON.stringify(result));
-          setIsLoaded(true);
-        })
-        .catch((err) => {
-          setError(err);
-          setIsLoaded(true)
-          console.log(err);
-        });
-  }, []);
-
   return (
     <main id="site-main" role="main" className="app-content">
       <div className="container" style={{ padding: '1rem' }}>
-        {/* <div className="feed" style={{display: "flex", flexDirection : "column" , justifyContent: "space-between"}}> 
-        <h5> "timestamp" The Medalla Launch POAP has been transfered from 0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c to 0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c</h5>  
-          <div style={{display: "flex" , justifyContent: "center"}}> <Link to="/activity">Activity view</Link> </div>
-
-        </div>  */}
-
+        <ActivityTable />
         <div className="gallery-grid">
           <div className="gallery-search">
             <input onChange={handleSearch} type="text" placeholder="Search.." />{' '}
