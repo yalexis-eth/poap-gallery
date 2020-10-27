@@ -94,6 +94,15 @@ export class PoapToken extends Entity {
   set created(value: BigInt) {
     this.set("created", Value.fromBigInt(value));
   }
+
+  get transfers(): Array<string> {
+    let value = this.get("transfers");
+    return value.toStringArray();
+  }
+
+  set transfers(value: Array<string>) {
+    this.set("transfers", Value.fromStringArray(value));
+  }
 }
 
 export class PoapOwner extends Entity {

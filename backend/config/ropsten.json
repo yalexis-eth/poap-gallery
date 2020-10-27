@@ -1,5 +1,6 @@
 {
   "network": "ropsten",
   "address": "0x50C5CA3e7f5566dA3Aa64eC687D283fdBEC2A2F2",
-  "startBlock": 5592084
+  "startBlock": 5592084,
+  "contract": "./abis/Contract.json"
 }

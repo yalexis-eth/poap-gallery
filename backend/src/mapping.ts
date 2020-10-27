@@ -173,19 +173,6 @@ export function handleTransfer(event: Transfer): void {
       let poapEvent = PoapEvent.load(token.event.toString())
       poapEvent.transferCount += BigInt.fromI32(1)
       poapEvent.save()
-      
-      // for (let i = 0; i < ownerTo.tokens.length; i++) {
-      //   ownerTo.tokens[i]
-      //   let ev = PoapEvent.load(PoapToken.load(ownerTo.tokens[i]).event.toString());
-      //   ev.power += BigInt.fromI32(1)
-      //   ev.save()
-      // }
-      
-      // for (let i = 0; i < ownerFrom.tokens.length; i++) {
-      //   let ev = PoapEvent.load(PoapToken.load(ownerTo.tokens[i]).event.toString());
-      //   ev.power -= BigInt.fromI32(1)
-      //   ev.save()
-      // }
     }
     
   token.currentOwner = ownerTo.id

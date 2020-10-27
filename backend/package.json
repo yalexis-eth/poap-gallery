@@ -6,7 +6,9 @@
     "build": "graph build",
     "prepare:mainnet": "mustache config/mainnet.json subgraph.template.yaml > subgraph.yaml",
     "prepare:ropsten": "mustache config/ropsten.json subgraph.template.yaml > subgraph.yaml",
+    "prepare:xdai": "mustache config/xdai.json subgraph.template.yaml > subgraph.yaml",
     "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ qu0b/poap",
+    "xdeploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ qu0b/xdai",
     "create-local": "graph create --node http://localhost:8020/ qu0b/poap",
     "remove-local": "graph remove --node http://localhost:8020/ qu0b/poap",
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 qu0b/poap"
