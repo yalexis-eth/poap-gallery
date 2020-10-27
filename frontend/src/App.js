@@ -32,6 +32,17 @@ function App() {
   const combineEvents = () => {
     const poapEvents = JSON.parse(localStorage.getItem('poap_events'))
     const graphEvents = JSON.parse(localStorage.getItem('graph_events'))
+    const xdaiEvents = JSON.parse(localStorage.getItem('xdai_events'))
+
+    if(xdaiEvents && xdaiEvents.length) {
+      graphEvents.map(event => xdaiEvents.map(dai => {
+        if (event.id === dai.id) {
+          event.tokenCount = parseInt(event.tokenCount) + parseInt(dai.tokenCount) + ""
+          event.tokens.concat(dai.tokens)
+        }
+      }))
+    }
+
 
     let mr = {}
     let up = {}
@@ -130,6 +141,52 @@ function App() {
     let oldItems = JSON.parse(localStorage.getItem('graph_events')) || []
     if(data && data.poapEvents) {
       localStorage.setItem('graph_events', JSON.stringify(data.poapEvents))
+    }
+
+    if(data && oldItems.length !== data.poapEvents) {
+      if(JSON.parse(localStorage.getItem('poap_events'))) {
+        combineEvents()
+      } else {
+        setError("Failed to Load poap Events")
+        console.log('poapevents not loaded')
+      }
+    }
+  })
+  .catch(err => {
+    setError(err)
+    console.log('could not query thegraph', err)
+  })
+}, [])
+
+  useEffect(() => {
+    fetch('https://api.thegraph.com/subgraphs/name/qu0b/xdai', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+
+    body: JSON.stringify({
+      query: `
+      {
+        poapEvents(orderBy: id, orderDirection: desc, first: 1000) {
+          id
+          tokenCount
+          tokens {
+            transferCount
+            currentOwner {
+              tokensOwned
+            }
+          }
+        }
+      }
+      `
+    })
+  })
+  .then(res => res.json())
+  .then(({data}) => {
+    let oldItems = JSON.parse(localStorage.getItem('xdai_events')) || []
+    if(data && data.poapEvents) {
+      localStorage.setItem('xdai_events', JSON.stringify(data.poapEvents))
     }
 
     if(data && oldItems.length !== data.poapEvents) {

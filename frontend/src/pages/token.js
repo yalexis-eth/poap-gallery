@@ -73,24 +73,68 @@ export function Token({ events, error, isLoaded }) {
             
             let tkns = result.data.poapEvents[0].tokens
             let length = result.data.poapEvents[0].tokens.length
+            tkns = tkns.concat(tokens)
             setTokens(tkns)
 
-            if (length > 10) {
-              length = 10
-            }
+            // if (length > 10) {
+            //   length = 10
+            // }
             
-            for (let i = 0; i < length; i++) {
-              const element = result.data.poapEvents[0].tokens[i];
-              // owners.push(element.currentOwner.id)
-              fetch("https://api.poap.xyz/actions/ens_lookup/"+element.currentOwner.id)
-              .then(res => res.json())
-              .then(({ens}) => {
-                if(ens) {
-                  tkns[i].ens = ens
-                  setTokens(tkns)
-                }
-              })
+            // for (let i = 0; i < length; i++) {
+            //   const element = result.data.poapEvents[0].tokens[i];
+            //   // owners.push(element.currentOwner.id)
+            //   fetch("https://api.poap.xyz/actions/ens_lookup/"+element.currentOwner.id)
+            //   .then(res => res.json())
+            //   .then(({ens}) => {
+            //     if(ens) {
+            //       tkns[i].ens = ens
+            //       setTokens(tkns)
+            //     }
+            //   })
+            // }
+          }
+        },
+        (error) => {
+          console.log('failed to query the graph',error)
+        },
+      );
+  }, []);
+
+  useEffect(() => {
+    fetch('https://api.thegraph.com/subgraphs/name/qu0b/xdai', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      
+      body: JSON.stringify({
+        query: `
+        {
+          poapEvents(where:{ id: ${eventId} }) {
+            id
+            tokens {
+              id
+              transferCount
+              created
+              currentOwner {
+                id
+                tokensOwned
+              }
             }
+          }
+        }
+        `
+      })
+    })
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          if(result && result.data && result.data.poapEvents && result.data.poapEvents.length) {
+            
+            let tkns = result.data.poapEvents[0].tokens
+            // let length = result.data.poapEvents[0].tokens.length
+            tkns = tkns.concat(tokens)
+            setTokens(tkns)
           }
         },
         (error) => {

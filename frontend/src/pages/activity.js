@@ -9,10 +9,13 @@ export default function Activity({ mostClaimed, mostRecent, highestPoapPower, up
 
   const [loading, setLoading] = useState(false)
   const [transfers, setTransfers] = useState([])
+  const [daitransfers, setDaiTransfers] = useState([])
+  const [mainnetTransfers, setMainnetTransfers] = useState([])
+
+
   
 
   useEffect(() => {
-    function fetchTransfers() {
       setLoading(true)
       fetch('https://api.thegraph.com/subgraphs/name/qu0b/poap', {
         method: 'POST',
@@ -44,21 +47,68 @@ export default function Activity({ mostClaimed, mostRecent, highestPoapPower, up
         .then((res) => res.json())
         .then(
           (result) => {
+            let tfrs = result.data.poapTransfers
+            setMainnetTransfers(tfrs)
             setLoading(false)
-            setTransfers(result.data.poapTransfers)
           },
           (error) => {
             setLoading(false)
             console.log('failed to query the graph',error)
           },
         );
-    }
-    fetchTransfers()
-    // const intervalId = setInterval(() => {
-    //  fetchTransfers()
-    // }, 15000)
-    // return () => clearInterval(intervalId)
   }, []);
+
+  useEffect(() => {
+      setLoading(true)
+      fetch('https://api.thegraph.com/subgraphs/name/qu0b/xdai', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        
+        body: JSON.stringify({
+          query: `
+          {
+            poapTransfers(first: 15, orderBy: time, orderDirection: desc) {
+              id
+              token {
+                id
+                transferCount
+              }
+              from {
+                id
+              }
+              to {
+                id
+              }
+              time
+            }
+          }
+          `
+        })
+      })
+        .then((res) => res.json())
+        .then(
+          (result) => {
+            let tfrs = result.data.poapTransfers
+            setDaiTransfers(tfrs)
+            setLoading(false)
+          },
+          (error) => {
+            setLoading(false)
+            console.log('failed to query the graph',error)
+          },
+        );
+  }, []);
+
+  useEffect(() => {
+
+    let tfrs = daitransfers.concat(mainnetTransfers)
+    tfrs.sort((a, b) => {
+      return b.time - a.time
+    })
+    setTransfers(tfrs.slice(0, 15))
+  }, [daitransfers, mainnetTransfers])
 
 
 
