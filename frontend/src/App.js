@@ -1,11 +1,10 @@
 import React, { useEffect, useState} from 'react';
-import {BrowserRouter, Route, Switch, Link } from 'react-router-dom';
+import {BrowserRouter, Route, Switch } from 'react-router-dom';
 import { ROUTES } from './routes'
-// import './App.css';
 import './scss/main.scss'
 import Gallery from './pages/gallery'
 import Activity from './pages/activity'
-import Tokens from './pages/token'
+import Tokens from './pages/event'
 
 
 import Header from './components/header'
@@ -35,14 +34,15 @@ function App() {
     const xdaiEvents = JSON.parse(localStorage.getItem('xdai_events'))
 
     if(xdaiEvents && xdaiEvents.length) {
-      graphEvents.map(event => xdaiEvents.map(dai => {
-        if (event.id === dai.id) {
-          event.tokenCount = parseInt(event.tokenCount) + parseInt(dai.tokenCount) + ""
-          event.tokens.concat(dai.tokens)
+      for (let i = 0; i < graphEvents.length; i++) {
+        for (let j = 0; j < xdaiEvents.length; j++) {
+          if (graphEvents[i].id === xdaiEvents[j].id) {
+            graphEvents[i].tokenCount = parseInt(graphEvents[i].tokenCount) + parseInt(xdaiEvents[j].tokenCount) + ""
+            graphEvents[i].tokens.concat(xdaiEvents[j].tokens)
+          }
         }
-      }))
+      }
     }
-
 
     let mr = {}
     let up = {}
@@ -230,7 +230,7 @@ useEffect(() => {
     <div className="landing">
       <Header />
       <Switch>
-        <Route path={ROUTES.token}>
+        <Route path={ROUTES.event}>
           <Tokens events={items} />
         </Route>
         <Route path={ROUTES.activity}>

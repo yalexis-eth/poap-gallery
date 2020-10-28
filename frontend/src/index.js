@@ -6,11 +6,7 @@ import AOS from 'aos';
 
 import { Provider } from 'react-redux'
 
-import configureAppStore from './store'
-
-const initialState = {}
-const store = configureAppStore(initialState)
-
+import store from './store'
 
 AOS.init({
   once: true,

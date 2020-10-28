@@ -3,6 +3,7 @@ import ReactTooltip from 'react-tooltip';
 import { Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendar, faQuestionCircle, faCoins, faFire, faGlobe, faLaptop, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { Helmet } from 'react-helmet'
 
 
 export default function Activity({ mostClaimed, mostRecent, highestPoapPower, upcoming}) {
@@ -114,6 +115,12 @@ export default function Activity({ mostClaimed, mostRecent, highestPoapPower, up
 
   return (
     <main id="site-main" role="main" className="app-content">
+      <Helmet>
+        <title>POAP Gallery - Activity</title>
+        <link rel="canonical" href="https://poap.gallery/activity"/>
+        <meta property="og:url" content="https://poap.gallery/activity"></meta>
+        <meta property="og:title" content="POAP Gallery - Activity"></meta>
+      </Helmet>
       <div className="activityContainer container" style={{
         padding: '0 1rem',
       }}>
@@ -189,7 +196,7 @@ function CreateTable({transfers, loading}) {
 
 function TokenCard({ event }) {
   return (
-    <Link to={'/token/' + event.id} className="gallery-card">
+    <Link to={'/event/' + event.id} className="gallery-card">
       <div>
         <h4>{event.heading}</h4>
       </div>
@@ -256,7 +263,7 @@ function TokenCard({ event }) {
         </div>
         <div style={{ marginTop: '5px' }}>
           <FontAwesomeIcon style={{ width: '1rem', marginRight: '.2rem' }} icon={faPaperPlane} />{' '}
-          {event.transferCount ? event.transferCount + ' transfers' : '0' +' transfers '}
+          {event.transferCount ? event.transferCount + ' transfers' : '0 transfers '}
         </div>
       </div>
     </Link>

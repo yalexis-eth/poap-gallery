@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { InView } from 'react-intersection-observer';
 import { Link } from 'react-router-dom';
-import ReactTooltip from 'react-tooltip';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendar, faCoins, faFire, faGlobe, faLaptop, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import ActivityTable from '../components/activityTable'
+import { Helmet } from 'react-helmet';
 
 export default function Gallery({ events, error, isLoaded }) {
   
@@ -128,6 +128,12 @@ export default function Gallery({ events, error, isLoaded }) {
 
   return (
     <main id="site-main" role="main" className="app-content">
+      <Helmet>
+        <title>POAP Gallery - Home</title>
+        <link rel="canonical" href="https://poap.gallery"/>
+        <meta property="og:url" content="https://poap.gallery"></meta>
+        <meta property="og:title" content="POAP Gallery - Home"></meta>
+      </Helmet>
       <div className="container" style={{ padding: '1rem' }}>
         <ActivityTable />
         <div className="gallery-grid">
@@ -277,7 +283,7 @@ function Cards({ events, length }) {
 
 function TokenCard({ event }) {
   return (
-    <Link to={'/token/' + event.id} className="gallery-card">
+    <Link to={'/event/' + event.id} className="gallery-card">
       <div
         style={{
           justifyContent: 'center',
@@ -341,7 +347,7 @@ function TokenCard({ event }) {
         </div>
         <div style={{ marginTop: '5px' }}>
           <FontAwesomeIcon style={{ width: '1rem', marginRight: '.2rem' }} icon={faPaperPlane} />{' '}
-          {event.transferCount ? event.transferCount + ' transfers' : '0' +' transfers '}
+          {event.transferCount ? event.transferCount + ' transfers' : '0 transfers '}
         </div>
       </div>
     </Link>

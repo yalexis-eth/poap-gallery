@@ -6,16 +6,17 @@ import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons'
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
 import { faLaptop } from '@fortawesome/free-solid-svg-icons'
+import { Helmet } from 'react-helmet'
 
 
 
-export default function Tokens({ events, error, isLoaded }) {
+export default function Events({ events, error, isLoaded }) {
   let match = useRouteMatch();
 
   return (
     <Switch>
       <Route path={`${match.path}/:eventId`}>
-        <Token error={error} isLoaded={isLoaded} events={events} />
+        <Event error={error} isLoaded={isLoaded} events={events} />
       </Route>
       <Route path={match.path}>
         <h3>No event Selected</h3>
@@ -24,12 +25,14 @@ export default function Tokens({ events, error, isLoaded }) {
   );
 }
 
-export function Token({ events, error, isLoaded }) {
+export function Event({ events }) {
   const params = useParams();
   let { eventId } = params;
 
   const [event, setEvent] = useState({});
-  const [tokens, setTokens] = useState([])
+  const [tokens, setTokens] = useState([]);
+  const [xDaiTokens, setxDaiTokens] = useState([]);
+  const [mainnetTokens, setMainnetTokens] = useState([]);
   
 
 
@@ -38,7 +41,7 @@ export function Token({ events, error, isLoaded }) {
     if(result && result.length) {
       setEvent(result[0]);
     }
-  }, [events])
+  }, [events, eventId])
 
   useEffect(() => {
     fetch('https://api.thegraph.com/subgraphs/name/qu0b/poap', {
@@ -72,9 +75,8 @@ export function Token({ events, error, isLoaded }) {
           if(result && result.data && result.data.poapEvents && result.data.poapEvents.length) {
             
             let tkns = result.data.poapEvents[0].tokens
-            let length = result.data.poapEvents[0].tokens.length
-            tkns = tkns.concat(tokens)
-            setTokens(tkns)
+            // let length = result.data.poapEvents[0].tokens.length
+            setMainnetTokens(tkns)
 
             // if (length > 10) {
             //   length = 10
@@ -98,7 +100,7 @@ export function Token({ events, error, isLoaded }) {
           console.log('failed to query the graph',error)
         },
       );
-  }, []);
+  }, [eventId]);
 
   useEffect(() => {
     fetch('https://api.thegraph.com/subgraphs/name/qu0b/xdai', {
@@ -133,18 +135,28 @@ export function Token({ events, error, isLoaded }) {
             
             let tkns = result.data.poapEvents[0].tokens
             // let length = result.data.poapEvents[0].tokens.length
-            tkns = tkns.concat(tokens)
-            setTokens(tkns)
+            setxDaiTokens(tkns)
           }
         },
         (error) => {
           console.log('failed to query the graph',error)
         },
       );
-  }, []);
+  }, [eventId]);
+
+  useEffect(() => {
+    const tkns = mainnetTokens.concat(xDaiTokens)
+    setTokens(tkns)
+  }, [mainnetTokens, xDaiTokens])
 
   return (
     <main id="site-main" role="main" className="app-content">
+      <Helmet>
+        <title>POAP Gallery - Event</title>
+        <link rel="canonical" href={"https://poap.gallery/event/" + eventId}/>
+        <meta property="og:url" content={"https://poap.gallery/event/" + eventId }></meta>
+        <meta property="og:title" content="POAP Gallery - Event"></meta>
+      </Helmet>
       <div className="container">
         <div style={{ 
           display: 'flex', 
@@ -285,10 +297,10 @@ function tokenDetails(event) {
   let array2 = [];
 
   for (let i = 0; i < array1.length; i++) {
-    if(array1[0].value == ''){
+    if(array1[0].value === ''){
       array1[0].value = <span> Virtual event  <FontAwesomeIcon icon={faLaptop}></FontAwesomeIcon> </span>
     }
-    if(array1[1].value == array1[2].value){
+    if(array1[1].value === array1[2].value){
       //array1.shift();
       array1[1].value = null;
       array1[2] = {value: event.end_date, key: 'Date'} 
