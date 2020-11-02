@@ -123,7 +123,7 @@ export default function ActivityTable() {
 
 function Claim({transfer}) {
   return (
-    <div style={{margin: '.2rem 0'}}>
+    <div style={{margin: '.8rem 0'}}>
       <span>Token </span>
       <a style={{width: '1.3rem'}} href={"https://app.poap.xyz/token/"+transfer.token.id}>
       <img style={{
@@ -138,7 +138,7 @@ function Claim({transfer}) {
 }
 function Transfer({transfer}) {
   return (
-    <div style={{margin: '.2rem 0'}}>
+    <div style={{margin: '.8rem 0'}}>
       <span>Token </span>
     <a style={{width: '1.3rem'}} href={"https://app.poap.xyz/token/"+transfer.token.id}>
       <img style={{

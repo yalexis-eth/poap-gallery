@@ -145,7 +145,25 @@ export function Event({ events }) {
   }, [eventId]);
 
   useEffect(() => {
-    const tkns = mainnetTokens.concat(xDaiTokens)
+    const tokenMap = {}
+    for (let i = 0; i < mainnetTokens.length; i++) {
+      const token = mainnetTokens[i];
+      if(tokenMap[token.currentOwner.id] === undefined) {
+        tokenMap[token.currentOwner.id] = token
+      } else {
+        tokenMap[token.currentOwner.id].currentOwner.tokensOwned = '' + (parseInt(token.currentOwner.tokensOwned) + parseInt(tokenMap[token.currentOwner.id].currentOwner.tokensOwned)) 
+      }
+    }
+    for (let j = 0; j < xDaiTokens.length; j++) {
+      const token = xDaiTokens[j]
+      if(tokenMap[token.currentOwner.id] === undefined) {
+        tokenMap[token.currentOwner.id] = token
+      } else {
+        
+        tokenMap[token.currentOwner.id].currentOwner.tokensOwned = '' + (parseInt(token.currentOwner.tokensOwned) + parseInt(tokenMap[token.currentOwner.id].currentOwner.tokensOwned)) 
+      }
+    }
+    const tkns = Object.values(tokenMap)
     setTokens(tkns)
   }, [mainnetTokens, xDaiTokens])
 
@@ -218,7 +236,7 @@ function CreateTable({tokens}) {
                 <th>ID</th>
                 <th>Owner</th>
                 <th>Claim date</th>
-                <th>Transfer count</th>
+                <th>Tx count</th>
                 <th>POAP Power <FontAwesomeIcon icon={faQuestionCircle} data-tip="Total amount of POAPs held by this address" /> <ReactTooltip /> </th>
               </tr>
             </thead>
@@ -308,8 +326,8 @@ function tokenDetails(event) {
     if(array1[i].value){
       let e = (
         <div key={i} style={{ display: 'flex', padding: '0 1rem'}}>
-          <h4 style={{ flex: '0 0 6rem'}}> {array1[i].key} </h4>
-          <div style={{ flex: '1 1 9rem'}}> {array1[i].render ? array1[i].render(array1[i].value) : array1[i].value} </div>
+          <h4 style={{ flex: '0 0 7rem'}}> {array1[i].key} </h4>
+          <div style={{ flex: '1 1 8rem'}}> {array1[i].render ? array1[i].render(array1[i].value) : array1[i].value} </div>
         </div>
       );
       array2.push(e);

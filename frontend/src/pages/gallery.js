@@ -15,6 +15,17 @@ export default function Gallery({ events, error, isLoaded }) {
   const [sortVariable, setSortVariable] = useState('date');
 
   useEffect(() => {
+    events = events.filter(event => {
+      // don't show future events
+      if (new Date(event.start_date.replace(/-/g, ' ')).getTime() > new Date().getTime() + (24 * 60 * 60 * 1000)) {
+        return false
+      }
+      // don't show events without a claimed token
+      if (event.tokenCount !== undefined && event.tokenCount === 0) {
+        return false
+      }
+      return true
+    })
     setItems(events)
   }, [events])
 
@@ -47,6 +58,8 @@ export default function Gallery({ events, error, isLoaded }) {
     let sortedItems = [...items]
     if (type === 'date') {
       sortedItems.sort((a, b) => {
+        a.start_date = a.start_date.replace(/-/g, " ")
+        b.start_date = b.start_date.replace(/-/g, " ")
         return isAsc
           ? new Date(a.start_date).getTime() - new Date(b.start_date).getTime()
           : new Date(b.start_date).getTime() - new Date(a.start_date).getTime();
