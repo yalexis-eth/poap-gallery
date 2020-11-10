@@ -76,13 +76,12 @@ export function Event({ events }) {
       .then((res) => res.json())
       .then(
         (result) => {
-          console.log(result)
           if(result && result.data && result.data.poapEvents && result.data.poapEvents.length) {
             let tkns = result.data.poapEvents[0].tokens
             tkns = tkns.filter(tkn => tkn.currentOwner.id !== '0x0000000000000000000000000000000000000000')
             setMainnetTokens(tkns)
-            setLoadingMainnet(false)
           }
+          setLoadingMainnet(false)
         },
         (error) => {
           setLoadingMainnet(false)
@@ -122,12 +121,11 @@ export function Event({ events }) {
       .then(
         (result) => {
           if(result && result.data && result.data.poapEvents && result.data.poapEvents.length) {
-            
             let tkns = result.data.poapEvents[0].tokens
             tkns = tkns.filter(tkn => tkn.currentOwner.id !== '0x0000000000000000000000000000000000000000')
             setxDaiTokens(tkns)
-            setLoadingxDai(false)
           }
+          setLoadingxDai(false)
         },
         (error) => {
           console.log('failed to query the graph',error)
