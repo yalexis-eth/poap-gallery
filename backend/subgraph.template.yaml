@@ -26,7 +26,7 @@ dataSources:
         - ApprovalForAll
       abis:
         - name: Contract
-          file: {{{contract}}}
+          file: ./abis/Contract.json
       eventHandlers:
         - event: EventToken(uint256,uint256)
           handler: handleEventToken

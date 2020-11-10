@@ -464,21 +464,6 @@ export class Contract extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  lastId(): BigInt {
-    let result = super.call("lastId", "lastId():(uint256)", []);
-
-    return result[0].toBigInt();
-  }
-
-  try_lastId(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall("lastId", "lastId():(uint256)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
   isApprovedForAll(owner: Address, operator: Address): boolean {
     let result = super.call(
       "isApprovedForAll",
@@ -1022,36 +1007,6 @@ export class SetBaseURICall__Outputs {
   }
 }
 
-export class SetLastIdCall extends ethereum.Call {
-  get inputs(): SetLastIdCall__Inputs {
-    return new SetLastIdCall__Inputs(this);
-  }
-
-  get outputs(): SetLastIdCall__Outputs {
-    return new SetLastIdCall__Outputs(this);
-  }
-}
-
-export class SetLastIdCall__Inputs {
-  _call: SetLastIdCall;
-
-  constructor(call: SetLastIdCall) {
-    this._call = call;
-  }
-
-  get newLastId(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-}
-
-export class SetLastIdCall__Outputs {
-  _call: SetLastIdCall;
-
-  constructor(call: SetLastIdCall) {
-    this._call = call;
-  }
-}
-
 export class ApproveCall extends ethereum.Call {
   get inputs(): ApproveCall__Inputs {
     return new ApproveCall__Inputs(this);
@@ -1318,6 +1273,22 @@ export class InitializeCall__Inputs {
   constructor(call: InitializeCall) {
     this._call = call;
   }
+
+  get __name(): string {
+    return this._call.inputValues[0].value.toString();
+  }
+
+  get __symbol(): string {
+    return this._call.inputValues[1].value.toString();
+  }
+
+  get __baseURI(): string {
+    return this._call.inputValues[2].value.toString();
+  }
+
+  get admins(): Array<Address> {
+    return this._call.inputValues[3].value.toAddressArray();
+  }
 }
 
 export class InitializeCall__Outputs {
@@ -1373,22 +1344,6 @@ export class Initialize2Call__Inputs {
 
   constructor(call: Initialize2Call) {
     this._call = call;
-  }
-
-  get __name(): string {
-    return this._call.inputValues[0].value.toString();
-  }
-
-  get __symbol(): string {
-    return this._call.inputValues[1].value.toString();
-  }
-
-  get __baseURI(): string {
-    return this._call.inputValues[2].value.toString();
-  }
-
-  get admins(): Array<Address> {
-    return this._call.inputValues[3].value.toAddressArray();
   }
 }
 

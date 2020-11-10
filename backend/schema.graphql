@@ -5,10 +5,14 @@ type PoapToken @entity {
   claimedBy: PoapOwner!
   transferCount: BigInt!
   created: BigInt!
-  transfers: [PoapTransfer!]! @derivedFrom(field: "token")
   #image: String! #https://api.poap.xyz/token/<tokenid>/image
   #eventDetails: #https://api.poap.xyz/metadata/<eventid>/<tokenid>
 }
+
+# supply of all poaps
+#type PoapStatistics @entity {
+
+#}
 
 type PoapOwner @entity {
   id: ID!
@@ -20,12 +24,9 @@ type PoapOwner @entity {
 
 type PoapEvent @entity {
   id: ID!
-  eventId: BigInt!
   tokenCount: BigInt! # How many tokens does the PoapEvent have i.e. how many have been claimed
   created: BigInt!
   tokens: [PoapToken!] @derivedFrom(field: "event")
-  transferCount: BigInt!
-  power: BigInt!
 }
 
 type PoapTransfer @entity {
