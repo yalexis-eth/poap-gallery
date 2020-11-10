@@ -30,19 +30,15 @@ function App() {
 
   const combineEvents = () => {
     const poapEvents = JSON.parse(localStorage.getItem('poap_events'))
-    const graphEvents = JSON.parse(localStorage.getItem('graph_events'))
+    let graphEvents = JSON.parse(localStorage.getItem('graph_events'))
     const xdaiEvents = JSON.parse(localStorage.getItem('xdai_events'))
 
+
     if(xdaiEvents && xdaiEvents.length) {
-      for (let i = 0; i < graphEvents.length; i++) {
-        for (let j = 0; j < xdaiEvents.length; j++) {
-          if (graphEvents[i].id === xdaiEvents[j].id) {
-            graphEvents[i].tokenCount = (parseInt(graphEvents[i].tokenCount) + parseInt(xdaiEvents[j].tokenCount)) + ""
-            graphEvents[i].tokens = graphEvents[i].tokens.concat(xdaiEvents[j].tokens)
-          }
-        }
-      }
+      graphEvents = graphEvents.concat(xdaiEvents)
     }
+
+
 
     let mr = {}
     let up = {}
@@ -66,7 +62,7 @@ function App() {
       for (let j = 0; j < graphEvents.length; j++) {
         const gev = graphEvents[j];
         if(ev.id === parseInt(gev.id)) {
-          ev.tokenCount = parseInt(gev.tokenCount)
+          ev.tokenCount += parseInt(gev.tokenCount)
           for (let k = 0; k < gev.tokens.length; k++) {
             const t = gev.tokens[k];
             if (parseInt(t.currentOwner.tokensOwned) < 0) {

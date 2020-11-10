@@ -175,12 +175,11 @@ function CreateTable({transfers, loading}) {
       <table className="table" style={{ width: '100%', fontSize: '.93rem', whiteSpace: 'nowrap', border: 'none' }}>
               <thead>
                 <tr>
-                  {/* <th>#</th> */}
                   <th>Id</th>
                   <th>From</th>
                   <th>To</th>
                   <th>Time</th>
-                  <th>Transfer count <FontAwesomeIcon icon={faQuestionCircle} data-tip="The amount of transactions this POAP has done since it the day it been claimed." /> <ReactTooltip /> </th>
+                  <th>Tx count <FontAwesomeIcon icon={faQuestionCircle} data-tip="The amount of transactions this POAP has done since it the day it been claimed." /> <ReactTooltip /> </th>
                   <th>Img</th>
                 </tr>
               </thead>
@@ -190,7 +189,6 @@ function CreateTable({transfers, loading}) {
       </table>
   )
 }
-
 
 
 

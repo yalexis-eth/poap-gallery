@@ -17,7 +17,7 @@ export default function Gallery({ events, error, isLoaded }) {
   useEffect(() => {
     events = events.filter(event => {
       // don't show future events
-      if (new Date(event.start_date.replace(/-/g, ' ')).getTime() > new Date().getTime() + (24 * 60 * 60 * 1000)) {
+      if ((new Date(event.start_date.replace(/-/g, ' ')).getTime() > new Date().getTime() + (24 * 60 * 60 * 1000))) {
         return false
       }
       // don't show events without a claimed token

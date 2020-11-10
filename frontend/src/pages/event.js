@@ -29,6 +29,9 @@ export function Event({ events }) {
   const params = useParams();
   let { eventId } = params;
 
+  const [loadingMainnet, setLoadingMainnet] = useState(false)
+  const [loadingxDai, setLoadingxDai] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [event, setEvent] = useState({});
   const [tokens, setTokens] = useState([]);
   const [xDaiTokens, setxDaiTokens] = useState([]);
@@ -44,6 +47,7 @@ export function Event({ events }) {
   }, [events, eventId])
 
   useEffect(() => {
+    setLoadingMainnet(true)
     fetch('https://api.thegraph.com/subgraphs/name/qu0b/poap', {
       method: 'POST',
       headers: {
@@ -72,37 +76,23 @@ export function Event({ events }) {
       .then((res) => res.json())
       .then(
         (result) => {
+          console.log(result)
           if(result && result.data && result.data.poapEvents && result.data.poapEvents.length) {
-            
             let tkns = result.data.poapEvents[0].tokens
-            // let length = result.data.poapEvents[0].tokens.length
+            tkns = tkns.filter(tkn => tkn.currentOwner.id !== '0x0000000000000000000000000000000000000000')
             setMainnetTokens(tkns)
-
-            // if (length > 10) {
-            //   length = 10
-            // }
-            
-            // for (let i = 0; i < length; i++) {
-            //   const element = result.data.poapEvents[0].tokens[i];
-            //   // owners.push(element.currentOwner.id)
-            //   fetch("https://api.poap.xyz/actions/ens_lookup/"+element.currentOwner.id)
-            //   .then(res => res.json())
-            //   .then(({ens}) => {
-            //     if(ens) {
-            //       tkns[i].ens = ens
-            //       setTokens(tkns)
-            //     }
-            //   })
-            // }
+            setLoadingMainnet(false)
           }
         },
         (error) => {
+          setLoadingMainnet(false)
           console.log('failed to query the graph',error)
         },
       );
   }, [eventId]);
 
   useEffect(() => {
+    setLoadingxDai(true)
     fetch('https://api.thegraph.com/subgraphs/name/qu0b/xdai', {
       method: 'POST',
       headers: {
@@ -134,18 +124,66 @@ export function Event({ events }) {
           if(result && result.data && result.data.poapEvents && result.data.poapEvents.length) {
             
             let tkns = result.data.poapEvents[0].tokens
-            // let length = result.data.poapEvents[0].tokens.length
+            tkns = tkns.filter(tkn => tkn.currentOwner.id !== '0x0000000000000000000000000000000000000000')
             setxDaiTokens(tkns)
+            setLoadingxDai(false)
+          }
+        },
+        (error) => {
+          console.log('failed to query the graph',error)
+          setLoadingxDai(false)
+        },
+      );
+  }, [eventId]);
+
+  useEffect(() => {
+    setLoading(!(loadingMainnet || loadingxDai))
+  }, [loadingMainnet, loadingxDai])
+
+  useEffect(() => {
+    if (!loading && xDaiTokens.length > 0 && mainnetTokens.length === 0) {
+        fetch('https://api.thegraph.com/subgraphs/name/qu0b/poap', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: `
+          {
+            poapOwners(where:{ id_in: [${xDaiTokens.map(token => "\"" + token.currentOwner.id + "\"").join(',')}] }) {
+              id
+              tokensOwned
+            }
+          }
+          `
+        })
+      })
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          if(result && result.data && result.data.poapOwners && result.data.poapOwners.length) {
+            let tkns = result.data.poapOwners.map(owner => {
+              owner.currentOwner = {id: owner.id, tokensOwned: owner.tokensOwned }
+              return owner
+            })
+            setMainnetTokens(tkns)
           }
         },
         (error) => {
           console.log('failed to query the graph',error)
         },
       );
-  }, [eventId]);
-
-  useEffect(() => {
+    }
     const tokenMap = {}
+    for (let j = 0; j < xDaiTokens.length; j++) {
+      const token = xDaiTokens[j]
+      if(tokenMap[token.currentOwner.id] === undefined) {
+        tokenMap[token.currentOwner.id] = token
+      } else {
+        tokenMap[token.currentOwner.id].currentOwner.tokensOwned = '' + (parseInt(token.currentOwner.tokensOwned) + parseInt(tokenMap[token.currentOwner.id].currentOwner.tokensOwned)) 
+      }
+    }
+
     for (let i = 0; i < mainnetTokens.length; i++) {
       const token = mainnetTokens[i];
       if(tokenMap[token.currentOwner.id] === undefined) {
@@ -154,18 +192,13 @@ export function Event({ events }) {
         tokenMap[token.currentOwner.id].currentOwner.tokensOwned = '' + (parseInt(token.currentOwner.tokensOwned) + parseInt(tokenMap[token.currentOwner.id].currentOwner.tokensOwned)) 
       }
     }
-    for (let j = 0; j < xDaiTokens.length; j++) {
-      const token = xDaiTokens[j]
-      if(tokenMap[token.currentOwner.id] === undefined) {
-        tokenMap[token.currentOwner.id] = token
-      } else {
-        
-        tokenMap[token.currentOwner.id].currentOwner.tokensOwned = '' + (parseInt(token.currentOwner.tokensOwned) + parseInt(tokenMap[token.currentOwner.id].currentOwner.tokensOwned)) 
-      }
-    }
+    
     const tkns = Object.values(tokenMap)
+    tkns.sort((a, b) => {
+      return parseInt(a.id) - parseInt(b.id)
+    })
     setTokens(tkns)
-  }, [mainnetTokens, xDaiTokens])
+  }, [mainnetTokens, xDaiTokens, loading])
 
   return (
     <main id="site-main" role="main" className="app-content">
@@ -201,7 +234,7 @@ export function Event({ events }) {
           <div style={{maxWidth: '50rem'}}>{event.description}</div> 
         </div>
         <div style={{ display: 'flex', alignItems: 'center', overflow: 'auto' }}>
-          <CreateTable tokens={tokens} ></CreateTable>
+          <CreateTable loading={loading} tokens={tokens} ></CreateTable>
         </div>
       </div>
     </main>
@@ -212,7 +245,7 @@ function TokenRow({token}) {
   return (
     <tr>
       <td><a href={"https://app.poap.xyz/token/" + token.id}>{token.id}</a></td>
-      <td><a href={"https://app.poap.xyz/scan/" + token.currentOwner.id}> {token.ens ? token.ens : token.currentOwner.id} </a></td>
+      <td style={{maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis'}}><a href={"https://app.poap.xyz/scan/" + token.currentOwner.id}> {token.ens ? token.ens : token.currentOwner.id} </a></td>
       <td> {new Date(token.created * 1000).toLocaleDateString()} </td>
       <td> {token.transferCount}</td>
       <td> {token.currentOwner.tokensOwned} </td>
@@ -221,12 +254,11 @@ function TokenRow({token}) {
 }
 
 
-function CreateTable({tokens}) {
+function CreateTable({tokens, loading}) {
   const tkns = []
   for (let i = 0; i < tokens.length; i++) {
     const t = tokens[i];
     tkns.push(<TokenRow key={i} token={t}></TokenRow>)
-    
   }
 
   return (
@@ -235,13 +267,13 @@ function CreateTable({tokens}) {
               <tr>
                 <th>ID</th>
                 <th>Owner</th>
-                <th>Claim date</th>
-                <th>Tx count</th>
-                <th>POAP Power <FontAwesomeIcon icon={faQuestionCircle} data-tip="Total amount of POAPs held by this address" /> <ReactTooltip /> </th>
+                <th>Claim Date</th>
+                <th>Tx Count</th>
+                <th>Power <FontAwesomeIcon icon={faQuestionCircle} data-tip="Total amount of POAPs held by this address" /> <ReactTooltip /> </th>
               </tr>
             </thead>
             <tbody>
-              {tkns && tkns.length? tkns : (<tr><td style={{textAlign: 'center'}} colSpan="5">No Tokens Claimed</td></tr>)}
+              {loading ? <tr style={{height: '300px', width: 'inherit'}}><td className="loading" colSpan="6"></td></tr> : tkns && tkns.length ? tkns : (<tr><td style={{textAlign: 'center'}} colSpan="5">No Tokens Claimed</td></tr>)}
             </tbody>
     </table>
   )
