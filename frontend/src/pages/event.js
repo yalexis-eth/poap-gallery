@@ -137,7 +137,7 @@ export function Event({ events }) {
   }, [eventId]);
 
   useEffect(() => {
-    setLoading(!(loadingMainnet || loadingxDai))
+    setLoading(loadingMainnet || loadingxDai)
   }, [loadingMainnet, loadingxDai])
 
   useEffect(() => {
