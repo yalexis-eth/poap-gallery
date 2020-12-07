@@ -87,11 +87,9 @@ export async function getIndexPageData() {
 
 
 export async function getEventPageData(eventId, first, skip) {
-  console.log('gettingeventpagedata', eventId, first, skip)
     let [mainnet, xDai] = await Promise.all([getMainnetTokens(eventId, first, skip), getxDaiTokens(eventId, first, skip)])
     let tokens = []
     let owners = []
-    console.log('mainnet', mainnet, 'owners', xDai)
 
   
     if (mainnet && mainnet.data && mainnet.data.poapTokens && mainnet.data.poapTokens.length) {
@@ -111,16 +109,14 @@ export async function getEventPageData(eventId, first, skip) {
   
     const [mainnetOwners, xDaiOwners] = await Promise.all([MainnetCrossReferenceXDai(owners), xDaiCrossReferenceMainnet(owners)])
 
-    console.log('mainnetOwners', mainnetOwners, 'xDaiOwners', xDaiOwners, owners.length)
   
     owners = {}
-    const ownersDai = {}
   
     if (mainnetOwners && mainnetOwners.data && mainnetOwners.data.poapOwners) {
       for (let i = 0; i < mainnetOwners.data.poapOwners.length; i++) {
         const owner = mainnetOwners.data.poapOwners[i];
         owners[owner.id] = {
-          tokensOwned: owner.tokensOwned 
+          tokens: owner.tokens.map(token => token.id) 
         }
       }
     }
@@ -128,27 +124,32 @@ export async function getEventPageData(eventId, first, skip) {
     if (xDaiOwners && xDaiOwners.data && xDaiOwners.data.poapOwners) {
       for (let i = 0; i < xDaiOwners.data.poapOwners.length; i++) {
         const owner = xDaiOwners.data.poapOwners[i];
-        if (ownersDai[owner.id] === undefined) {
-          ownersDai[owner.id] = {
-            tokensOwned: owner.tokensOwned 
+        if (owners[owner.id] === undefined) {
+          owners[owner.id] = {
+            tokens: owner.tokens.map(token => token.id) 
           }
+        } else {
+          owners[owner.id].tokens =  owners[owner.id].tokens.concat(owner.tokens.map(token => token.id) )
         }
       }
     }
 
+    for (const [key, value] of Object.entries(owners)) {
+      owners[key].tokensOwned = uniq(value.tokens).length
+    }
+
   
     for (let j = 0; j < tokens.length; j++) {
-      tokens[j].currentOwner.tokensOwnedMain = 0
-      tokens[j].currentOwner.tokensOwnedDai = 0
       if (owners[tokens[j].currentOwner.id] !== undefined ) {
-        tokens[j].currentOwner.tokensOwnedMain = owners[tokens[j].currentOwner.id].tokensOwned
-      }
-      if (ownersDai[tokens[j].currentOwner.id] !== undefined ) {
-        tokens[j].currentOwner.tokensOwnedDai = ownersDai[tokens[j].currentOwner.id].tokensOwned
+        tokens[j].currentOwner.tokensOwned = owners[tokens[j].currentOwner.id].tokensOwned
+      } else {
+        console.log("NOT FOUND", tokens[j].currentOwner.id, tokens[j].currentOwner.tokensOwned)
       }
     }
 
-    return { id: eventId, tokens: uniqBy(tokens, 'id') }
+    return { id: eventId, tokens: uniqBy(tokens, 'id').sort((a, b) => {
+      return parseInt(a.id) - parseInt(b.id)
+    }) }
 }
 
 

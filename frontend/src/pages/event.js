@@ -10,6 +10,7 @@ import { faLaptop } from '@fortawesome/free-solid-svg-icons'
 import { Helmet } from 'react-helmet'
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchEventPageData, selectEventById } from '../store';
+import { parse } from '@fortawesome/fontawesome-svg-core';
 
 
 
@@ -34,13 +35,13 @@ export function Event() {
   const dispatch = useDispatch()
 
   const tokens = useSelector(state => state.events.tokens)
+
   const loadingEvent  = useSelector(state => state.events.eventStatus)
   const loading  = useSelector(state => state.events.status)
   const error = useSelector(state => state.events.error)
   const errorEvent = useSelector(state => state.events.eventError)
   const event = useSelector(state => selectEventById(state, eventId))
   
-  const fetchIdRef = useRef(0)
   const pageCount = useMemo( () => event.tokenCount % 50 != 0 ? Math.floor(event.tokenCount / 50) + 1 : event.tokenCount, [event])
   const data = useMemo(() => {
     const data = []
@@ -50,7 +51,7 @@ export function Event() {
         col2: (<a href={"https://app.poap.xyz/scan/" + tokens[i].currentOwner.id}> {tokens[i].ens ? tokens[i].ens : tokens[i].currentOwner.id.substr(0,10)}…{tokens[i].ens ? tokens[i].ens : tokens[i].currentOwner.id.substr(32)}</a>),
         col3: new Date(tokens[i].created * 1000).toLocaleDateString(),
         col4: tokens[i].transferCount,
-        col5: tokens[i].currentOwner.tokensOwned + ' / ' + tokens[i].currentOwner.tokensOwnedDai,
+        col5: tokens[i].currentOwner.tokensOwned,
       })
     }
     return data
@@ -87,7 +88,7 @@ export function Event() {
         accessor: 'col4',
       },
       {
-        Header: () => (<span>Power M / D <FontAwesomeIcon icon={faQuestionCircle} data-tip="Total amount of POAPs held by this address (Mainnet / xDai)" /> <ReactTooltip /></span>),
+        Header: () => (<span>Power <FontAwesomeIcon icon={faQuestionCircle} data-tip="Total amount of POAPs held by this address" /> <ReactTooltip /></span>),
         accessor: 'col5',
       },
     ],
@@ -237,7 +238,7 @@ function CreateTable({loading, pageCount: pc, fetchData, columns, data, event}) 
               <td colSpan="10000">Loading...</td>
             ) : (
               <td colSpan="10000">
-                Showing {page.length} of {event.tokenCount}{' '}
+                Showing {page.length} of {page.length}{' '}
                 results
               </td>
             )}

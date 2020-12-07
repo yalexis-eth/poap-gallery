@@ -16,9 +16,13 @@ export async function getMainnetEvents() {
           id
           tokenCount
           tokens {
+            id
             transferCount
             currentOwner {
               tokensOwned
+              tokens(first: 1000) {
+                id
+              }
             }
           }
         }
@@ -44,9 +48,13 @@ export async function getxDaiEvents() {
           id
           tokenCount
           tokens {
+            id
             transferCount
             currentOwner {
               tokensOwned
+              tokens(first: 1000) {
+                id
+              }
             }
           }
         }
@@ -184,6 +192,9 @@ export async function xDaiCrossReferenceMainnet(owners) {
         poapOwners(where:{ id_in: [${owners.map(owner => "\"" + owner + "\"").join(',')}] }, first: 1000) {
           id
           tokensOwned
+          tokens {
+            id
+          }
         }
       }
       `
@@ -204,6 +215,9 @@ export async function MainnetCrossReferenceXDai(owners) {
         poapOwners(where:{ id_in: [${owners.map(owner => "\"" + owner + "\"").join(',')}] }, first: 1000) {
           id
           tokensOwned
+          tokens {
+            id
+          }
         }
       }
       `
