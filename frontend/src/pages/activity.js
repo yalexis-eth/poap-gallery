@@ -4,17 +4,22 @@ import { Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendar, faQuestionCircle, faCoins, faFire, faGlobe, faLaptop, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { Helmet } from 'react-helmet'
+import { useSelector } from 'react-redux';
+import { selectMostClaimed, selectMostRecent, selectUpcoming, selectHighestPoapPower } from '../store';
 
 
-export default function Activity({ mostClaimed, mostRecent, highestPoapPower, upcoming}) {
+export default function Activity() {
 
   const [loading, setLoading] = useState(false)
   const [transfers, setTransfers] = useState([])
   const [daitransfers, setDaiTransfers] = useState([])
   const [mainnetTransfers, setMainnetTransfers] = useState([])
 
+  const mostClaimed = useSelector(selectMostClaimed)
+  const mostRecent = useSelector(selectMostRecent)
+  const upcoming = useSelector(selectUpcoming)
+  const highestPoapPower = useSelector(selectHighestPoapPower)
 
-  
 
   useEffect(() => {
       setLoading(true)

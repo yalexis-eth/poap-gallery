@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useRef, useCallback } from 'react';
+import { useTable, usePagination } from 'react-table'
 import ReactTooltip from 'react-tooltip';
 import { Switch, Route, useRouteMatch, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -7,16 +8,18 @@ import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
 import { faLaptop } from '@fortawesome/free-solid-svg-icons'
 import { Helmet } from 'react-helmet'
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchEventPageData, selectEventById } from '../store';
 
 
 
-export default function Events({ events, error, isLoaded }) {
+export default function Events() {
   let match = useRouteMatch();
 
   return (
     <Switch>
       <Route path={`${match.path}/:eventId`}>
-        <Event error={error} isLoaded={isLoaded} events={events} />
+        <Event />
       </Route>
       <Route path={match.path}>
         <h3>No event Selected</h3>
@@ -25,178 +28,112 @@ export default function Events({ events, error, isLoaded }) {
   );
 }
 
-export function Event({ events }) {
+export function Event() {
   const params = useParams();
-  let { eventId } = params;
+  const { eventId } = params;
+  const dispatch = useDispatch()
 
-  const [loadingMainnet, setLoadingMainnet] = useState(false)
-  const [loadingxDai, setLoadingxDai] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [event, setEvent] = useState({});
-  const [tokens, setTokens] = useState([]);
-  const [xDaiTokens, setxDaiTokens] = useState([]);
-  const [mainnetTokens, setMainnetTokens] = useState([]);
+  const tokens = useSelector(state => state.events.tokens)
+  const loadingEvent  = useSelector(state => state.events.eventStatus)
+  const loading  = useSelector(state => state.events.status)
+  const error = useSelector(state => state.events.error)
+  const errorEvent = useSelector(state => state.events.eventError)
+  const event = useSelector(state => selectEventById(state, eventId))
   
-
-
-  useEffect(() => {
-    let result = events.filter((event) => event.id + '' === eventId);
-    if(result && result.length) {
-      setEvent(result[0]);
+  const fetchIdRef = useRef(0)
+  const pageCount = useMemo( () => event.tokenCount % 50 != 0 ? Math.floor(event.tokenCount / 50) + 1 : event.tokenCount, [event])
+  const data = useMemo(() => {
+    const data = []
+    for (let i = 0; i < tokens.length; i++) {
+      data.push({
+        col1:  (<a href={"https://app.poap.xyz/token/" + tokens[i].id}>{tokens[i].id}</a>) ,
+        col2: (<a href={"https://app.poap.xyz/scan/" + tokens[i].currentOwner.id}> {tokens[i].ens ? tokens[i].ens : tokens[i].currentOwner.id.substr(0,10)}…{tokens[i].ens ? tokens[i].ens : tokens[i].currentOwner.id.substr(32)}</a>),
+        col3: new Date(tokens[i].created * 1000).toLocaleDateString(),
+        col4: tokens[i].transferCount,
+        col5: tokens[i].currentOwner.tokensOwned + ' / ' + tokens[i].currentOwner.tokensOwnedDai,
+      })
     }
-  }, [events, eventId])
+    return data
+  }, [tokens])
 
   useEffect(() => {
-    setLoadingMainnet(true)
-    fetch('https://api.thegraph.com/subgraphs/name/qu0b/poap', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    if (eventId) {
+      dispatch(fetchEventPageData({ eventId, first: 1000, skip: 0  }))
+    }
+  }, [dispatch, eventId])
+
+  const fetchData = useCallback(({pageSize, pageIndex}) => {
+        const startRow = pageSize * pageIndex
+        const endRow = startRow + pageSize
+        console.log('fetching data', startRow, endRow)
+  }, [])
+
+  const columns = useMemo(
+    () => [
+      {
+        Header: 'ID',
+        accessor: 'col1', // accessor is the "key" in the data
       },
-      
-      body: JSON.stringify({
-        query: `
-        {
-          poapEvents(where:{ id: ${eventId} }) {
-            id
-            tokens {
-              id
-              transferCount
-              created
-              currentOwner {
-                id
-                tokensOwned
-              }
-            }
-          }
-        }
-        `
-      })
-    })
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          if(result && result.data && result.data.poapEvents && result.data.poapEvents.length) {
-            let tkns = result.data.poapEvents[0].tokens
-            tkns = tkns.filter(tkn => tkn.currentOwner.id !== '0x0000000000000000000000000000000000000000')
-            setMainnetTokens(tkns)
-          }
-          setLoadingMainnet(false)
-        },
-        (error) => {
-          setLoadingMainnet(false)
-          console.log('failed to query the graph',error)
-        },
-      );
-  }, [eventId]);
-
-  useEffect(() => {
-    setLoadingxDai(true)
-    fetch('https://api.thegraph.com/subgraphs/name/qu0b/xdai', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+      {
+        Header: 'Owner',
+        accessor: 'col2',
       },
-      
-      body: JSON.stringify({
-        query: `
-        {
-          poapEvents(where:{ id: ${eventId} }) {
-            id
-            tokens {
-              id
-              transferCount
-              created
-              currentOwner {
-                id
-                tokensOwned
-              }
-            }
-          }
-        }
-        `
-      })
-    })
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          if(result && result.data && result.data.poapEvents && result.data.poapEvents.length) {
-            let tkns = result.data.poapEvents[0].tokens
-            tkns = tkns.filter(tkn => tkn.currentOwner.id !== '0x0000000000000000000000000000000000000000')
-            setxDaiTokens(tkns)
-          }
-          setLoadingxDai(false)
-        },
-        (error) => {
-          console.log('failed to query the graph',error)
-          setLoadingxDai(false)
-        },
-      );
-  }, [eventId]);
+      {
+        Header: 'Claim Date',
+        accessor: 'col3',
+      },
+      {
+        Header: 'Tx Count',
+        accessor: 'col4',
+      },
+      {
+        Header: () => (<span>Power M / D <FontAwesomeIcon icon={faQuestionCircle} data-tip="Total amount of POAPs held by this address (Mainnet / xDai)" /> <ReactTooltip /></span>),
+        accessor: 'col5',
+      },
+    ],
+    []
+  )
 
-  useEffect(() => {
-    setLoading(loadingMainnet || loadingxDai)
-  }, [loadingMainnet, loadingxDai])
 
-  useEffect(() => {
-    if (!loading && xDaiTokens.length > 0 && mainnetTokens.length === 0) {
-        fetch('https://api.thegraph.com/subgraphs/name/qu0b/poap', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          query: `
-          {
-            poapOwners(where:{ id_in: [${xDaiTokens.map(token => "\"" + token.currentOwner.id + "\"").join(',')}] }) {
-              id
-              tokensOwned
-            }
-          }
-          `
-        })
-      })
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          if(result && result.data && result.data.poapOwners && result.data.poapOwners.length) {
-            let tkns = result.data.poapOwners.map(owner => {
-              owner.currentOwner = {id: owner.id, tokensOwned: owner.tokensOwned }
-              return owner
-            })
-            setMainnetTokens(tkns)
-          }
-        },
-        (error) => {
-          console.log('failed to query the graph',error)
-        },
-      );
-    }
-    const tokenMap = {}
-    for (let j = 0; j < xDaiTokens.length; j++) {
-      const token = xDaiTokens[j]
-      if(tokenMap[token.currentOwner.id] === undefined) {
-        tokenMap[token.currentOwner.id] = token
-      } else {
-        tokenMap[token.currentOwner.id].currentOwner.tokensOwned = '' + (parseInt(token.currentOwner.tokensOwned) + parseInt(tokenMap[token.currentOwner.id].currentOwner.tokensOwned)) 
-      }
-    }
+  if (loading === 'loading' || loading === 'idle' || loadingEvent === 'loading' || loadingEvent === 'idle') {
+    return (
+      <main id="site-main" role="main" className="app-content">
+      <Helmet>
+        <title>POAP Gallery - Event</title>
+        <link rel="canonical" href={"https://poap.gallery/event/" + eventId}/>
+        <meta property="og:url" content={"https://poap.gallery/event/" + eventId }></meta>
+        <meta property="og:title" content="POAP Gallery - Event"></meta>
+      </Helmet>
+        <div style={{display: 'flex', justifyContent: 'center'}}>
+          <div className="spinner">
+            <div className="cube1"></div>
+            <div className="cube2"></div>
+          </div>
+        </div>
+      </main>
+    )
+  }
 
-    for (let i = 0; i < mainnetTokens.length; i++) {
-      const token = mainnetTokens[i];
-      if(tokenMap[token.currentOwner.id] === undefined) {
-        tokenMap[token.currentOwner.id] = token
-      } else {
-        tokenMap[token.currentOwner.id].currentOwner.tokensOwned = '' + (parseInt(token.currentOwner.tokensOwned) + parseInt(tokenMap[token.currentOwner.id].currentOwner.tokensOwned)) 
-      }
-    }
-    
-    const tkns = Object.values(tokenMap)
-    tkns.sort((a, b) => {
-      return parseInt(a.id) - parseInt(b.id)
-    })
-    setTokens(tkns)
-  }, [mainnetTokens, xDaiTokens, loading])
+  if (error || errorEvent || Object.keys(event).length === 0) {
+    return (
+      <main id="site-main" role="main" className="app-content">
+      <Helmet>
+        <title>POAP Gallery - Event</title>
+        <link rel="canonical" href={"https://poap.gallery/event/" + eventId}/>
+        <meta property="og:url" content={"https://poap.gallery/event/" + eventId }></meta>
+        <meta property="og:title" content="POAP Gallery - Event"></meta>
+      </Helmet>
+        <div style={{display: 'flex', justifyContent: 'center', flexDirection: 'column', margin: '0 auto', textAlign: 'center'}}>
+          <h2>{error || errorEvent || 'Token not found'}</h2>
+          <div >
+            <img alt="warning sign" style={{maxWidth: '30rem'}} src="/icons/warning.svg"></img>
+          </div>
+        </div>
+      </main>
+    )
+  }
+
+
 
   return (
     <main id="site-main" role="main" className="app-content">
@@ -232,48 +169,102 @@ export function Event({ events }) {
           <div style={{maxWidth: '50rem'}}>{event.description}</div> 
         </div>
         <div style={{ display: 'flex', alignItems: 'center', overflow: 'auto' }}>
-          <CreateTable loading={loading} tokens={tokens} ></CreateTable>
+          <CreateTable event={event} loading={loadingEvent !== 'succeeded'} fetchData={fetchData} columns={columns} data={data} pageCount={pageCount} ></CreateTable>
         </div>
       </div>
     </main>
   );
 }
 
-function TokenRow({token}) {
+function CreateTable({loading, pageCount: pc, fetchData, columns, data, event}) {
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    prepareRow,
+    page,
+    pageCount,
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
+    gotoPage,
+    nextPage,
+    previousPage,
+    setPageSize,
+    // Get the state from the instance
+    state: { pageIndex, pageSize },
+  } = useTable({ columns, data, pageCount: pc, initialState: { pageIndex: 0 }, manualPagination: true }, usePagination)
+
+  React.useEffect(() => {
+    fetchData({ pageIndex, pageSize })
+  }, [fetchData, pageIndex, pageSize])
+
+
   return (
-    <tr>
-      <td><a href={"https://app.poap.xyz/token/" + token.id}>{token.id}</a></td>
-      <td style={{maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis'}}><a href={"https://app.poap.xyz/scan/" + token.currentOwner.id}> {token.ens ? token.ens : token.currentOwner.id} </a></td>
-      <td> {new Date(token.created * 1000).toLocaleDateString()} </td>
-      <td> {token.transferCount}</td>
-      <td> {token.currentOwner.tokensOwned} </td>
-    </tr>
-  )
-}
-
-
-function CreateTable({tokens, loading}) {
-  const tkns = []
-  for (let i = 0; i < tokens.length; i++) {
-    const t = tokens[i];
-    tkns.push(<TokenRow key={i} token={t}></TokenRow>)
-  }
-
-  return (
-    <table className="activityTable" style={{ width: '100%', border: 'none' }}>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Owner</th>
-                <th>Claim Date</th>
-                <th>Tx Count</th>
-                <th>Power <FontAwesomeIcon icon={faQuestionCircle} data-tip="Total amount of POAPs held by this address" /> <ReactTooltip /> </th>
+    <div style={{width: '100%'}}>
+      <table className="activityTable" style={{ width: '100%', border: 'none' }} {...getTableProps()}>
+      <thead>
+        {// Loop over the header rows
+        headerGroups.map(headerGroup => (
+          // Apply the header row props
+          <tr {...headerGroup.getHeaderGroupProps()}>
+            {// Loop over the headers in each row
+            headerGroup.headers.map(column => (
+              // Apply the header cell props
+              <th {...column.getHeaderProps()}>
+                {// Render the header
+                column.render('Header')}
+              </th>
+            ))}
+          </tr>
+        ))}
+      </thead>
+      {/* Apply the table body props */}
+      <tbody {...getTableBodyProps()}>
+          {page.map((row, i) => {
+            prepareRow(row)
+            return (
+              <tr {...row.getRowProps()}>
+                {row.cells.map(cell => {
+                  return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                })}
               </tr>
-            </thead>
-            <tbody>
-              {loading ? <tr style={{height: '300px', width: 'inherit'}}><td className="loading" colSpan="6"></td></tr> : tkns && tkns.length ? tkns : (<tr><td style={{textAlign: 'center'}} colSpan="5">No Tokens Claimed</td></tr>)}
-            </tbody>
+            )
+          })}
+          <tr>
+            {loading ? (
+              // Use our custom loading state to show a loading indicator
+              <td colSpan="10000">Loading...</td>
+            ) : (
+              <td colSpan="10000">
+                Showing {page.length} of {event.tokenCount}{' '}
+                results
+              </td>
+            )}
+          </tr>
+        </tbody>
     </table>
+     {/* <div className="pagination">
+     <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+       {'<<'}
+     </button>{' '}
+     <button onClick={() => previousPage()} disabled={!canPreviousPage}>
+       {'<'}
+     </button>{' '}
+     <button onClick={() => nextPage()} disabled={!canNextPage}>
+       {'>'}
+     </button>{' '}
+     <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
+       {'>>'}
+     </button>{' '}
+     <span>
+       Page{' '}
+       <strong>
+         {pageIndex + 1} of {pageOptions.length}
+       </strong>{' '}
+     </span>
+   </div> */}
+   </div>
   )
 }
 
@@ -366,13 +357,4 @@ function tokenDetails(event) {
   return array2;
 }
 
-/*
-  
-        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> Description </h4> </div>  <div style={{marginLeft: "3rem"}}> {event.description} </div> </div>
-        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> Virtual Event </h4> </div>  <div style={{marginLeft: "3rem"}}> {event.virtual_event} </div> </div>
-   { event.country ? <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> Country  </h4> </div>  <div style={{marginLeft: "3rem"}}> {event.country} </div> </div> : null}
-        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> Start date </h4> </div>  <div style={{marginLeft: "3rem"}}>{event.start_date} </div> </div>
-        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> End date </h4> </div>  <div style={{marginLeft: "3rem"}}>{event.end_date} </div> </div>
-        <div style={{display: "flex", flexDirection: "row"}}> <div style={{width: "100px", marginLeft: "1rem"}}> <h4> Website </h4> </div>  <div style={{marginLeft: "3rem"}}> {event.event_url} </div> </div>
 
-        */

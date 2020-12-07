@@ -5,8 +5,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendar, faCoins, faFire, faGlobe, faLaptop, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import ActivityTable from '../components/activityTable'
 import { Helmet } from 'react-helmet';
+import { selectEventStatus, selectEventError, selectRecentEvents } from '../store';
+import { useSelector } from 'react-redux';
 
-export default function Gallery({ events, error, isLoaded }) {
+
+
+export default function Gallery() {
+
+  const events  = useSelector(selectRecentEvents)
+  const eventStatus = useSelector(selectEventStatus)
+  const eventError = useSelector(selectEventError)
+
   
   const [items, setItems] = useState(events)
   const [search, setSearch] = useState([]);
@@ -14,18 +23,8 @@ export default function Gallery({ events, error, isLoaded }) {
   const [sortOrder, setSortOrder] = useState('desc');
   const [sortVariable, setSortVariable] = useState('date');
 
+
   useEffect(() => {
-    events = events.filter(event => {
-      // don't show future events
-      if ((new Date(event.start_date.replace(/-/g, ' ')).getTime() > new Date().getTime() + (24 * 60 * 60 * 1000))) {
-        return false
-      }
-      // don't show events without a claimed token
-      if (event.tokenCount !== undefined && event.tokenCount === 0) {
-        return false
-      }
-      return true
-    })
     setItems(events)
   }, [events])
 
@@ -243,7 +242,7 @@ export default function Gallery({ events, error, isLoaded }) {
               </div>
             </div>
           </div>
-          {error ? (
+          {eventError ? (
             <div
               style={{
                 gridColumn: '1 / 3',
@@ -252,7 +251,7 @@ export default function Gallery({ events, error, isLoaded }) {
               <span>Could not load gallery, check your connection and try again</span>
             </div>
             
-          ) : isLoaded ? (
+          ) : eventStatus === 'succeeded' ? (
             <Cards events={search && search.length ? search : items} length={search.length || length} />
           ) : (
             <div className="spinner">
