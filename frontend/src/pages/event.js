@@ -11,6 +11,7 @@ import { Helmet } from 'react-helmet'
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchEventPageData, selectEventById } from '../store';
 import { parse } from '@fortawesome/fontawesome-svg-core';
+import { CSVLink } from "react-csv";
 
 
 
@@ -43,8 +44,12 @@ export function Event() {
   const event = useSelector(state => selectEventById(state, eventId))
   
   const pageCount = useMemo( () => event.tokenCount % 50 != 0 ? Math.floor(event.tokenCount / 50) + 1 : event.tokenCount, [event])
-  const data = useMemo(() => {
+  const {data, csv_data} = useMemo(() => {
     const data = []
+    const csv_data = [];
+
+		// Add the headers
+    csv_data.push(['ID', 'Owner', 'Claim Date', 'Tx Count', 'Power']);
     for (let i = 0; i < tokens.length; i++) {
       data.push({
         col1:  (<a href={"https://app.poap.xyz/token/" + tokens[i].id}>{tokens[i].id}</a>) ,
@@ -53,8 +58,9 @@ export function Event() {
         col4: tokens[i].transferCount,
         col5: tokens[i].currentOwner.tokensOwned,
       })
+      csv_data.push([tokens[i].id, tokens[i].currentOwner.id, new Date(tokens[i].created * 1000).toLocaleDateString(), tokens[i].transferCount, tokens[i].currentOwner.tokensOwned])
     }
-    return data
+    return {data, csv_data}
   }, [tokens])
 
   useEffect(() => {
@@ -163,11 +169,26 @@ export function Event() {
             </div>
           </div>
           <div style={{flex: '1 1 18rem', maxWidth: '500px', overflowWrap: 'anywhere'}}>
-            {tokenDetails(event)}
+            {tokenDetails(event, csv_data)}
           </div>
         </div>
         <div style={{display: 'flex', justifyContent:'center',textAlign: 'center'}}>
           <div style={{maxWidth: '50rem'}}>{event.description}</div> 
+        </div>
+        <div style={{display: 'flex', justifyContent: 'flex-end', overflow: 'auto'}}>
+          <CSVLink
+            filename={`${event.name}.csv`}
+            target="_blank"
+            className="btn"
+            style={{
+              fontSize: '0.9rem', width: 'fit-content', borderRadius: '10px',
+              boxShadow: 'none', minHeight: 'fit-content', minWidth: 'auto',
+              marginBottom: '0px'
+            }}
+            data={csv_data}
+          >
+            Download CSV
+          </CSVLink>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', overflow: 'auto' }}>
           <CreateTable event={event} loading={loadingEvent !== 'succeeded'} fetchData={fetchData} columns={columns} data={data} pageCount={pageCount} ></CreateTable>
@@ -199,7 +220,6 @@ function CreateTable({loading, pageCount: pc, fetchData, columns, data, event}) 
   React.useEffect(() => {
     fetchData({ pageIndex, pageSize })
   }, [fetchData, pageIndex, pageSize])
-
 
   return (
     <div style={{width: '100%'}}>
@@ -245,26 +265,6 @@ function CreateTable({loading, pageCount: pc, fetchData, columns, data, event}) 
           </tr>
         </tbody>
     </table>
-     {/* <div className="pagination">
-     <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
-       {'<<'}
-     </button>{' '}
-     <button onClick={() => previousPage()} disabled={!canPreviousPage}>
-       {'<'}
-     </button>{' '}
-     <button onClick={() => nextPage()} disabled={!canNextPage}>
-       {'>'}
-     </button>{' '}
-     <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
-       {'>>'}
-     </button>{' '}
-     <span>
-       Page{' '}
-       <strong>
-         {pageIndex + 1} of {pageOptions.length}
-       </strong>{' '}
-     </span>
-   </div> */}
    </div>
   )
 }
@@ -320,7 +320,7 @@ function TokenCard({ event }) {
   );
 }
 
-function tokenDetails(event) {
+function tokenDetails(event, csv_data) {
   let array1 = [
     { value: event.city, key: 'City' },
     { value: event.country, key: 'Country' },
