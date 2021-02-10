@@ -1,10 +1,14 @@
+export const XDAI_SUBGRAPH_URL = 'https://api.thegraph.com/subgraphs/name/qu0b/xdai';
+export const MAINNET_SUBGRAPH_URL = 'https://api.thegraph.com/subgraphs/name/qu0b/poap';
+export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
+
 export async function getEvents() {
   const res = await fetch('https://api.poap.xyz/events')
   return res.json()
 }
 
-export async function getMainnetEvents() {
-  const res = await fetch('https://api.thegraph.com/subgraphs/name/qu0b/poap', {
+export async function getLayerEvents(url) {
+  const res = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -31,11 +35,20 @@ export async function getMainnetEvents() {
     })
   })
 
-  return res.json()
+	return res.json()
+}
+
+export async function getMainnetEvents() {
+  return getLayerEvents(MAINNET_SUBGRAPH_URL);
 }
 
 export async function getxDaiEvents() {
-  const res = await fetch('https://api.thegraph.com/subgraphs/name/qu0b/xdai', {
+	return getLayerEvents(XDAI_SUBGRAPH_URL);
+
+}
+
+export async function getLayerTokens(eventId, first, skip, url) {
+  const res = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -43,40 +56,8 @@ export async function getxDaiEvents() {
 
     body: JSON.stringify({
       query: `
-      {
-        poapEvents(orderBy: id, orderDirection: desc, first: 1000) {
-          id
-          tokenCount
-          tokens {
-            id
-            transferCount
-            currentOwner {
-              tokensOwned
-              tokens(first: 1000) {
-                id
-              }
-            }
-          }
-        }
-      }
-      `
-    })
-  })
-
-  return res.json()
-}
-
-export async function getxDaiTokens(eventId, first, skip) {
-  const res = await fetch('https://api.thegraph.com/subgraphs/name/qu0b/xdai', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      
-      body: JSON.stringify({
-        query: `
         {
-          poapTokens(where:{ event: "${eventId}" }, first: ${first}, skip: ${skip}) {
+          poapTokens(where:{ event: "${eventId}",  currentOwner_not: "${ZERO_ADDRESS}"}, first: ${first}, skip: ${skip}) {
             id
             transferCount
             created
@@ -87,34 +68,18 @@ export async function getxDaiTokens(eventId, first, skip) {
           }
         }
         `
-      })
-    })
-  return res.json()
+		})
+	})
+	return res.json()
+}
+
+
+export async function getxDaiTokens(eventId, first, skip) {
+  return getLayerTokens(eventId, first, skip, XDAI_SUBGRAPH_URL);
 }
 
 export async function getMainnetTokens(eventId, first, skip) {
-  const res = await fetch('https://api.thegraph.com/subgraphs/name/qu0b/poap', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      query: `
-      {
-        poapTokens(where:{ event: "${eventId}" }, first: ${first}, skip: ${skip}) {
-          id
-          transferCount
-          created
-          currentOwner {
-            id
-            tokensOwned
-          }
-        }
-      }
-      `
-    })
-  })
-return res.json()
+	return getLayerTokens(eventId, first, skip, MAINNET_SUBGRAPH_URL);
 }
 
 export async function getxDaiTransfers() {

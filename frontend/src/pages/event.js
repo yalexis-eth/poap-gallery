@@ -48,7 +48,7 @@ export function Event() {
     const data = []
     const csv_data = [];
 
-		// Add the headers
+    // Add the headers
     csv_data.push(['ID', 'Owner', 'Claim Date', 'Tx Count', 'Power']);
     for (let i = 0; i < tokens.length; i++) {
       data.push({
