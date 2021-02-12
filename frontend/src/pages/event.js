@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useCallback } from 'react';
+import React, { useEffect, useMemo, useCallback } from 'react';
 import { useTable, usePagination } from 'react-table'
 import ReactTooltip from 'react-tooltip';
 import { Switch, Route, useRouteMatch, useParams } from 'react-router-dom';
@@ -10,7 +10,6 @@ import { faLaptop } from '@fortawesome/free-solid-svg-icons'
 import { Helmet } from 'react-helmet'
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchEventPageData, selectEventById } from '../store';
-import { parse } from '@fortawesome/fontawesome-svg-core';
 import { CSVLink } from "react-csv";
 
 
@@ -42,8 +41,8 @@ export function Event() {
   const error = useSelector(state => state.events.error)
   const errorEvent = useSelector(state => state.events.eventError)
   const event = useSelector(state => selectEventById(state, eventId))
-  
-  const pageCount = useMemo( () => event.tokenCount % 50 != 0 ? Math.floor(event.tokenCount / 50) + 1 : event.tokenCount, [event])
+
+  const pageCount = useMemo( () => event.tokenCount % 50 !== 0 ? Math.floor(event.tokenCount / 50) + 1 : event.tokenCount, [event])
   const {data, csv_data} = useMemo(() => {
     const data = []
     const csv_data = [];
@@ -151,15 +150,15 @@ export function Event() {
         <meta property="og:title" content="POAP Gallery - Event"></meta>
       </Helmet>
       <div className="container">
-        <div style={{ 
-          display: 'flex', 
+        <div style={{
+          display: 'flex',
           alignItems: 'center',
           flexWrap: 'wrap',
           alignContent: 'space-around',
           justifyContent: 'space-around',
         }}>
           <div style={{flex: '0 0 18rem', display: 'flex', flexDirection: "column", justifyContent: "center"}}>
-            <div style={{display: 'flex', justifyContent: "space-between"}}> 
+            <div style={{display: 'flex', justifyContent: "space-between"}}>
               <a href={parseInt(eventId)-1} ><FontAwesomeIcon icon={faAngleLeft}> </FontAwesomeIcon> </a>
               <h4 style={{marginBottom: '0'}}> Event Id: {eventId} </h4>
               <a href={parseInt(eventId)+1} ><FontAwesomeIcon icon={faAngleRight}> </FontAwesomeIcon></a>
@@ -173,7 +172,7 @@ export function Event() {
           </div>
         </div>
         <div style={{display: 'flex', justifyContent:'center',textAlign: 'center'}}>
-          <div style={{maxWidth: '50rem'}}>{event.description}</div> 
+          <div style={{maxWidth: '50rem'}}>{event.description}</div>
         </div>
         <div style={{display: 'flex', justifyContent: 'flex-end', overflow: 'auto'}}>
           <CSVLink
@@ -205,14 +204,6 @@ function CreateTable({loading, pageCount: pc, fetchData, columns, data, event}) 
     headerGroups,
     prepareRow,
     page,
-    pageCount,
-    canPreviousPage,
-    canNextPage,
-    pageOptions,
-    gotoPage,
-    nextPage,
-    previousPage,
-    setPageSize,
     // Get the state from the instance
     state: { pageIndex, pageSize },
   } = useTable({ columns, data, pageCount: pc, initialState: { pageIndex: 0 }, manualPagination: true }, usePagination)
@@ -281,8 +272,8 @@ function TokenCard({ event }) {
         padding: '1rem 0rem',
         width: '300px',
       }}
-    > 
-      <div 
+    >
+      <div
         style={{
           justifyContent: 'center',
           alignItems: 'center',
@@ -343,7 +334,7 @@ function tokenDetails(event, csv_data) {
     if(array1[1].value === array1[2].value){
       //array1.shift();
       array1[1].value = null;
-      array1[2] = {value: event.end_date, key: 'Date'} 
+      array1[2] = {value: event.end_date, key: 'Date'}
     } //todo: if 1 == 2 , it pushes the the table down
     if(array1[i].value){
       let e = (

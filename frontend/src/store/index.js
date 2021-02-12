@@ -1,6 +1,5 @@
 import { createSlice, combineReducers, configureStore, createAsyncThunk  } from '@reduxjs/toolkit';
-import { persistStore, persistReducer } from 'redux-persist'
-import storage from 'redux-persist/lib/storage' // defaults to localStorage for web
+// import storage from 'redux-persist/lib/storage' // defaults to localStorage for web
 import { getIndexPageData, getEventPageData } from './mutations';
 
 const initialEventsState = {
@@ -124,10 +123,10 @@ const rootReducer = combineReducers({
   // transfers: transferSlice.reducer
 })
 
-const persistConfig = {
-  key: 'root',
-  storage,
-}
+// const persistConfig = {
+//   key: 'root',
+//   storage,
+// }
 
 // const persistedReducer = persistReducer(persistConfig, rootReducer)
 

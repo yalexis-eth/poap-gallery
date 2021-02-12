@@ -6,7 +6,7 @@ import AOS from 'aos';
 
 import { Provider } from 'react-redux'
 
-import store, { fetchIndexData, persistor } from './store'
+import store, { fetchIndexData } from './store'
 // import { PersistGate } from 'redux-persist/integration/react'
 
 
