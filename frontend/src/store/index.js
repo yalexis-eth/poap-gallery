@@ -1,4 +1,4 @@
-import { createSlice, combineReducers, configureStore, createAsyncThunk  } from '@reduxjs/toolkit';
+import { createSlice, combineReducers, configureStore, createAsyncThunk, current  } from '@reduxjs/toolkit';
 // import storage from 'redux-persist/lib/storage' // defaults to localStorage for web
 import { getIndexPageData, getEventPageData } from './mutations';
 
@@ -14,6 +14,7 @@ const initialEventsState = {
   eventStatus: 'idle',
   eventError: null,
   tokens: [],
+  tokenId: null
 }
 
 export const fetchIndexData = createAsyncThunk('events/fetchIndexEvents', getIndexPageData)
@@ -46,7 +47,13 @@ const eventsSlice = createSlice({
       state.eventStatus = 'loading'
     },
     [fetchEventPageData.fulfilled]: (state, action) => {
-      state.tokens = action.payload.tokens
+      if (state.tokenId === action.payload.id) {
+        state.tokens = current(state.tokens).concat(action.payload.tokens)
+      } else {
+        state.tokens = action.payload.tokens
+      }
+
+      state.tokenId = action.payload.id
       state.eventStatus = 'succeeded'
     },
     [fetchEventPageData.rejected]: (state, action) => {

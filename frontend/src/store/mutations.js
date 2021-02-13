@@ -20,7 +20,7 @@ export async function getIndexPageData() {
     let up = {}
     let mC = {}
     let hPP = {}
-    
+
     if(poapEvents && poapEvents.length) {
       mr = poapEvents[0]
       up = poapEvents[0]
@@ -51,8 +51,8 @@ export async function getIndexPageData() {
       }
       let now = new Date().getTime()
       let evDate = new Date(ev.start_date.replace(/-/g, ' ')).getTime()
-      
-      
+
+
       if(evDate > now) {
         up = ev
       }
@@ -61,7 +61,7 @@ export async function getIndexPageData() {
         isMostRecent = true
         mr = ev
       }
-      
+
       if(ev.tokenCount > mC.tokenCount) {
         mC = ev
       }
@@ -91,42 +91,42 @@ export async function getEventPageData(eventId, first, skip) {
     let tokens = []
     let owners = []
 
-  
+
     if (mainnet && mainnet.data && mainnet.data.poapTokens && mainnet.data.poapTokens.length) {
       tokens = tokens.concat(mainnet.data.poapTokens)
-    }  
-  
+    }
+
     if (xDai && xDai.data && xDai.data.poapTokens && xDai.data.poapTokens.length) {
       tokens = tokens.concat(xDai.data.poapTokens)
     }
-  
+
     for (let i = 0; i < tokens.length; i++) {
       owners.push(tokens[i].currentOwner.id)
     }
-  
+
     owners = uniq(owners)
-  
-  
+
+
     const [mainnetOwners, xDaiOwners] = await Promise.all([MainnetCrossReferenceXDai(owners), xDaiCrossReferenceMainnet(owners)])
 
-  
+
     owners = {}
-  
+
     if (mainnetOwners && mainnetOwners.data && mainnetOwners.data.poapOwners) {
       for (let i = 0; i < mainnetOwners.data.poapOwners.length; i++) {
         const owner = mainnetOwners.data.poapOwners[i];
         owners[owner.id] = {
-          tokens: owner.tokens.map(token => token.id) 
+          tokens: owner.tokens.map(token => token.id)
         }
       }
     }
-  
+
     if (xDaiOwners && xDaiOwners.data && xDaiOwners.data.poapOwners) {
       for (let i = 0; i < xDaiOwners.data.poapOwners.length; i++) {
         const owner = xDaiOwners.data.poapOwners[i];
         if (owners[owner.id] === undefined) {
           owners[owner.id] = {
-            tokens: owner.tokens.map(token => token.id) 
+            tokens: owner.tokens.map(token => token.id)
           }
         } else {
           owners[owner.id].tokens =  owners[owner.id].tokens.concat(owner.tokens.map(token => token.id) )
@@ -138,7 +138,7 @@ export async function getEventPageData(eventId, first, skip) {
       owners[key].tokensOwned = uniq(value.tokens).length
     }
 
-  
+
     for (let j = 0; j < tokens.length; j++) {
       if (owners[tokens[j].currentOwner.id] !== undefined ) {
         tokens[j].currentOwner.tokensOwned = owners[tokens[j].currentOwner.id].tokensOwned

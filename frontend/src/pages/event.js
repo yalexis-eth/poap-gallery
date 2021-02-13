@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTable, usePagination } from 'react-table'
 import ReactTooltip from 'react-tooltip';
 import { Switch, Route, useRouteMatch, useParams } from 'react-router-dom';
@@ -13,6 +13,7 @@ import { fetchEventPageData, selectEventById } from '../store';
 import { CSVLink } from "react-csv";
 
 
+const GRAPH_LIMIT = 1000;
 
 export default function Events() {
   let match = useRouteMatch();
@@ -42,6 +43,8 @@ export function Event() {
   const errorEvent = useSelector(state => state.events.eventError)
   const event = useSelector(state => selectEventById(state, eventId))
 
+  const [pageIndex, setPageIndex] = useState(0);
+
   const pageCount = useMemo( () => event.tokenCount % 50 !== 0 ? Math.floor(event.tokenCount / 50) + 1 : event.tokenCount, [event])
   const {data, csv_data} = useMemo(() => {
     const data = []
@@ -64,14 +67,23 @@ export function Event() {
 
   useEffect(() => {
     if (eventId) {
-      dispatch(fetchEventPageData({ eventId, first: 1000, skip: 0  }))
+      dispatch(fetchEventPageData({ eventId, first: GRAPH_LIMIT, skip: GRAPH_LIMIT*pageIndex  }))
     }
-  }, [dispatch, eventId])
+  }, [dispatch, eventId, pageIndex])
+
+  useEffect(() => {
+    if (event && event.tokenCount > GRAPH_LIMIT && tokens && tokens.length > 0) {
+      const totalPages = Math.ceil(event.tokenCount / GRAPH_LIMIT);
+      if (pageIndex + 1 < totalPages) {
+        setPageIndex(pageIndex + 1);
+      }
+    }
+  }, [event, tokens, pageIndex, setPageIndex]);
 
   const fetchData = useCallback(({pageSize, pageIndex}) => {
         const startRow = pageSize * pageIndex
         const endRow = startRow + pageSize
-        console.log('fetching data', startRow, endRow)
+        console.log('fetching data', startRow, ' - ', endRow);
   }, [])
 
   const columns = useMemo(
@@ -104,12 +116,12 @@ export function Event() {
   if (loading === 'loading' || loading === 'idle' || loadingEvent === 'loading' || loadingEvent === 'idle') {
     return (
       <main id="site-main" role="main" className="app-content">
-      <Helmet>
-        <title>POAP Gallery - Event</title>
-        <link rel="canonical" href={"https://poap.gallery/event/" + eventId}/>
-        <meta property="og:url" content={"https://poap.gallery/event/" + eventId }></meta>
-        <meta property="og:title" content="POAP Gallery - Event"></meta>
-      </Helmet>
+        <Helmet>
+          <title>POAP Gallery - Event</title>
+          <link rel="canonical" href={"https://poap.gallery/event/" + eventId}/>
+          <meta property="og:url" content={"https://poap.gallery/event/" + eventId }></meta>
+          <meta property="og:title" content="POAP Gallery - Event"></meta>
+        </Helmet>
         <div style={{display: 'flex', justifyContent: 'center'}}>
           <div className="spinner">
             <div className="cube1"></div>
@@ -123,12 +135,12 @@ export function Event() {
   if (error || errorEvent || Object.keys(event).length === 0) {
     return (
       <main id="site-main" role="main" className="app-content">
-      <Helmet>
-        <title>POAP Gallery - Event</title>
-        <link rel="canonical" href={"https://poap.gallery/event/" + eventId}/>
-        <meta property="og:url" content={"https://poap.gallery/event/" + eventId }></meta>
-        <meta property="og:title" content="POAP Gallery - Event"></meta>
-      </Helmet>
+        <Helmet>
+          <title>POAP Gallery - Event</title>
+          <link rel="canonical" href={"https://poap.gallery/event/" + eventId}/>
+          <meta property="og:url" content={"https://poap.gallery/event/" + eventId }></meta>
+          <meta property="og:title" content="POAP Gallery - Event"></meta>
+        </Helmet>
         <div style={{display: 'flex', justifyContent: 'center', flexDirection: 'column', margin: '0 auto', textAlign: 'center'}}>
           <h2>{error || errorEvent || 'Token not found'}</h2>
           <div >
