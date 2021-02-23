@@ -1,10 +1,9 @@
-export const XDAI_SUBGRAPH_URL = process.env.REACT_APP_XDAI_SUBGRAPH_URL;
-export const MAINNET_SUBGRAPH_URL = process.env.REACT_APP_MAINNET_SUBGRAPH_URL;
-export const POAP_API_URL = process.env.REACT_APP_POAP_API_URL;
+export const XDAI_SUBGRAPH_URL = 'https://api.thegraph.com/subgraphs/name/poap-xyz/poap-sokol';
+export const MAINNET_SUBGRAPH_URL = 'https://api.thegraph.com/subgraphs/name/poap-xyz/poap-ropsten';
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 export async function getEvents() {
-  const res = await fetch(`${POAP_API_URL}/events`)
+  const res = await fetch('https://api.poap.xyz/events')
   return res.json()
 }
 
@@ -84,12 +83,12 @@ export async function getMainnetTokens(eventId, first, skip) {
 }
 
 export async function getxDaiTransfers() {
-  const res = await fetch(XDAI_SUBGRAPH_URL, {
+  const res = await fetch('https://api.thegraph.com/subgraphs/name/qu0b/xdai', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-
+    
     body: JSON.stringify({
       query: `
       {
@@ -115,12 +114,12 @@ export async function getxDaiTransfers() {
 }
 
 export async function getMainnetTransfers() {
-  const res = await fetch(MAINNET_SUBGRAPH_URL, {
+  const res = await fetch('https://api.thegraph.com/subgraphs/name/qu0b/poap', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-
+    
     body: JSON.stringify({
       query: `
       {
@@ -147,7 +146,7 @@ export async function getMainnetTransfers() {
 
 
 export async function xDaiCrossReferenceMainnet(owners) {
-  const res = await fetch(MAINNET_SUBGRAPH_URL, {
+  const res = await fetch('https://api.thegraph.com/subgraphs/name/qu0b/poap', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -170,7 +169,7 @@ export async function xDaiCrossReferenceMainnet(owners) {
 }
 
 export async function MainnetCrossReferenceXDai(owners) {
-  const res = await fetch(XDAI_SUBGRAPH_URL, {
+  const res = await fetch('https://api.thegraph.com/subgraphs/name/qu0b/xdai', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
