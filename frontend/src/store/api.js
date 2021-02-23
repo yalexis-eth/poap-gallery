@@ -17,13 +17,13 @@ export async function getLayerEvents(url) {
     body: JSON.stringify({
       query: `
       {
-        poapEvents(orderBy: id, orderDirection: desc, first: 1000) {
+        events(orderBy: id, orderDirection: desc, first: 1000) {
           id
           tokenCount
           tokens {
             id
             transferCount
-            currentOwner {
+            owner {
               tokensOwned
               tokens(first: 1000) {
                 id
@@ -58,11 +58,11 @@ export async function getLayerTokens(eventId, first, skip, url) {
     body: JSON.stringify({
       query: `
         {
-          poapTokens(where:{ event: "${eventId}",  currentOwner_not: "${ZERO_ADDRESS}"}, first: ${first}, skip: ${skip}) {
+          tokens(where:{ event: "${eventId}",  owner_not: "${ZERO_ADDRESS}"}, first: ${first}, skip: ${skip}) {
             id
             transferCount
             created
-            currentOwner {
+            owner {
               id
               tokensOwned
             }
@@ -178,7 +178,7 @@ export async function MainnetCrossReferenceXDai(owners) {
     body: JSON.stringify({
       query: `
       {
-        poapOwners(where:{ id_in: [${owners.map(owner => "\"" + owner + "\"").join(',')}] }, first: 1000) {
+        owners(where:{ id_in: [${owners.map(owner => "\"" + owner + "\"").join(',')}] }, first: 1000) {
           id
           tokensOwned
           tokens {

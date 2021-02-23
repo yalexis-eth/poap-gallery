@@ -5,14 +5,14 @@ import { uniq, uniqBy } from 'lodash'
 export async function getIndexPageData() {
   let [poapEvents, graphEvents, xdaiEvents] = await Promise.all([getEvents(), getMainnetEvents(), getxDaiEvents()])
 
-  if (graphEvents && graphEvents.data && graphEvents.data.poapEvents) {
-    graphEvents = graphEvents.data.poapEvents
+  if (graphEvents && graphEvents.data && graphEvents.data.events) {
+    graphEvents = graphEvents.data.events
   } else {
     graphEvents = []
   }
 
-  if (xdaiEvents && xdaiEvents.data && xdaiEvents.data.poapEvents) {
-    xdaiEvents = xdaiEvents.data.poapEvents
+  if (xdaiEvents && xdaiEvents.data && xdaiEvents.data.events) {
+    xdaiEvents = xdaiEvents.data.events
     graphEvents = graphEvents.concat(xdaiEvents)
   }
 
@@ -41,10 +41,10 @@ export async function getIndexPageData() {
           ev.tokenCount += parseInt(gev.tokenCount)
           for (let k = 0; k < gev.tokens.length; k++) {
             const t = gev.tokens[k];
-            if (parseInt(t.currentOwner.tokensOwned) < 0) {
+            if (parseInt(t.owner.tokensOwned) < 0) {
               continue
             }
-            ev.power += parseInt(t.currentOwner.tokensOwned)
+            ev.power += parseInt(t.owner.tokensOwned)
             ev.transferCount += parseInt(t.transferCount)
           }
         }
@@ -91,17 +91,17 @@ export async function getEventPageData(eventId, first, skip) {
     let tokens = []
     let owners = []
 
-
-    if (mainnet && mainnet.data && mainnet.data.poapTokens && mainnet.data.poapTokens.length) {
-      tokens = tokens.concat(mainnet.data.poapTokens)
-    }
-
-    if (xDai && xDai.data && xDai.data.poapTokens && xDai.data.poapTokens.length) {
-      tokens = tokens.concat(xDai.data.poapTokens)
+  
+    if (mainnet && mainnet.data && mainnet.data.tokens && mainnet.data.tokens.length) {
+      tokens = tokens.concat(mainnet.data.tokens)
+    }  
+  
+    if (xDai && xDai.data && xDai.data.tokens && xDai.data.tokens.length) {
+      tokens = tokens.concat(xDai.data.tokens)
     }
 
     for (let i = 0; i < tokens.length; i++) {
-      owners.push(tokens[i].currentOwner.id)
+      owners.push(tokens[i].owner.id)
     }
 
     owners = uniq(owners)
@@ -111,19 +111,19 @@ export async function getEventPageData(eventId, first, skip) {
 
 
     owners = {}
-
-    if (mainnetOwners && mainnetOwners.data && mainnetOwners.data.poapOwners) {
-      for (let i = 0; i < mainnetOwners.data.poapOwners.length; i++) {
-        const owner = mainnetOwners.data.poapOwners[i];
+  
+    if (mainnetOwners && mainnetOwners.data && mainnetOwners.data.owners) {
+      for (let i = 0; i < mainnetOwners.data.owners.length; i++) {
+        const owner = mainnetOwners.data.owners[i];
         owners[owner.id] = {
           tokens: owner.tokens.map(token => token.id)
         }
       }
     }
-
-    if (xDaiOwners && xDaiOwners.data && xDaiOwners.data.poapOwners) {
-      for (let i = 0; i < xDaiOwners.data.poapOwners.length; i++) {
-        const owner = xDaiOwners.data.poapOwners[i];
+  
+    if (xDaiOwners && xDaiOwners.data && xDaiOwners.data.owners) {
+      for (let i = 0; i < xDaiOwners.data.owners.length; i++) {
+        const owner = xDaiOwners.data.owners[i];
         if (owners[owner.id] === undefined) {
           owners[owner.id] = {
             tokens: owner.tokens.map(token => token.id)
@@ -140,10 +140,10 @@ export async function getEventPageData(eventId, first, skip) {
 
 
     for (let j = 0; j < tokens.length; j++) {
-      if (owners[tokens[j].currentOwner.id] !== undefined ) {
-        tokens[j].currentOwner.tokensOwned = owners[tokens[j].currentOwner.id].tokensOwned
+      if (owners[tokens[j].owner.id] !== undefined ) {
+        tokens[j].owner.tokensOwned = owners[tokens[j].owner.id].tokensOwned
       } else {
-        console.log("NOT FOUND", tokens[j].currentOwner.id, tokens[j].currentOwner.tokensOwned)
+        console.log("NOT FOUND", tokens[j].owner.id, tokens[j].owner.tokensOwned)
       }
     }
 

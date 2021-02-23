@@ -55,16 +55,15 @@ export function Event() {
     for (let i = 0; i < tokens.length; i++) {
       data.push({
         col1:  (<a href={"https://app.poap.xyz/token/" + tokens[i].id}>{tokens[i].id}</a>) ,
-        col2: (<a href={"https://app.poap.xyz/scan/" + tokens[i].currentOwner.id}> {tokens[i].ens ? tokens[i].ens : tokens[i].currentOwner.id.substr(0,10)}…{tokens[i].ens ? tokens[i].ens : tokens[i].currentOwner.id.substr(32)}</a>),
+        col2: (<a href={"https://app.poap.xyz/scan/" + tokens[i].owner.id}> {tokens[i].ens ? tokens[i].ens : tokens[i].owner.id.substr(0,10)}…{tokens[i].ens ? tokens[i].ens : tokens[i].owner.id.substr(32)}</a>),
         col3: new Date(tokens[i].created * 1000).toLocaleDateString(),
         col4: tokens[i].transferCount,
-        col5: tokens[i].currentOwner.tokensOwned,
+        col5: tokens[i].owner.tokensOwned,
       })
-      csv_data.push([tokens[i].id, tokens[i].currentOwner.id, new Date(tokens[i].created * 1000).toLocaleDateString(), tokens[i].transferCount, tokens[i].currentOwner.tokensOwned])
+      csv_data.push([tokens[i].id, tokens[i].owner.id, new Date(tokens[i].created * 1000).toLocaleDateString(), tokens[i].transferCount, tokens[i].owner.tokensOwned])
     }
     return {data, csv_data}
   }, [tokens])
-
   useEffect(() => {
     if (eventId) {
       dispatch(fetchEventPageData({ eventId, first: GRAPH_LIMIT, skip: GRAPH_LIMIT*pageIndex  }))
