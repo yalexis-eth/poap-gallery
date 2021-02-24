@@ -45,15 +45,9 @@ export async function getIndexPageData() {
       for (let j = 0; j < graphEvents.length; j++) {
         const gev = graphEvents[j];
         if(ev.id === parseInt(gev.id)) {
-          if(gev.id === "1031") {
-            console.log(gev);
-          }
           ev.tokenCount += parseInt(gev.tokenCount)
           for (let k = 0; k < gev.tokens.length; k++) {
             const t = gev.tokens[k];
-            if(gev.id === "1031") {
-              console.log(t.owner);
-            }
             if (parseInt(t.owner.tokensOwned) < 0 || t.owner.id === ZERO_ADDRESS) {
               continue
             }
