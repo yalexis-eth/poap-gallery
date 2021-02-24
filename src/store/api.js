@@ -1,9 +1,10 @@
-export const XDAI_SUBGRAPH_URL = 'https://api.thegraph.com/subgraphs/name/poap-xyz/poap-xdai';
-export const MAINNET_SUBGRAPH_URL = 'https://api.thegraph.com/subgraphs/name/poap-xyz/poap';
+export const XDAI_SUBGRAPH_URL = process.env.REACT_APP_XDAI_SUBGRAPH_URL;
+export const MAINNET_SUBGRAPH_URL = process.env.REACT_APP_MAINNET_SUBGRAPH_URL;
+export const POAP_API_URL = process.env.REACT_APP_POAP_API_URL;
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 export async function getEvents() {
-  const res = await fetch('https://api.poap.xyz/events')
+  const res = await fetch(`${POAP_API_URL}/events`)
   return res.json()
 }
 

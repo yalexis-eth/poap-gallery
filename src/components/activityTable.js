@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import {getMainnetTransfers, getxDaiTransfers} from "../store/api";
+import {getMainnetTransfers, getxDaiTransfers, POAP_API_URL} from "../store/api";
 
 
 dayjs.extend(relativeTime)

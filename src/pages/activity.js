@@ -6,7 +6,7 @@ import { faCalendar, faQuestionCircle, faCoins, faFire, faGlobe, faLaptop, faPap
 import { Helmet } from 'react-helmet'
 import { useSelector } from 'react-redux';
 import { selectMostClaimed, selectMostRecent, selectUpcoming, selectHighestPoapPower } from '../store';
-import {getMainnetTransfers, getxDaiTransfers} from "../store/api";
+import {getMainnetTransfers, getxDaiTransfers, POAP_API_URL} from "../store/api";
 
 
 export default function Activity() {
