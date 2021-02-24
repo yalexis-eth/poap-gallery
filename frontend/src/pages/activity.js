@@ -6,6 +6,7 @@ import { faCalendar, faQuestionCircle, faCoins, faFire, faGlobe, faLaptop, faPap
 import { Helmet } from 'react-helmet'
 import { useSelector } from 'react-redux';
 import { selectMostClaimed, selectMostRecent, selectUpcoming, selectHighestPoapPower } from '../store';
+import { XDAI_SUBGRAPH_URL, MAINNET_SUBGRAPH_URL, POAP_API_URL } from '../store/api';
 
 
 export default function Activity() {
@@ -23,12 +24,12 @@ export default function Activity() {
 
   useEffect(() => {
       setLoading(true)
-      fetch('https://api.thegraph.com/subgraphs/name/qu0b/poap', {
+      fetch(MAINNET_SUBGRAPH_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        
+
         body: JSON.stringify({
           query: `
           {
@@ -66,12 +67,12 @@ export default function Activity() {
 
   useEffect(() => {
       setLoading(true)
-      fetch('https://api.thegraph.com/subgraphs/name/qu0b/xdai', {
+      fetch(XDAI_SUBGRAPH_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        
+
         body: JSON.stringify({
           query: `
           {
@@ -132,7 +133,7 @@ export default function Activity() {
 
       <div className="gallery-grid activity-grid">
 
-         <TokenCard event={mostRecent} /> 
+         <TokenCard event={mostRecent} />
          <TokenCard event={upcoming} />
          <TokenCard event={mostClaimed} />
          <TokenCard event={highestPoapPower} />
@@ -163,7 +164,7 @@ function TokenRow({transfer}) {
             width: "100%",
             height: 'auto',
             borderRadius: '50%'
-        }} src={"https://api.poap.xyz/token/"+transfer.token.id+"/image"} alt=""/>
+        }} src={`${POAP_API_URL}/token/${transfer.token.id}/image`} alt=""/>
         </a>
       </td>
     </tr>
