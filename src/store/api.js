@@ -113,3 +113,42 @@ export async function MainnetCrossReferenceXDai(owner) {
 export async function xDaiCrossReferenceMainnet(owner) {
   return crossReference(owner, MAINNET_SUBGRAPH_URL);
 }
+
+export async function getLayerTransfers(amount, url) {
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+
+    body: JSON.stringify({
+      query: `
+          {
+            transfers(first: ${amount}, orderBy: timestamp, orderDirection: desc) {
+              id
+              token {
+                id
+                transferCount
+              }
+              from {
+                id
+              }
+              to {
+                id
+              }
+              timestamp
+            }
+          }
+          `
+    })
+  })
+  return res.json()
+}
+
+export async function getxDaiTransfers(amount) {
+  return getLayerTransfers(amount, XDAI_SUBGRAPH_URL);
+}
+
+export async function getMainnetTransfers(amount) {
+  return getLayerTransfers(amount, MAINNET_SUBGRAPH_URL);
+}

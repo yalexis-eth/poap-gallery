@@ -6,7 +6,7 @@ import { faCalendar, faQuestionCircle, faCoins, faFire, faGlobe, faLaptop, faPap
 import { Helmet } from 'react-helmet'
 import { useSelector } from 'react-redux';
 import { selectMostClaimed, selectMostRecent, selectUpcoming, selectHighestPoapPower } from '../store';
-import { XDAI_SUBGRAPH_URL, MAINNET_SUBGRAPH_URL, POAP_API_URL } from '../store/api';
+import {getMainnetTransfers, getxDaiTransfers} from "../store/api";
 
 
 export default function Activity() {
@@ -24,37 +24,10 @@ export default function Activity() {
 
   useEffect(() => {
       setLoading(true)
-      fetch(MAINNET_SUBGRAPH_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-
-        body: JSON.stringify({
-          query: `
-          {
-            poapTransfers(first: 15, orderBy: time, orderDirection: desc) {
-              id
-              token {
-                id
-                transferCount
-              }
-              from {
-                id
-              }
-              to {
-                id
-              }
-              time
-            }
-          }
-          `
-        })
-      })
-        .then((res) => res.json())
+      getMainnetTransfers(15)
         .then(
           (result) => {
-            let tfrs = result.data.poapTransfers
+            let tfrs = result.data.transfers
             setMainnetTransfers(tfrs)
             setLoading(false)
           },
@@ -67,37 +40,10 @@ export default function Activity() {
 
   useEffect(() => {
       setLoading(true)
-      fetch(XDAI_SUBGRAPH_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-
-        body: JSON.stringify({
-          query: `
-          {
-            poapTransfers(first: 15, orderBy: time, orderDirection: desc) {
-              id
-              token {
-                id
-                transferCount
-              }
-              from {
-                id
-              }
-              to {
-                id
-              }
-              time
-            }
-          }
-          `
-        })
-      })
-        .then((res) => res.json())
+      getxDaiTransfers(15)
         .then(
           (result) => {
-            let tfrs = result.data.poapTransfers
+            let tfrs = result.data.transfers
             setDaiTransfers(tfrs)
             setLoading(false)
           },
@@ -112,7 +58,7 @@ export default function Activity() {
 
     let tfrs = daitransfers.concat(mainnetTransfers)
     tfrs.sort((a, b) => {
-      return b.time - a.time
+      return b.timestamp - a.timestamp
     })
     setTransfers(tfrs.slice(0, 15))
   }, [daitransfers, mainnetTransfers])
@@ -155,8 +101,7 @@ function TokenRow({transfer}) {
       <td><a href={"https://app.poap.xyz/token/" + transfer.token.id}>{transfer.token.id}</a></td>
       <td><a href={"https://app.poap.xyz/scan/" + transfer.from.id}> {transfer.from.id.substring(0,16)+ '…'} </a></td>
       <td><a href={"https://app.poap.xyz/scan/" + transfer.to.id}> {transfer.to.id.substring(0,16)+ '…'} </a></td>
-      {/* <td> {("0" + new Date(transfer.time * 1000).getHours()).substr(-2) + ':' +("0"+ new Date(transfer.time * 1000).getMinutes()).substr(-2) + ":"+("0"+new Date(transfer.time * 1000).getSeconds()).substr(-2)} </td> */}
-      <td> { new Date(transfer.time * 1000).toLocaleDateString('en-UK') } </td>
+      <td> { new Date(transfer.timestamp * 1000).toLocaleDateString('en-UK') } </td>
       <td> {transfer.token.transferCount && transfer.token.transferCount > 0 ? transfer.token.transferCount : 'Claimed'} </td>
       <td style={{width:'50px', padding: '0 .5rem', height: '50px'}}>
         <a href={"https://app.poap.xyz/token/"+transfer.token.id}>
