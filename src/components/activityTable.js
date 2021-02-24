@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import {XDAI_SUBGRAPH_URL, MAINNET_SUBGRAPH_URL, POAP_API_URL} from '../store/api'
+import {getMainnetTransfers, getxDaiTransfers, POAP_API_URL} from "../store/api";
 
 
 dayjs.extend(relativeTime)
@@ -17,37 +17,10 @@ export default function ActivityTable() {
 
   useEffect(() => {
       setLoading(true)
-      fetch(MAINNET_SUBGRAPH_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-
-        body: JSON.stringify({
-          query: `
-          {
-            poapTransfers(first: 2, orderBy: time, orderDirection: desc) {
-              id
-              token {
-                id
-                transferCount
-              }
-              from {
-                id
-              }
-              to {
-                id
-              }
-              time
-            }
-          }
-          `
-        })
-      })
-        .then((res) => res.json())
+    getMainnetTransfers(2)
         .then(
           (result) => {
-            let tfrs = result.data.poapTransfers
+            let tfrs = result.data.transfers
             tfrs.map(t => t.network = "mainnet")
             setMainnetTransfers(tfrs)
             setLoading(false)
@@ -61,37 +34,10 @@ export default function ActivityTable() {
 
   useEffect(() => {
       setLoading(true)
-      fetch(XDAI_SUBGRAPH_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-
-        body: JSON.stringify({
-          query: `
-          {
-            poapTransfers(first: 2, orderBy: time, orderDirection: desc) {
-              id
-              token {
-                id
-                transferCount
-              }
-              from {
-                id
-              }
-              to {
-                id
-              }
-              time
-            }
-          }
-          `
-        })
-      })
-        .then((res) => res.json())
+      getxDaiTransfers(2)
         .then(
           (result) => {
-            let tfrs = result.data.poapTransfers
+            let tfrs = result.data.transfers
             tfrs.map(t => t.network = "xDai")
             setDaiTransfers(tfrs)
             setLoading(false)
@@ -106,7 +52,7 @@ export default function ActivityTable() {
   useEffect(() => {
     let tfrs = daitransfers.concat(mainnetTransfers)
     tfrs.sort((a, b) => {
-      return b.time - a.time
+      return b.timestamp - a.timestamp
     })
 
     setTransfers(tfrs.slice(0, 2))
@@ -133,7 +79,7 @@ function Claim({transfer}) {
        borderRadius: '50%'
       }} src={`${POAP_API_URL}/token/${transfer.token.id}/image`} alt=""/>
    </a>
-      <span> was claimed by <a href={"https://app.poap.xyz/scan/" + transfer.to.id}> {transfer.to.id.substring(0,16)+ '…'} </a> {dayjs(transfer.time * 1000).fromNow()} on {transfer.network} </span>
+      <span> was claimed by <a href={"https://app.poap.xyz/scan/" + transfer.to.id}> {transfer.to.id.substring(0,16)+ '…'} </a> {dayjs(transfer.timestamp * 1000).fromNow()} on {transfer.network} </span>
     </div>
   )
 }
@@ -148,7 +94,7 @@ function Transfer({transfer}) {
        borderRadius: '50%'
       }} src={`${POAP_API_URL}/token/${transfer.token.id}/image`} alt=""/>
    </a>
-      <span> was transferred from <a href={"https://app.poap.xyz/scan/" + transfer.from.id}> {transfer.from.id.substring(0,16)+ '…'} </a> to <a href={"https://app.poap.xyz/scan/" + transfer.to.id}> {transfer.to.id.substring(0,16)+ '…'} </a> {dayjs(transfer.time * 1000).fromNow()} {transfer.network} </span>
+      <span> was transferred from <a href={"https://app.poap.xyz/scan/" + transfer.from.id}> {transfer.from.id.substring(0,16)+ '…'} </a> to <a href={"https://app.poap.xyz/scan/" + transfer.to.id}> {transfer.to.id.substring(0,16)+ '…'} </a> {dayjs(transfer.timestamp * 1000).fromNow()} {transfer.network} </span>
     </div>
   )
 }

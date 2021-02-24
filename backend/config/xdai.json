@@ -1,7 +1,0 @@
-{
-  "network": "xdai",
-  "address": "0x22C1f6050E56d2876009903609a2cC3fEf83B415",
-  "startBlock": 12188423,
-  "token": "2a7827d8ce364a4c96719fa99f13fb03",
-  "contract": "./abis/xdai.json"
-}
