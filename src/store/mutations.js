@@ -1,5 +1,13 @@
-import { getxDaiEvents, getMainnetTokens, getEvents, getMainnetEvents, getxDaiTokens, MainnetCrossReferenceXDai, xDaiCrossReferenceMainnet} from './api'
-// import { useDispatch } from 'react-redux'
+import {
+  getxDaiEvents,
+  getMainnetTokens,
+  getEvents,
+  getMainnetEvents,
+  getxDaiTokens,
+  MainnetCrossReferenceXDai,
+  xDaiCrossReferenceMainnet,
+  ZERO_ADDRESS
+} from './api'
 import { uniq, uniqBy } from 'lodash'
 
 export async function getIndexPageData() {
@@ -29,7 +37,6 @@ export async function getIndexPageData() {
     }
     let isMostRecent = false
 
-
     for (let i = 0; i < poapEvents.length; i++) {
       const ev = poapEvents[i];
       ev.tokenCount = 0
@@ -38,10 +45,16 @@ export async function getIndexPageData() {
       for (let j = 0; j < graphEvents.length; j++) {
         const gev = graphEvents[j];
         if(ev.id === parseInt(gev.id)) {
+          if(gev.id === "1031") {
+            console.log(gev);
+          }
           ev.tokenCount += parseInt(gev.tokenCount)
           for (let k = 0; k < gev.tokens.length; k++) {
             const t = gev.tokens[k];
-            if (parseInt(t.owner.tokensOwned) < 0) {
+            if(gev.id === "1031") {
+              console.log(t.owner);
+            }
+            if (parseInt(t.owner.tokensOwned) < 0 || t.owner.id === ZERO_ADDRESS) {
               continue
             }
             ev.power += parseInt(t.owner.tokensOwned)
@@ -74,7 +87,6 @@ export async function getIndexPageData() {
     up.heading = "Upcoming Event"
     mC.heading = "Most Claimed Token"
     hPP.heading = "Highest Poap Power"
-
 
     return {
       poapEvents: poapEvents,
@@ -112,18 +124,18 @@ export async function getEventPageData(eventId, first, skip) {
 
     owners = {}
   
-    if (mainnetOwners && mainnetOwners.data && mainnetOwners.data.owners) {
-      for (let i = 0; i < mainnetOwners.data.owners.length; i++) {
-        const owner = mainnetOwners.data.owners[i];
+    if (mainnetOwners && mainnetOwners.data && mainnetOwners.data.accounts) {
+      for (let i = 0; i < mainnetOwners.data.accounts.length; i++) {
+        const owner = mainnetOwners.data.accounts[i];
         owners[owner.id] = {
           tokens: owner.tokens.map(token => token.id)
         }
       }
     }
   
-    if (xDaiOwners && xDaiOwners.data && xDaiOwners.data.owners) {
-      for (let i = 0; i < xDaiOwners.data.owners.length; i++) {
-        const owner = xDaiOwners.data.owners[i];
+    if (xDaiOwners && xDaiOwners.data && xDaiOwners.data.accounts) {
+      for (let i = 0; i < xDaiOwners.data.accounts.length; i++) {
+        const owner = xDaiOwners.data.accounts[i];
         if (owners[owner.id] === undefined) {
           owners[owner.id] = {
             tokens: owner.tokens.map(token => token.id)
@@ -138,7 +150,6 @@ export async function getEventPageData(eventId, first, skip) {
       owners[key].tokensOwned = uniq(value.tokens).length
     }
 
-
     for (let j = 0; j < tokens.length; j++) {
       if (owners[tokens[j].owner.id] !== undefined ) {
         tokens[j].owner.tokensOwned = owners[tokens[j].owner.id].tokensOwned
@@ -146,13 +157,7 @@ export async function getEventPageData(eventId, first, skip) {
         console.log("NOT FOUND", tokens[j].owner.id, tokens[j].owner.tokensOwned)
       }
     }
-
     return { id: eventId, tokens: uniqBy(tokens, 'id').sort((a, b) => {
       return parseInt(a.id) - parseInt(b.id)
     }) }
-}
-
-
-export function getTransactionPageData() {
-
 }

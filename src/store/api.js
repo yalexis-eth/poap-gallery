@@ -1,5 +1,5 @@
-export const XDAI_SUBGRAPH_URL = 'https://api.thegraph.com/subgraphs/name/poap-xyz/poap-sokol';
-export const MAINNET_SUBGRAPH_URL = 'https://api.thegraph.com/subgraphs/name/poap-xyz/poap-ropsten';
+export const XDAI_SUBGRAPH_URL = 'https://api.thegraph.com/subgraphs/name/poap-xyz/poap-xdai';
+export const MAINNET_SUBGRAPH_URL = 'https://api.thegraph.com/subgraphs/name/poap-xyz/poap';
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 export async function getEvents() {
@@ -23,6 +23,7 @@ export async function getLayerEvents(url) {
             id
             transferCount
             owner {
+              id
               tokensOwned
               tokens(first: 1000) {
                 id
@@ -82,71 +83,8 @@ export async function getMainnetTokens(eventId, first, skip) {
 	return getLayerTokens(eventId, first, skip, MAINNET_SUBGRAPH_URL);
 }
 
-export async function getxDaiTransfers() {
-  const res = await fetch('https://api.thegraph.com/subgraphs/name/qu0b/xdai', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    
-    body: JSON.stringify({
-      query: `
-      {
-        poapTransfers(first: 15, orderBy: time, orderDirection: desc) {
-          id
-          token {
-            id
-            transferCount
-          }
-          from {
-            id
-          }
-          to {
-            id
-          }
-          time
-        }
-      }
-      `
-    })
-  })
-  return res.json()
-}
-
-export async function getMainnetTransfers() {
-  const res = await fetch('https://api.thegraph.com/subgraphs/name/qu0b/poap', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    
-    body: JSON.stringify({
-      query: `
-      {
-        poapTransfers(first: 15, orderBy: time, orderDirection: desc) {
-          id
-          token {
-            id
-            transferCount
-          }
-          from {
-            id
-          }
-          to {
-            id
-          }
-          time
-        }
-      }
-      `
-    })
-  })
-  return res.json()
-}
-
-
-export async function xDaiCrossReferenceMainnet(owners) {
-  const res = await fetch('https://api.thegraph.com/subgraphs/name/qu0b/poap', {
+export async function crossReference(owners, url) {
+  const res = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -154,7 +92,7 @@ export async function xDaiCrossReferenceMainnet(owners) {
     body: JSON.stringify({
       query: `
       {
-        poapOwners(where:{ id_in: [${owners.map(owner => "\"" + owner + "\"").join(',')}] }, first: 1000) {
+        accounts(where:{ id_in: [${owners.map(owner => "\"" + owner + "\"").join(',')}] }, first: 1000) {
           id
           tokensOwned
           tokens {
@@ -168,43 +106,10 @@ export async function xDaiCrossReferenceMainnet(owners) {
   return res.json()
 }
 
-export async function MainnetCrossReferenceXDai(owners) {
-  const res = await fetch('https://api.thegraph.com/subgraphs/name/qu0b/xdai', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      query: `
-      {
-        owners(where:{ id_in: [${owners.map(owner => "\"" + owner + "\"").join(',')}] }, first: 1000) {
-          id
-          tokensOwned
-          tokens {
-            id
-          }
-        }
-      }
-      `
-    })
-  })
-  return res.json()
+export async function MainnetCrossReferenceXDai(owner) {
+  return crossReference(owner, XDAI_SUBGRAPH_URL);
 }
 
-
-// xDaiCrossReferenceMainnet(xDaiTokens.map(token => token.currentOwner.id))
-// .then(
-//   (result) => {
-//     if(result && result.data && result.data.poapOwners && result.data.poapOwners.length) {
-//       let tkns = result.data.poapOwners.map(owner => {
-//         owner.currentOwner = {id: owner.id, tokensOwned: owner.tokensOwned }
-//         return owner
-//       })
-//       console.log('MAINNET EVENT DOES NOT EXIST', tkns)
-//       setMainnetTokens(tkns)
-//     }
-//   },
-//   (error) => {
-//     console.log('failed to query the graph',error)
-//   },
-// );
+export async function xDaiCrossReferenceMainnet(owner) {
+  return crossReference(owner, MAINNET_SUBGRAPH_URL);
+}
