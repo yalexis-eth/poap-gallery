@@ -1,16 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { InView } from 'react-intersection-observer';
-import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendar, faCoins, faFire, faGlobe, faLaptop, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import React, {useEffect, useState} from 'react';
+import {InView} from 'react-intersection-observer';
+import {Link} from 'react-router-dom';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faCalendar, faCoins, faFire, faGlobe, faLaptop, faPaperPlane} from '@fortawesome/free-solid-svg-icons';
 import ActivityTable from '../components/activityTable'
-import { Helmet } from 'react-helmet';
-import { selectEventStatus, selectEventError, selectRecentEvents } from '../store';
-import { useSelector } from 'react-redux';
-
+import {Helmet} from 'react-helmet';
+import {fetchIndexData, selectEventError, selectEventStatus, selectRecentEvents} from '../store';
+import {useDispatch, useSelector} from 'react-redux';
 
 
 export default function Gallery() {
+  const dispatch = useDispatch()
+
+  // Meanwhile get all the events
+  useEffect(() => {
+    dispatch(fetchIndexData());
+  }, [])
 
   const events  = useSelector(selectRecentEvents)
   const eventStatus = useSelector(selectEventStatus)

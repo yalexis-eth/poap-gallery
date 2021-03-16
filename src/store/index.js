@@ -4,6 +4,7 @@ import { getIndexPageData, getEventPageData } from './mutations';
 
 const initialEventsState = {
   events: [],
+  event: {},
   transfers: [],
   mostClaimed: {},
   upcoming: {},
@@ -55,6 +56,7 @@ const eventsSlice = createSlice({
 
       state.tokenId = action.payload.id
       state.eventStatus = 'succeeded'
+      state.event = action.payload.event
     },
     [fetchEventPageData.rejected]: (state, action) => {
       state.eventError = action.error.message

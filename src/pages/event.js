@@ -36,12 +36,9 @@ export function Event() {
   const dispatch = useDispatch()
 
   const tokens = useSelector(state => state.events.tokens)
-
   const loadingEvent  = useSelector(state => state.events.eventStatus)
-  const loading  = useSelector(state => state.events.status)
-  const error = useSelector(state => state.events.error)
   const errorEvent = useSelector(state => state.events.eventError)
-  const event = useSelector(state => selectEventById(state, eventId))
+  const event = useSelector(state => state.events.event)
 
   const [pageIndex, setPageIndex] = useState(0);
 
@@ -112,7 +109,7 @@ export function Event() {
   )
 
 
-  if (loading === 'loading' || loading === 'idle' || loadingEvent === 'loading' || loadingEvent === 'idle') {
+  if (loadingEvent === 'loading' || loadingEvent === 'idle') {
     return (
       <main id="site-main" role="main" className="app-content">
         <Helmet>
@@ -131,7 +128,7 @@ export function Event() {
     )
   }
 
-  if (error || errorEvent || Object.keys(event).length === 0) {
+  if (errorEvent || Object.keys(event).length === 0) {
     return (
       <main id="site-main" role="main" className="app-content">
         <Helmet>
@@ -141,7 +138,7 @@ export function Event() {
           <meta property="og:title" content="POAP Gallery - Event"></meta>
         </Helmet>
         <div style={{display: 'flex', justifyContent: 'center', flexDirection: 'column', margin: '0 auto', textAlign: 'center'}}>
-          <h2>{error || errorEvent || 'Token not found'}</h2>
+          <h2>{errorEvent || 'Token not found'}</h2>
           <div >
             <img alt="warning sign" style={{maxWidth: '30rem'}} src="/icons/warning.svg"></img>
           </div>

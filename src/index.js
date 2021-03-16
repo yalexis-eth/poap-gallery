@@ -6,9 +6,7 @@ import AOS from 'aos';
 
 import { Provider } from 'react-redux'
 
-import store, { fetchIndexData } from './store'
-
-store.dispatch(fetchIndexData())
+import store from './store'
 
 AOS.init({
   once: true,
