@@ -26,9 +26,6 @@ export async function getLayerEvents(url) {
             owner {
               id
               tokensOwned
-              tokens(first: 1000) {
-                id
-              }
             }
           }
         }
