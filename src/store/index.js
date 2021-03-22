@@ -81,8 +81,6 @@ export const selectRecentEvents = state => state.events.events.filter(event => {
   return true
 })
 
-export const selectEventById = (state, eventId) => state.events.events.find(event => event.id + '' === eventId) || {}
-
 export const selectMostRecent = state => state.events.mostRecent
 export const selectMostClaimed = state => state.events.mostClaimed
 export const selectUpcoming = state => state.events.upcoming

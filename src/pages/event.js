@@ -9,7 +9,7 @@ import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
 import { faLaptop } from '@fortawesome/free-solid-svg-icons'
 import { Helmet } from 'react-helmet'
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchEventPageData, selectEventById } from '../store';
+import { fetchEventPageData } from '../store';
 import { CSVLink } from "react-csv";
 
 
