@@ -1,14 +1,15 @@
 import {
-  getxDaiEvents,
-  getMainnetTokens,
+  getEvent,
   getEvents,
   getMainnetEvents,
+  getMainnetTokens,
+  getxDaiEvents,
   getxDaiTokens,
   MainnetCrossReferenceXDai,
   xDaiCrossReferenceMainnet,
   ZERO_ADDRESS
 } from './api'
-import { uniq, uniqBy } from 'lodash'
+import {uniq, uniqBy} from 'lodash'
 
 export async function getIndexPageData() {
   let [poapEvents, graphEvents, xdaiEvents] = await Promise.all([getEvents(), getMainnetEvents(), getxDaiEvents()])
@@ -93,11 +94,10 @@ export async function getIndexPageData() {
 
 
 export async function getEventPageData(eventId, first, skip) {
-    let [mainnet, xDai] = await Promise.all([getMainnetTokens(eventId, first, skip), getxDaiTokens(eventId, first, skip)])
+    let [mainnet, xDai, event] = await Promise.all([getMainnetTokens(eventId, first, skip), getxDaiTokens(eventId, first, skip), getEvent(eventId)])
     let tokens = []
     let owners = []
 
-  
     if (mainnet && mainnet.data && mainnet.data.tokens && mainnet.data.tokens.length) {
       tokens = tokens.concat(mainnet.data.tokens)
     }  
@@ -151,7 +151,7 @@ export async function getEventPageData(eventId, first, skip) {
         console.log("NOT FOUND", tokens[j].owner.id, tokens[j].owner.tokensOwned)
       }
     }
-    return { id: eventId, tokens: uniqBy(tokens, 'id').sort((a, b) => {
+    return { id: eventId, event, tokens: uniqBy(tokens, 'id').sort((a, b) => {
       return parseInt(a.id) - parseInt(b.id)
     }) }
 }

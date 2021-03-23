@@ -1,22 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { InView } from 'react-intersection-observer';
-import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendar, faCoins, faFire, faGlobe, faLaptop, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import React, {useEffect, useState} from 'react';
+import {InView} from 'react-intersection-observer';
+import {Link} from 'react-router-dom';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faCalendar, faCoins, faFire, faGlobe, faLaptop, faPaperPlane} from '@fortawesome/free-solid-svg-icons';
 import ActivityTable from '../components/activityTable'
-import { Helmet } from 'react-helmet';
-import { selectEventStatus, selectEventError, selectRecentEvents } from '../store';
-import { useSelector } from 'react-redux';
-
+import {Helmet} from 'react-helmet';
+import {fetchIndexData, selectEventError, selectEventStatus, selectRecentEvents} from '../store';
+import {useDispatch, useSelector} from 'react-redux';
 
 
 export default function Gallery() {
+  const dispatch = useDispatch()
+
+  // Meanwhile get all the events
+  useEffect(() => {
+    dispatch(fetchIndexData());
+  }, []); /* eslint-disable-line react-hooks/exhaustive-deps */
 
   const events  = useSelector(selectRecentEvents)
   const eventStatus = useSelector(selectEventStatus)
   const eventError = useSelector(selectEventError)
 
-  
+
   const [items, setItems] = useState(events)
   const [search, setSearch] = useState([]);
   const [length, setLength] = useState(50);
@@ -77,7 +82,7 @@ export default function Gallery() {
         }
         if (b === "") {
           return -1
-        } 
+        }
         if( a > b ) {
           return isAsc ? 1 : -1
         } else if(b > a) {
@@ -250,7 +255,7 @@ export default function Gallery() {
             >
               <span>Could not load gallery, check your connection and try again</span>
             </div>
-            
+
           ) : eventStatus === 'succeeded' ? (
             <Cards events={search && search.length ? search : items} length={search.length || length} />
           ) : (

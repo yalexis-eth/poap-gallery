@@ -4,6 +4,7 @@ import { getIndexPageData, getEventPageData } from './mutations';
 
 const initialEventsState = {
   events: [],
+  event: {},
   transfers: [],
   mostClaimed: {},
   upcoming: {},
@@ -55,6 +56,7 @@ const eventsSlice = createSlice({
 
       state.tokenId = action.payload.id
       state.eventStatus = 'succeeded'
+      state.event = action.payload.event
     },
     [fetchEventPageData.rejected]: (state, action) => {
       state.eventError = action.error.message
@@ -64,7 +66,6 @@ const eventsSlice = createSlice({
   }
 })
 
-export const selectAllEvents = state => state.events.events
 export const selectEventStatus = state => state.events.status
 export const selectEventError = state => state.events.error
 
@@ -80,68 +81,18 @@ export const selectRecentEvents = state => state.events.events.filter(event => {
   return true
 })
 
-export const selectEventById = (state, eventId) => state.events.events.find(event => event.id + '' === eventId) || {}
-
-// export const selectEventById = (state, eventId) => {
-//   console.log("SELECTING EVENT BY ID", eventId, state.events.events)
-//   const el =  state.events.events.find((event) => {
-//     console.log('comparing', event.id + '', 'and', eventId, event.id + '' === eventId)
-//     return event.id + '' === eventId
-//   })
-//   console.log("FOUND EVENT BY ID", eventId, el)
-//   return el
-// }
-
 export const selectMostRecent = state => state.events.mostRecent
 export const selectMostClaimed = state => state.events.mostClaimed
 export const selectUpcoming = state => state.events.upcoming
 export const selectHighestPoapPower = state => state.events.highestPoapPower
-// const selectEventById = (state, eventId) => state.events.find(event => event.id === eventId)
-
-// const transferSlice = createSlice({
-//   name: 'transfers',
-//   initialState: initialState,
-//   reducers: {
-//     setTransfers: {
-//       reducer(state, action) {
-//         state.transfers = action.payload
-//       }
-//     },
-//   },
-//   extraReducers: {
-//     [fetchMainnetTransfers.pending]: (state, action) => {
-//       state.status = 'loading'
-//     },
-//     [fetchMainnetTransfers.fulfilled]: (state, action) => {
-//       state.status = 'succeeded'
-//       state.transfers = action.payload
-//     },
-//     [fetchMainnetTransfers.rejected]: (state, action) => {
-//       state.status = 'failed'
-//       state.error = action.error.message
-//     }
-//   }
-// })
-
-
 
 const rootReducer = combineReducers({
   events: eventsSlice.reducer,
-  // transfers: transferSlice.reducer
 })
-
-// const persistConfig = {
-//   key: 'root',
-//   storage,
-// }
-
-// const persistedReducer = persistReducer(persistConfig, rootReducer)
 
 const store = configureStore({
   reducer: rootReducer
 })
-
-// export const persistor =  persistStore(store)
 
 if (process.env.NODE_ENV === 'development' && module.hot) {
   module.hot.accept(rootReducer, () => {
@@ -149,37 +100,5 @@ if (process.env.NODE_ENV === 'development' && module.hot) {
     store.replaceReducer(newRootReducer)
   })
 }
-
-// convert object to string and store in localStorage
-// function saveToLocalStorage(state) {
-//   try {
-//     const serialisedState = JSON.stringify(state);
-//     localStorage.setItem("persistantState", serialisedState);
-//   } catch (e) {
-//     console.warn(e);
-//   }
-// }
-
-// // load string from localStarage and convert into an Object
-// // invalid output must be undefined
-// function loadFromLocalStorage() {
-//   try {
-//     const serialisedState = localStorage.getItem("persistantState");
-//     if (serialisedState === null) return undefined;
-//     return JSON.parse(serialisedState);
-//   } catch (e) {
-//     console.warn(e);
-//     return undefined;
-//   }
-// }
-
-// // create our store from our rootReducers and use loadFromLocalStorage
-// // to overwrite any values that we already have saved
-// const store = createStore(rootReducer, loadFromLocalStorage());
-
-// // listen for store changes and use saveToLocalStorage to
-// // save them to localStorage
-// store.subscribe(() => saveToLocalStorage(store.getState()));
-
 
 export default store

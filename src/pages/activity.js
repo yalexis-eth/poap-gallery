@@ -4,12 +4,18 @@ import { Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendar, faQuestionCircle, faCoins, faFire, faGlobe, faLaptop, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { Helmet } from 'react-helmet'
-import { useSelector } from 'react-redux';
-import { selectMostClaimed, selectMostRecent, selectUpcoming, selectHighestPoapPower } from '../store';
+import {useDispatch, useSelector} from 'react-redux';
+import {selectMostClaimed, selectMostRecent, selectUpcoming, selectHighestPoapPower, fetchIndexData} from '../store';
 import {getMainnetTransfers, getxDaiTransfers, POAP_API_URL} from "../store/api";
 
 
 export default function Activity() {
+  const dispatch = useDispatch()
+
+  // Meanwhile get all the events
+  useEffect(() => {
+    dispatch(fetchIndexData());
+  }, []); /* eslint-disable-line react-hooks/exhaustive-deps */
 
   const [loading, setLoading] = useState(false)
   const [transfers, setTransfers] = useState([])

@@ -8,6 +8,11 @@ export async function getEvents() {
   return res.json()
 }
 
+export async function getEvent(id) {
+  const res = await fetch(`${POAP_API_URL}/events/id/${id}`)
+  return res.json()
+}
+
 export async function getLayerEvents(url) {
   const res = await fetch(url, {
     method: 'POST',
