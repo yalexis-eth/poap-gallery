@@ -15,7 +15,7 @@ export default function Activity() {
   // Meanwhile get all the events
   useEffect(() => {
     dispatch(fetchIndexData());
-  }, [])
+  }, []); /* eslint-disable-line react-hooks/exhaustive-deps */
 
   const [loading, setLoading] = useState(false)
   const [transfers, setTransfers] = useState([])
