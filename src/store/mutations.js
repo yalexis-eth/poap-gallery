@@ -98,12 +98,22 @@ export async function getEventPageData(eventId, first, skip) {
     let tokens = []
     let owners = []
 
-    if (mainnet && mainnet.data && mainnet.data.tokens && mainnet.data.tokens.length) {
-      tokens = tokens.concat(mainnet.data.tokens)
-    }  
+    event.tokenCount = 0;
+
+    if (mainnet && mainnet.data) {
+      if(mainnet.data.tokens && mainnet.data.tokens.length)
+        tokens = tokens.concat(mainnet.data.tokens)
+
+      if(mainnet.data.event && mainnet.data.event.tokenCount)
+        event.tokenCount += parseInt(mainnet.data.event.tokenCount);
+    }
   
-    if (xDai && xDai.data && xDai.data.tokens && xDai.data.tokens.length) {
-      tokens = tokens.concat(xDai.data.tokens)
+    if (xDai && xDai.data) {
+      if(xDai.data.tokens && xDai.data.tokens.length)
+        tokens = tokens.concat(xDai.data.tokens);
+
+      if(xDai.data.event && xDai.data.event.tokenCount)
+        event.tokenCount += parseInt(xDai.data.event.tokenCount);
     }
 
     for (let i = 0; i < tokens.length; i++) {
