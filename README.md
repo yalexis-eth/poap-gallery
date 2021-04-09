@@ -15,3 +15,13 @@ deploy contact: 0x22C1f6050E56d2876009903609a2cC3fEf83B415
 ## Ropsen Testnet
 
 deploy contract: 0x50C5CA3e7f5566dA3Aa64eC687D283fdBEC2A2F2
+
+
+## How to setup
+
+```
+git clone https://github.com/poap-xyz/poap-gallery.git
+cd
+yarn
+cp .env.template .env // Add your own REACT_APP_RPC_PROVIDER_URL
+```

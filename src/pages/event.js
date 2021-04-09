@@ -11,7 +11,7 @@ import { Helmet } from 'react-helmet'
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchEventPageData } from '../store';
 import { CSVLink } from "react-csv";
-
+import { ethers } from 'ethers';
 
 const GRAPH_LIMIT = 1000;
 
@@ -41,26 +41,9 @@ export function Event() {
   const event = useSelector(state => state.events.event)
 
   const [pageIndex, setPageIndex] = useState(0);
-
+  const [data, setData] = useState([]);
+  const [csv_data, setCsv_data] = useState([]);
   const pageCount = useMemo( () => event.tokenCount % 50 !== 0 ? Math.floor(event.tokenCount / 50) + 1 : event.tokenCount, [event])
-  const {data, csv_data} = useMemo(() => {
-    const data = []
-    const csv_data = [];
-
-    // Add the headers
-    csv_data.push(['ID', 'Owner', 'Claim Date', 'Tx Count', 'Power']);
-    for (let i = 0; i < tokens.length; i++) {
-      data.push({
-        col1:  (<a href={"https://app.poap.xyz/token/" + tokens[i].id}>{tokens[i].id}</a>) ,
-        col2: (<a href={"https://app.poap.xyz/scan/" + tokens[i].owner.id}> {tokens[i].ens ? tokens[i].ens : tokens[i].owner.id.substr(0,10)}…{tokens[i].ens ? tokens[i].ens : tokens[i].owner.id.substr(32)}</a>),
-        col3: new Date(tokens[i].created * 1000).toLocaleDateString(),
-        col4: tokens[i].transferCount,
-        col5: tokens[i].owner.tokensOwned,
-      })
-      csv_data.push([tokens[i].id, tokens[i].owner.id, new Date(tokens[i].created * 1000).toLocaleDateString(), tokens[i].transferCount, tokens[i].owner.tokensOwned])
-    }
-    return {data, csv_data}
-  }, [tokens])
   useEffect(() => {
     if (eventId) {
       dispatch(fetchEventPageData({ eventId, first: GRAPH_LIMIT, skip: GRAPH_LIMIT*pageIndex  }))
@@ -68,14 +51,40 @@ export function Event() {
   }, [dispatch, eventId, pageIndex])
 
   useEffect(() => {
+    let ownerIds = tokens.map(t => t.owner.id)
     if (event && event.tokenCount > GRAPH_LIMIT && tokens && tokens.length > 0) {
       const totalPages = Math.ceil(event.tokenCount / GRAPH_LIMIT);
       if (pageIndex + 1 < totalPages) {
         setPageIndex(pageIndex + 1);
       }
     }
-  }, [event, tokens, pageIndex, setPageIndex]);
+    // ReverseRecord contract on Mainnet. Use Mainnet ENS as main data source regardless of the network you connect to
+    let address = '0x3671aE578E63FdF66ad4F3E12CC0c0d71Ac7510C'
+    let abi = [{"inputs":[{"internalType":"contract ENS","name":"_ens","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"address[]","name":"addresses","type":"address[]"}],"name":"getNames","outputs":[{"internalType":"string[]","name":"r","type":"string[]"}],"stateMutability":"view","type":"function"}]
+    const provider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_RPC_PROVIDER_URL);
+    const ReverseRecords = new ethers.Contract(address, abi, provider)
 
+    let _data = []
+    let _csv_data = []
+    _csv_data.push(['ID', 'Owner', 'Claim Date', 'Tx Count', 'Power']);
+    ReverseRecords.getNames(ownerIds).then(allnames => {
+      for (let i = 0; i < tokens.length; i++) {
+        const ens = allnames[i];
+        const displayName = ens !== '' ? ens : `${tokens[i].owner.id.substr(0,10)}…${tokens[i].ens ? tokens[i].ens : tokens[i].owner.id.substr(32)}`
+        console.log({displayName, token:tokens[i]})
+        _data.push({
+          col1:  (<a href={"https://app.poap.xyz/token/" + tokens[i].id}>{tokens[i].id}</a>) ,
+          col2: (<a href={"https://app.poap.xyz/scan/" + tokens[i].owner.id}> {displayName}</a>),
+          col3: new Date(tokens[i].created * 1000).toLocaleDateString(),
+          col4: tokens[i].transferCount,
+          col5: tokens[i].owner.tokensOwned,
+        })
+        _csv_data.push([tokens[i].id, tokens[i].owner.id, new Date(tokens[i].created * 1000).toLocaleDateString(), tokens[i].transferCount, tokens[i].owner.tokensOwned])
+      }
+      setData(_data)
+      setCsv_data(_csv_data)
+    })
+  }, [event, tokens, pageIndex, setPageIndex]);
   const fetchData = useCallback(({pageSize, pageIndex}) => {
         const startRow = pageSize * pageIndex
         const endRow = startRow + pageSize
@@ -146,8 +155,6 @@ export function Event() {
       </main>
     )
   }
-
-
 
   return (
     <main id="site-main" role="main" className="app-content">
