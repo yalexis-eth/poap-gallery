@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchEventPageData } from '../store';
 import { CSVLink } from "react-csv";
 import { ethers } from 'ethers';
+import namehash from 'eth-ens-namehash';
 
 const GRAPH_LIMIT = 1000;
 
@@ -66,12 +67,12 @@ export function Event() {
 
     let _data = []
     let _csv_data = []
-    _csv_data.push(['ID', 'Owner', 'Claim Date', 'Tx Count', 'Power']);
+    _csv_data.push(['ID', 'Owner', 'ENS', 'Claim Date', 'Tx Count', 'Power']);
     ReverseRecords.getNames(ownerIds).then(allnames => {
       for (let i = 0; i < tokens.length; i++) {
         const ens = allnames[i];
-        const displayName = ens !== '' ? ens : `${tokens[i].owner.id.substr(0,10)}…${tokens[i].ens ? tokens[i].ens : tokens[i].owner.id.substr(32)}`
-        console.log({displayName, token:tokens[i]})
+        const validName = (namehash.normalize(ens) === ens && ens !== '') && ens
+        const displayName = validName || `${tokens[i].owner.id.substr(0,10)}…${tokens[i].ens ? tokens[i].ens : tokens[i].owner.id.substr(32)}`
         _data.push({
           col1:  (<a href={"https://app.poap.xyz/token/" + tokens[i].id}>{tokens[i].id}</a>) ,
           col2: (<a href={"https://app.poap.xyz/scan/" + tokens[i].owner.id}> {displayName}</a>),
@@ -79,7 +80,7 @@ export function Event() {
           col4: tokens[i].transferCount,
           col5: tokens[i].owner.tokensOwned,
         })
-        _csv_data.push([tokens[i].id, tokens[i].owner.id, new Date(tokens[i].created * 1000).toLocaleDateString(), tokens[i].transferCount, tokens[i].owner.tokensOwned])
+        _csv_data.push([tokens[i].id, tokens[i].owner.id, validName, new Date(tokens[i].created * 1000).toLocaleDateString(), tokens[i].transferCount, tokens[i].owner.tokensOwned])
       }
       setData(_data)
       setCsv_data(_csv_data)
