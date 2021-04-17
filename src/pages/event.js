@@ -13,6 +13,7 @@ import { fetchEventPageData } from '../store';
 import { CSVLink } from "react-csv";
 import { ethers } from 'ethers';
 import namehash from 'eth-ens-namehash';
+import _ from 'lodash'
 
 const GRAPH_LIMIT = 1000;
 
@@ -44,6 +45,7 @@ export function Event() {
   const [pageIndex, setPageIndex] = useState(0);
   const [data, setData] = useState([]);
   const [csv_data, setCsv_data] = useState([]);
+  const [ensNames, setEnsNames] = useState([]);
   const pageCount = useMemo( () => event.tokenCount % 50 !== 0 ? Math.floor(event.tokenCount / 50) + 1 : event.tokenCount, [event])
   useEffect(() => {
     if (eventId) {
@@ -68,24 +70,44 @@ export function Event() {
     let _data = []
     let _csv_data = []
     _csv_data.push(['ID', 'Owner', 'ENS', 'Claim Date', 'Tx Count', 'Power']);
+    for (let i = 0; i < tokens.length; i++) {
+      const displayName = `${tokens[i].owner.id.substr(0,10)}…${tokens[i].ens ? tokens[i].ens : tokens[i].owner.id.substr(32)}`
+      _data.push({
+        col1:  (<a href={"https://app.poap.xyz/token/" + tokens[i].id}>{tokens[i].id}</a>) ,
+        col2: (<a href={"https://app.poap.xyz/scan/" + tokens[i].owner.id}> {displayName}</a>),
+        col3: new Date(tokens[i].created * 1000).toLocaleDateString(),
+        col4: tokens[i].transferCount,
+        col5: tokens[i].owner.tokensOwned,
+      })
+      _csv_data.push([tokens[i].id, tokens[i].owner.id, null, new Date(tokens[i].created * 1000).toLocaleDateString(), tokens[i].transferCount, tokens[i].owner.tokensOwned])
+    }
+    setData(_data)
+    setCsv_data(_csv_data)
     ReverseRecords.getNames(ownerIds).then(allnames => {
-      for (let i = 0; i < tokens.length; i++) {
-        const ens = allnames[i];
-        const validName = (namehash.normalize(ens) === ens && ens !== '') && ens
-        const displayName = validName || `${tokens[i].owner.id.substr(0,10)}…${tokens[i].ens ? tokens[i].ens : tokens[i].owner.id.substr(32)}`
-        _data.push({
-          col1:  (<a href={"https://app.poap.xyz/token/" + tokens[i].id}>{tokens[i].id}</a>) ,
-          col2: (<a href={"https://app.poap.xyz/scan/" + tokens[i].owner.id}> {displayName}</a>),
-          col3: new Date(tokens[i].created * 1000).toLocaleDateString(),
-          col4: tokens[i].transferCount,
-          col5: tokens[i].owner.tokensOwned,
-        })
-        _csv_data.push([tokens[i].id, tokens[i].owner.id, validName, new Date(tokens[i].created * 1000).toLocaleDateString(), tokens[i].transferCount, tokens[i].owner.tokensOwned])
+      if(allnames.length > 0){
+        setEnsNames(allnames.map(name => (namehash.normalize(name) === name && name !== '') && name ))
       }
-      setData(_data)
-      setCsv_data(_csv_data)
     })
   }, [event, tokens, pageIndex, setPageIndex]);
+
+  useEffect(() => {
+    // probably there is a better way to merge
+    var _data = _.cloneDeep(data);
+    var _csv_data = _.cloneDeep(csv_data);
+    for (let i = 0; i < tokens.length; i++) {
+      let validName = ensNames[i]
+      if(validName){
+        if(data[i]){
+          console.log({validName})
+          _data[i].col2 = (<a href={"https://app.poap.xyz/scan/" + tokens[i].owner.id}> {validName}</a>)
+          _csv_data[i][2] = validName
+        }
+      }
+    }
+    setData(_data)
+    setCsv_data(_csv_data)
+  }, [ensNames])
+
   const fetchData = useCallback(({pageSize, pageIndex}) => {
         const startRow = pageSize * pageIndex
         const endRow = startRow + pageSize
