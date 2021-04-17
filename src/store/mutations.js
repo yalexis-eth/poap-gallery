@@ -22,7 +22,7 @@ const ReverseRecords = new ethers.Contract(address, abi, provider)
 
 // TODO: Refactor to render as it returns data rather than waiting all in batch
 export async function getEnsData(ownerIds){
-  const chunked = _.chunk(ownerIds, 100)
+  const chunked = _.chunk(ownerIds, 50)
   let allnames = []
   for (let i = 0; i < chunked.length; i++) {
     const chunk = chunked[i];

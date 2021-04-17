@@ -84,7 +84,7 @@ export function Event() {
   }, [event, tokens, pageIndex, setPageIndex]);
 
   useEffect(() => {
-    if(ensNames > 0){
+    if(ensNames.length > 0){
       // TODO: probably there is a better way to merge
       var _data = _.cloneDeep(data);
       var _csv_data = _.cloneDeep(csv_data);
