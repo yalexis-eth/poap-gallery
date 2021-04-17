@@ -10,6 +10,36 @@ import {
   ZERO_ADDRESS
 } from './api'
 import {uniq, uniqBy} from 'lodash'
+import { ethers } from 'ethers';
+import namehash from 'eth-ens-namehash';
+import _ from 'lodash'
+
+// ReverseRecord contract on Mainnet. Use Mainnet ENS as main data source regardless of the network you connect to
+let address = '0x3671aE578E63FdF66ad4F3E12CC0c0d71Ac7510C'
+let abi = [{"inputs":[{"internalType":"contract ENS","name":"_ens","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"address[]","name":"addresses","type":"address[]"}],"name":"getNames","outputs":[{"internalType":"string[]","name":"r","type":"string[]"}],"stateMutability":"view","type":"function"}]
+const provider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_RPC_PROVIDER_URL);
+const ReverseRecords = new ethers.Contract(address, abi, provider)
+
+// TODO: Refactor to render as it returns data rather than waiting all in batch
+export async function getEnsData(ownerIds){
+  const chunked = _.chunk(ownerIds, 100)
+  let allnames = []
+  for (let i = 0; i < chunked.length; i++) {
+    const chunk = chunked[i];
+    let names
+    try{
+      // TODO: Figure out why some call throws error
+      names = await ReverseRecords.getNames(chunk)
+    }catch(e){
+      // Fallback to null if problem fetching Reverse record
+      console.log(e)
+      names = chunk.map(a => null)
+    }
+    const validNames = names.map(name => (namehash.normalize(name) === name && name !== '') && name )
+    allnames = _.concat(allnames, validNames);
+  }
+  return allnames
+}
 
 export async function getIndexPageData() {
   let [poapEvents, graphEvents, xdaiEvents] = await Promise.all([getEvents(), getMainnetEvents(), getxDaiEvents()])

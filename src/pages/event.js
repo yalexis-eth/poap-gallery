@@ -11,8 +11,7 @@ import { Helmet } from 'react-helmet'
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchEventPageData } from '../store';
 import { CSVLink } from "react-csv";
-import { ethers } from 'ethers';
-import namehash from 'eth-ens-namehash';
+import { getEnsData } from './../store/mutations';
 import _ from 'lodash'
 
 const GRAPH_LIMIT = 1000;
@@ -36,7 +35,6 @@ export function Event() {
   const params = useParams();
   const { eventId } = params;
   const dispatch = useDispatch()
-
   const tokens = useSelector(state => state.events.tokens)
   const loadingEvent  = useSelector(state => state.events.eventStatus)
   const errorEvent = useSelector(state => state.events.eventError)
@@ -61,11 +59,6 @@ export function Event() {
         setPageIndex(pageIndex + 1);
       }
     }
-    // ReverseRecord contract on Mainnet. Use Mainnet ENS as main data source regardless of the network you connect to
-    let address = '0x3671aE578E63FdF66ad4F3E12CC0c0d71Ac7510C'
-    let abi = [{"inputs":[{"internalType":"contract ENS","name":"_ens","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"address[]","name":"addresses","type":"address[]"}],"name":"getNames","outputs":[{"internalType":"string[]","name":"r","type":"string[]"}],"stateMutability":"view","type":"function"}]
-    const provider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_RPC_PROVIDER_URL);
-    const ReverseRecords = new ethers.Contract(address, abi, provider)
 
     let _data = []
     let _csv_data = []
@@ -83,29 +76,30 @@ export function Event() {
     }
     setData(_data)
     setCsv_data(_csv_data)
-    ReverseRecords.getNames(ownerIds).then(allnames => {
+    getEnsData(ownerIds).then(allnames => {
       if(allnames.length > 0){
-        setEnsNames(allnames.map(name => (namehash.normalize(name) === name && name !== '') && name ))
+        setEnsNames(allnames)
       }
     })
   }, [event, tokens, pageIndex, setPageIndex]);
 
   useEffect(() => {
-    // probably there is a better way to merge
-    var _data = _.cloneDeep(data);
-    var _csv_data = _.cloneDeep(csv_data);
-    for (let i = 0; i < tokens.length; i++) {
-      let validName = ensNames[i]
-      if(validName){
-        if(data[i]){
-          console.log({validName})
-          _data[i].col2 = (<a href={"https://app.poap.xyz/scan/" + tokens[i].owner.id}> {validName}</a>)
-          _csv_data[i][2] = validName
+    if(ensNames > 0){
+      // TODO: probably there is a better way to merge
+      var _data = _.cloneDeep(data);
+      var _csv_data = _.cloneDeep(csv_data);
+      for (let i = 0; i < tokens.length; i++) {
+        let validName = ensNames[i]
+        if(validName){
+          if(data[i]){
+            _data[i].col2 = (<a href={"https://app.poap.xyz/scan/" + tokens[i].owner.id}> {validName}</a>)
+            _csv_data[i][2] = validName
+          }
         }
       }
+      setData(_data)
+      setCsv_data(_csv_data)
     }
-    setData(_data)
-    setCsv_data(_csv_data)
   }, [ensNames])
 
   const fetchData = useCallback(({pageSize, pageIndex}) => {
