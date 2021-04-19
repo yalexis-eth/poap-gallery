@@ -66,8 +66,8 @@ export function Event() {
     for (let i = 0; i < tokens.length; i++) {
       const displayName = `${tokens[i].owner.id.substr(0,10)}…${tokens[i].ens ? tokens[i].ens : tokens[i].owner.id.substr(32)}`
       _data.push({
-        col1:  (<a href={"https://app.poap.xyz/token/" + tokens[i].id}>{tokens[i].id}</a>) ,
-        col2: (<a href={"https://app.poap.xyz/scan/" + tokens[i].owner.id}> {displayName}</a>),
+        col1:  (<a href={"https://app.poap.xyz/token/" + tokens[i].id} target="_blank" rel="noopener noreferrer">{tokens[i].id}</a>) ,
+        col2: (<a href={"https://app.poap.xyz/scan/" + tokens[i].owner.id} target="_blank" rel="noopener noreferrer"> {displayName}</a>),
         col3: new Date(tokens[i].created * 1000).toLocaleDateString(),
         col4: tokens[i].transferCount,
         col5: tokens[i].owner.tokensOwned,
@@ -100,7 +100,7 @@ export function Event() {
       setData(_data)
       setCsv_data(_csv_data)
     }
-  }, [ensNames])
+  }, [ensNames]) /* eslint-disable-line react-hooks/exhaustive-deps */
 
   const fetchData = useCallback(({pageSize, pageIndex}) => {
         const startRow = pageSize * pageIndex
@@ -352,7 +352,7 @@ function tokenDetails(event, csv_data) {
     { value: event.event_url, key: 'Website', render: (value) => {
       let host = new URL(value).hostname
       return (
-      <a href={value} className="href">{host}</a>
+      <a href={value} className="href" target="_blank" rel="noopener noreferrer">{host}</a>
       )
     } },
     // { value: event.description, key: 'Description' },
