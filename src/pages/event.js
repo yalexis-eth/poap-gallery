@@ -320,6 +320,7 @@ function TokenCard({ event }) {
           style={{
             width: '100%',
             height: '100%',
+            objectFit: 'cover',
             borderRadius: '50%'
           }}
           src={event.image_url}
@@ -354,9 +355,11 @@ function tokenDetails(event, csv_data) {
       return (
       <a href={value} className="href" target="_blank" rel="noopener noreferrer">{host}</a>
       )
-    } },
-    // { value: event.description, key: 'Description' },
+    }},
   ];
+  if (Array.isArray(csv_data) && csv_data.length > 1) {
+    array1.push({ value: csv_data.length - 1, key: 'Supply' });
+  }
   let array2 = [];
 
   for (let i = 0; i < array1.length; i++) {

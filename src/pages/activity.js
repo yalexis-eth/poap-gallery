@@ -109,11 +109,12 @@ function TokenRow({transfer}) {
       <td><a href={"https://app.poap.xyz/scan/" + transfer.to.id}> {transfer.to.id.substring(0,16)+ '…'} </a></td>
       <td> { new Date(transfer.timestamp * 1000).toLocaleDateString('en-UK') } </td>
       <td> {transfer.token.transferCount && transfer.token.transferCount > 0 ? transfer.token.transferCount : 'Claimed'} </td>
-      <td style={{width:'50px', padding: '0 .5rem', height: '50px'}}>
+      <td style={{width:'50px', padding: '.5rem', height: '50px'}}>
         <a href={"https://app.poap.xyz/token/"+transfer.token.id}>
           <img style={{
-            width: "100%",
-            height: 'auto',
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
             borderRadius: '50%'
         }} src={`${POAP_API_URL}/token/${transfer.token.id}/image`} alt=""/>
         </a>
@@ -168,8 +169,9 @@ function TokenCard({ event }) {
       >
         <img
           style={{
-            width: 'auto',
-            height: '100%%',
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
             borderRadius: '50%',
           }}
           src={event.image_url}
