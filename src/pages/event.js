@@ -11,7 +11,8 @@ import { Helmet } from 'react-helmet'
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchEventPageData } from '../store';
 import { CSVLink } from "react-csv";
-
+import { getEnsData } from './../store/mutations';
+import _ from 'lodash'
 
 const GRAPH_LIMIT = 1000;
 
@@ -34,33 +35,16 @@ export function Event() {
   const params = useParams();
   const { eventId } = params;
   const dispatch = useDispatch()
-
   const tokens = useSelector(state => state.events.tokens)
   const loadingEvent  = useSelector(state => state.events.eventStatus)
   const errorEvent = useSelector(state => state.events.eventError)
   const event = useSelector(state => state.events.event)
 
   const [pageIndex, setPageIndex] = useState(0);
-
+  const [data, setData] = useState([]);
+  const [csv_data, setCsv_data] = useState([]);
+  const [ensNames, setEnsNames] = useState([]);
   const pageCount = useMemo( () => event.tokenCount % 50 !== 0 ? Math.floor(event.tokenCount / 50) + 1 : event.tokenCount, [event])
-  const {data, csv_data} = useMemo(() => {
-    const data = []
-    const csv_data = [];
-
-    // Add the headers
-    csv_data.push(['ID', 'Owner', 'Claim Date', 'Tx Count', 'Power']);
-    for (let i = 0; i < tokens.length; i++) {
-      data.push({
-        col1:  (<a href={"https://app.poap.xyz/token/" + tokens[i].id}>{tokens[i].id}</a>) ,
-        col2: (<a href={"https://app.poap.xyz/scan/" + tokens[i].owner.id}> {tokens[i].ens ? tokens[i].ens : tokens[i].owner.id.substr(0,10)}…{tokens[i].ens ? tokens[i].ens : tokens[i].owner.id.substr(32)}</a>),
-        col3: new Date(tokens[i].created * 1000).toLocaleDateString(),
-        col4: tokens[i].transferCount,
-        col5: tokens[i].owner.tokensOwned,
-      })
-      csv_data.push([tokens[i].id, tokens[i].owner.id, new Date(tokens[i].created * 1000).toLocaleDateString(), tokens[i].transferCount, tokens[i].owner.tokensOwned])
-    }
-    return {data, csv_data}
-  }, [tokens])
   useEffect(() => {
     if (eventId) {
       dispatch(fetchEventPageData({ eventId, first: GRAPH_LIMIT, skip: GRAPH_LIMIT*pageIndex  }))
@@ -68,13 +52,55 @@ export function Event() {
   }, [dispatch, eventId, pageIndex])
 
   useEffect(() => {
+    let ownerIds = tokens.map(t => t.owner.id)
     if (event && event.tokenCount > GRAPH_LIMIT && tokens && tokens.length > 0) {
       const totalPages = Math.ceil(event.tokenCount / GRAPH_LIMIT);
       if (pageIndex + 1 < totalPages) {
         setPageIndex(pageIndex + 1);
       }
     }
+
+    let _data = []
+    let _csv_data = []
+    _csv_data.push(['ID', 'Owner', 'ENS', 'Claim Date', 'Tx Count', 'Power']);
+    for (let i = 0; i < tokens.length; i++) {
+      const displayName = `${tokens[i].owner.id.substr(0,10)}…${tokens[i].ens ? tokens[i].ens : tokens[i].owner.id.substr(32)}`
+      _data.push({
+        col1:  (<a href={"https://app.poap.xyz/token/" + tokens[i].id}>{tokens[i].id}</a>) ,
+        col2: (<a href={"https://app.poap.xyz/scan/" + tokens[i].owner.id}> {displayName}</a>),
+        col3: new Date(tokens[i].created * 1000).toLocaleDateString(),
+        col4: tokens[i].transferCount,
+        col5: tokens[i].owner.tokensOwned,
+      })
+      _csv_data.push([tokens[i].id, tokens[i].owner.id, null, new Date(tokens[i].created * 1000).toLocaleDateString(), tokens[i].transferCount, tokens[i].owner.tokensOwned])
+    }
+    setData(_data)
+    setCsv_data(_csv_data)
+    getEnsData(ownerIds).then(allnames => {
+      if(allnames.length > 0){
+        setEnsNames(allnames)
+      }
+    })
   }, [event, tokens, pageIndex, setPageIndex]);
+
+  useEffect(() => {
+    if(ensNames.length > 0){
+      // TODO: probably there is a better way to merge
+      var _data = _.cloneDeep(data);
+      var _csv_data = _.cloneDeep(csv_data);
+      for (let i = 0; i < tokens.length; i++) {
+        let validName = ensNames[i]
+        if(validName){
+          if(data[i]){
+            _data[i].col2 = (<a href={"https://app.poap.xyz/scan/" + tokens[i].owner.id}> {validName}</a>)
+            _csv_data[i][2] = validName
+          }
+        }
+      }
+      setData(_data)
+      setCsv_data(_csv_data)
+    }
+  }, [ensNames])
 
   const fetchData = useCallback(({pageSize, pageIndex}) => {
         const startRow = pageSize * pageIndex
@@ -146,8 +172,6 @@ export function Event() {
       </main>
     )
   }
-
-
 
   return (
     <main id="site-main" role="main" className="app-content">
