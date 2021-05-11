@@ -70,11 +70,11 @@ export default function Gallery() {
     let sortedItems = [...items]
     if (type === 'date') {
       sortedItems.sort((a, b) => {
-        a.start_date = a.start_date.replace(/-/g, " ")
-        b.start_date = b.start_date.replace(/-/g, " ")
+        const a_start_date = a.start_date.replace(/-/g, " ")
+        const b_start_date = b.start_date.replace(/-/g, " ")
         return isAsc
-          ? new Date(a.start_date).getTime() - new Date(b.start_date).getTime()
-          : new Date(b.start_date).getTime() - new Date(a.start_date).getTime();
+          ? new Date(a_start_date).getTime() - new Date(b_start_date).getTime()
+          : new Date(b_start_date).getTime() - new Date(a_start_date).getTime();
       });
     } else if(type === 'id') {
       sortedItems.sort((a, b) => {
