@@ -2,7 +2,15 @@ import React, {useEffect, useState} from 'react';
 import {InView} from 'react-intersection-observer';
 import {Link} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faCalendar, faCoins, faFire, faGlobe, faLaptop, faPaperPlane} from '@fortawesome/free-solid-svg-icons';
+import {
+  faCalendar,
+  faCoins,
+  faFire,
+  faGlobe,
+  faHashtag,
+  faLaptop,
+  faPaperPlane
+} from '@fortawesome/free-solid-svg-icons';
 import ActivityTable from '../components/activityTable'
 import {Helmet} from 'react-helmet';
 import {fetchIndexData, selectEventError, selectEventStatus, selectRecentEvents} from '../store';
@@ -214,7 +222,7 @@ export default function Gallery() {
                     >
                       <select onChange={filterType} value={sortVariable} name="sort-by" id="" className="select">
                         <option value="date">Date</option>
-                        <option value="id">Release</option>
+                        <option value="id">ID</option>
                         <option value="holders">Holders</option>
                         <option value="transfers">Transactions</option>
                         <option value="city">City (A-Z)</option>
@@ -344,6 +352,10 @@ function TokenCard({ event }) {
       </div>
       <div>
         <div style={{ marginTop: '5px' }}>
+          <div style={{ marginBottom: '5px' }}>
+            <FontAwesomeIcon style={{ width: '1rem', marginRight: '.2rem' }} icon={faHashtag} />
+            {event.id}
+          </div>
           {event.city ? <FontAwesomeIcon style={{ width: '1rem', marginRight: '.2rem' }} icon={faGlobe} /> : null}
           {event.city ? ' ' + event.city.length > 15 ? event.city.substr(0, 15) + '…' : event.city : (
             <div>
