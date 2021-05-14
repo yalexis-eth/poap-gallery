@@ -96,7 +96,6 @@ export default function Activity() {
          <EventCard event={mostRecent} showHeading={true} />
          <EventCard event={upcoming} showHeading={true} />
          <EventCard event={mostClaimed} showHeading={true} />
-         <EventCard event={mostClaimed} showHeading={true} />
 
         </div>
 
