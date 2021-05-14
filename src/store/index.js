@@ -1,5 +1,4 @@
 import { createSlice, combineReducers, configureStore, createAsyncThunk, current  } from '@reduxjs/toolkit';
-// import storage from 'redux-persist/lib/storage' // defaults to localStorage for web
 import { getIndexPageData, getEventPageData } from './mutations';
 
 const initialEventsState = {

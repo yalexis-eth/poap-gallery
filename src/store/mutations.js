@@ -2,18 +2,16 @@ import {
   getEvent,
   getEvents,
   getMainnetEvents,
+  getMainnetOwners,
   getMainnetTokens,
   getxDaiEvents,
-  getxDaiTokens,
-  MainnetCrossReferenceXDai,
-  xDaiCrossReferenceMainnet,
-  ZERO_ADDRESS
+  getXDaiOwners,
+  getxDaiTokens
 } from './api'
 import {ensABI} from './abis';
-import {uniq, uniqBy} from 'lodash'
-import { ethers } from 'ethers';
+import _, {uniqBy} from 'lodash'
+import {ethers} from 'ethers';
 import namehash from 'eth-ens-namehash';
-import _ from 'lodash'
 
 const {REACT_APP_RPC_PROVIDER_URL, REACT_APP_ENS_CONTRACT} = process.env;
 const provider = new ethers.providers.JsonRpcProvider(REACT_APP_RPC_PROVIDER_URL);
@@ -110,75 +108,68 @@ export async function getIndexPageData() {
 }
 
 
+function processSubgraphEventData(subgraphEvent, apiEvent, owners, tokens) {
+  if (subgraphEvent && subgraphEvent.data) {
+    if(subgraphEvent.data.tokens && subgraphEvent.data.tokens.length)
+      tokens = tokens.concat(subgraphEvent.data.tokens)
+
+    if(subgraphEvent.data.event && subgraphEvent.data.event.tokenCount)
+      apiEvent.tokenCount += parseInt(subgraphEvent.data.event.tokenCount);
+
+    for (let i = 0; i < subgraphEvent.data.tokens.length; i++) {
+      const owner = subgraphEvent.data.tokens[i].owner;
+      owner.tokensOwned = parseInt(owner.tokensOwned)
+      owners[owner.id] = owner;
+    }
+  }
+  return tokens
+}
+
+function processCrossChainTokenOwned(chainOwner, crossChainOwner) {
+  if (crossChainOwner && crossChainOwner.data && crossChainOwner.data.accounts) {
+    for (let i = 0; i < crossChainOwner.data.accounts.length; i++) {
+      const owner = crossChainOwner.data.accounts[i];
+      chainOwner[owner.id].tokensOwned += parseInt(crossChainOwner.data.accounts.find(({id}) => id === owner.id).tokensOwned)
+    }
+  }
+}
+
+
 export async function getEventPageData(eventId, first, skip) {
-    let [mainnet, xDai, event] = await Promise.all([getMainnetTokens(eventId, first, skip), getxDaiTokens(eventId, first, skip), getEvent(eventId)])
-    let tokens = []
-    let owners = []
+  // Get the tokens info
+  let [mainnet, xDai, event] = await Promise.all([getMainnetTokens(eventId, first, skip), getxDaiTokens(eventId, first, skip), getEvent(eventId)])
+  let tokens = []
+  const xDaiOwners = {};
+  const mainnetOwners = {}
+  event.tokenCount = 0;
 
-    event.tokenCount = 0;
+  // Process the data tokens and the owners
+  tokens = processSubgraphEventData(mainnet, event, mainnetOwners, tokens);
+  tokens = processSubgraphEventData(xDai, event, xDaiOwners, tokens);
 
-    if (mainnet && mainnet.data) {
-      if(mainnet.data.tokens && mainnet.data.tokens.length)
-        tokens = tokens.concat(mainnet.data.tokens)
+  // Get owner's data from the other chain (tokensOwned)
+  let [mainnetCallOwners, xDaiCallOwners]  = await Promise.all([
+    // Get mainnet data from the xdai owners
+    getMainnetOwners(Object.keys(xDaiOwners)),
+    // Get xDai data from the mainnet owners
+    getXDaiOwners(Object.keys(mainnetOwners))
+  ])
 
-      if(mainnet.data.event && mainnet.data.event.tokenCount)
-        event.tokenCount += parseInt(mainnet.data.event.tokenCount);
+  //Sum the tokensOwned (power) for both chains from every owner
+  processCrossChainTokenOwned(xDaiOwners, mainnetCallOwners);
+  processCrossChainTokenOwned(mainnetOwners, xDaiCallOwners);
+
+  // Add the power to the tokens
+  for (let j = 0; j < tokens.length; j++) {
+    if (mainnetOwners[tokens[j].owner.id] !== undefined) {
+      tokens[j].owner.tokensOwned = mainnetOwners[tokens[j].owner.id].tokensOwned
+    } else if (xDaiOwners[tokens[j].owner.id] !== undefined ) {
+      tokens[j].owner.tokensOwned = xDaiOwners[tokens[j].owner.id].tokensOwned
+    } else {
+      console.log("NOT FOUND", tokens[j].owner.id, tokens[j].owner.tokensOwned)
     }
-
-    if (xDai && xDai.data) {
-      if(xDai.data.tokens && xDai.data.tokens.length)
-        tokens = tokens.concat(xDai.data.tokens);
-
-      if(xDai.data.event && xDai.data.event.tokenCount)
-        event.tokenCount += parseInt(xDai.data.event.tokenCount);
-    }
-
-    for (let i = 0; i < tokens.length; i++) {
-      owners.push(tokens[i].owner.id)
-    }
-
-    owners = uniq(owners)
-
-
-    const [mainnetOwners, xDaiOwners] = await Promise.all([MainnetCrossReferenceXDai(owners), xDaiCrossReferenceMainnet(owners)])
-
-
-    owners = {}
-
-    if (mainnetOwners && mainnetOwners.data && mainnetOwners.data.accounts) {
-      for (let i = 0; i < mainnetOwners.data.accounts.length; i++) {
-        const owner = mainnetOwners.data.accounts[i];
-        owners[owner.id] = {
-          tokens: owner.tokens.map(token => token.id)
-        }
-      }
-    }
-
-    if (xDaiOwners && xDaiOwners.data && xDaiOwners.data.accounts) {
-      for (let i = 0; i < xDaiOwners.data.accounts.length; i++) {
-        const owner = xDaiOwners.data.accounts[i];
-        if (owners[owner.id] === undefined) {
-          owners[owner.id] = {
-            tokens: owner.tokens.map(token => token.id)
-          }
-        } else {
-          owners[owner.id].tokens =  owners[owner.id].tokens.concat(owner.tokens.map(token => token.id) )
-        }
-      }
-    }
-
-    for (const [key, value] of Object.entries(owners)) {
-      owners[key].tokensOwned = uniq(value.tokens).length
-    }
-
-    for (let j = 0; j < tokens.length; j++) {
-      if (owners[tokens[j].owner.id] !== undefined ) {
-        tokens[j].owner.tokensOwned = owners[tokens[j].owner.id].tokensOwned
-      } else {
-        console.log("NOT FOUND", tokens[j].owner.id, tokens[j].owner.tokensOwned)
-      }
-    }
-    return { id: eventId, event, tokens: uniqBy(tokens, 'id').sort((a, b) => {
-      return parseInt(a.id) - parseInt(b.id)
-    }) }
+  }
+  return { id: eventId, event, tokens: uniqBy(tokens, 'id').sort((a, b) => {
+    return parseInt(a.id) - parseInt(b.id)
+  }) }
 }
