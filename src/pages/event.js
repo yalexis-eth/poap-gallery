@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {usePagination, useTable} from 'react-table'
 import ReactTooltip from 'react-tooltip';
 import {Route, Switch, useParams, useRouteMatch} from 'react-router-dom';
@@ -98,11 +98,6 @@ export function Event() {
       setCsv_data(_csv_data)
     }
   }, [ensNames]) /* eslint-disable-line react-hooks/exhaustive-deps */
-
-  const fetchData = useCallback(({pageSize, pageIndex}) => {
-        const startRow = pageSize * pageIndex
-        const endRow = startRow + pageSize
-  }, [])
 
   const columns = useMemo(
     () => [
@@ -218,27 +213,21 @@ export function Event() {
           </CSVLink>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', overflow: 'auto' }}>
-          <CreateTable event={event} loading={loadingEvent !== 'succeeded'} fetchData={fetchData} columns={columns} data={data} pageCount={pageCount} ></CreateTable>
+          <CreateTable event={event} loading={loadingEvent !== 'succeeded'} columns={columns} data={data} pageCount={pageCount} ></CreateTable>
         </div>
       </div>
     </main>
   );
 }
 
-function CreateTable({loading, pageCount: pc, fetchData, columns, data, event}) {
+function CreateTable({loading, pageCount: pc, columns, data, event}) {
   const {
     getTableProps,
     getTableBodyProps,
     headerGroups,
     prepareRow,
     page,
-    // Get the state from the instance
-    state: { pageIndex, pageSize },
   } = useTable({ columns, data, pageCount: pc, initialState: { pageIndex: 0 }, manualPagination: true }, usePagination)
-
-  React.useEffect(() => {
-    fetchData({ pageIndex, pageSize })
-  }, [fetchData, pageIndex, pageSize])
 
   return (
     <div style={{width: '100%'}}>

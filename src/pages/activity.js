@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons';
 import {Helmet} from 'react-helmet'
 import {useDispatch, useSelector} from 'react-redux';
-import {fetchIndexData, selectHighestPoapPower, selectMostClaimed, selectMostRecent, selectUpcoming} from '../store';
+import {fetchIndexData, selectMostClaimed, selectMostRecent, selectUpcoming} from '../store';
 import {getMainnetTransfers, getxDaiTransfers, POAP_API_URL} from "../store/api";
 import {EventCard} from "../components/eventCard";
 
@@ -25,7 +25,6 @@ export default function Activity() {
   const mostClaimed = useSelector(selectMostClaimed)
   const mostRecent = useSelector(selectMostRecent)
   const upcoming = useSelector(selectUpcoming)
-  const highestPoapPower = useSelector(selectHighestPoapPower)
 
 
   useEffect(() => {
