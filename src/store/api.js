@@ -25,14 +25,7 @@ export async function getLayerEvents(url) {
         events(orderBy: id, orderDirection: desc, first: 1000) {
           id
           tokenCount
-          tokens(first: 1000) {
-            id
-            transferCount
-            owner {
-              id
-              tokensOwned
-            }
-          }
+          transferCount
         }
       }
       `
@@ -89,7 +82,8 @@ export async function getMainnetTokens(eventId, first, skip) {
 	return getLayerTokens(eventId, first, skip, MAINNET_SUBGRAPH_URL);
 }
 
-export async function crossReference(owners, url) {
+export async function getLayerOwners(owners, url) {
+  const owners_id = owners.map(owner => "\"" + owner + "\"").join(',')
   const res = await fetch(url, {
     method: 'POST',
     headers: {
@@ -98,12 +92,9 @@ export async function crossReference(owners, url) {
     body: JSON.stringify({
       query: `
       {
-        accounts(where:{ id_in: [${owners.map(owner => "\"" + owner + "\"").join(',')}] }, first: 1000) {
+        accounts(where:{id_in: [${owners_id}]}) {
           id
           tokensOwned
-          tokens {
-            id
-          }
         }
       }
       `
@@ -112,12 +103,12 @@ export async function crossReference(owners, url) {
   return res.json()
 }
 
-export async function MainnetCrossReferenceXDai(owner) {
-  return crossReference(owner, XDAI_SUBGRAPH_URL);
+export async function getXDaiOwners(owner) {
+  return getLayerOwners(owner, XDAI_SUBGRAPH_URL);
 }
 
-export async function xDaiCrossReferenceMainnet(owner) {
-  return crossReference(owner, MAINNET_SUBGRAPH_URL);
+export async function getMainnetOwners(owner) {
+  return getLayerOwners(owner, MAINNET_SUBGRAPH_URL);
 }
 
 export async function getLayerTransfers(amount, url) {

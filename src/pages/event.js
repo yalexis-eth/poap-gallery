@@ -1,17 +1,14 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { useTable, usePagination } from 'react-table'
+import React, {useEffect, useMemo, useState} from 'react';
+import {usePagination, useTable} from 'react-table'
 import ReactTooltip from 'react-tooltip';
-import { Switch, Route, useRouteMatch, useParams } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons'
-import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'
-import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
-import { faLaptop } from '@fortawesome/free-solid-svg-icons'
-import { Helmet } from 'react-helmet'
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchEventPageData } from '../store';
-import { CSVLink } from "react-csv";
-import { getEnsData } from './../store/mutations';
+import {Route, Switch, useParams, useRouteMatch} from 'react-router-dom';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faAngleLeft, faAngleRight, faLaptop, faQuestionCircle} from '@fortawesome/free-solid-svg-icons'
+import {Helmet} from 'react-helmet'
+import {useDispatch, useSelector} from 'react-redux';
+import {fetchEventPageData} from '../store';
+import {CSVLink} from "react-csv";
+import {getEnsData} from './../store/mutations';
 import _ from 'lodash'
 
 const GRAPH_LIMIT = 1000;
@@ -101,12 +98,6 @@ export function Event() {
       setCsv_data(_csv_data)
     }
   }, [ensNames]) /* eslint-disable-line react-hooks/exhaustive-deps */
-
-  const fetchData = useCallback(({pageSize, pageIndex}) => {
-        const startRow = pageSize * pageIndex
-        const endRow = startRow + pageSize
-        console.log('fetching data', startRow, ' - ', endRow);
-  }, [])
 
   const columns = useMemo(
     () => [
@@ -222,27 +213,21 @@ export function Event() {
           </CSVLink>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', overflow: 'auto' }}>
-          <CreateTable event={event} loading={loadingEvent !== 'succeeded'} fetchData={fetchData} columns={columns} data={data} pageCount={pageCount} ></CreateTable>
+          <CreateTable event={event} loading={loadingEvent !== 'succeeded'} columns={columns} data={data} pageCount={pageCount} ></CreateTable>
         </div>
       </div>
     </main>
   );
 }
 
-function CreateTable({loading, pageCount: pc, fetchData, columns, data, event}) {
+function CreateTable({loading, pageCount: pc, columns, data, event}) {
   const {
     getTableProps,
     getTableBodyProps,
     headerGroups,
     prepareRow,
     page,
-    // Get the state from the instance
-    state: { pageIndex, pageSize },
   } = useTable({ columns, data, pageCount: pc, initialState: { pageIndex: 0 }, manualPagination: true }, usePagination)
-
-  React.useEffect(() => {
-    fetchData({ pageIndex, pageSize })
-  }, [fetchData, pageIndex, pageSize])
 
   return (
     <div style={{width: '100%'}}>
@@ -359,6 +344,12 @@ function tokenDetails(event, csv_data) {
   ];
   if (Array.isArray(csv_data) && csv_data.length > 1) {
     array1.push({ value: csv_data.length - 1, key: 'Supply' });
+    const power = csv_data.reduce((power, token, index) => {
+      if(index === 0)
+        return 0;
+      return power + token[5]
+    }, 0)
+    array1.push({ value: power, key: 'Power' });
   }
   let array2 = [];
 

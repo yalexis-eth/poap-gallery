@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React, {useEffect, useState} from 'react'
 import ReactTooltip from 'react-tooltip';
-import { Link } from 'react-router-dom'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendar, faQuestionCircle, faCoins, faFire, faGlobe, faLaptop, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
-import { Helmet } from 'react-helmet'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons';
+import {Helmet} from 'react-helmet'
 import {useDispatch, useSelector} from 'react-redux';
-import {selectMostClaimed, selectMostRecent, selectUpcoming, selectHighestPoapPower, fetchIndexData} from '../store';
+import {fetchIndexData, selectMostClaimed, selectMostRecent, selectUpcoming} from '../store';
 import {getMainnetTransfers, getxDaiTransfers, POAP_API_URL} from "../store/api";
+import {EventCard} from "../components/eventCard";
 
 
 export default function Activity() {
@@ -25,7 +25,6 @@ export default function Activity() {
   const mostClaimed = useSelector(selectMostClaimed)
   const mostRecent = useSelector(selectMostRecent)
   const upcoming = useSelector(selectUpcoming)
-  const highestPoapPower = useSelector(selectHighestPoapPower)
 
 
   useEffect(() => {
@@ -85,10 +84,9 @@ export default function Activity() {
 
       <div className="gallery-grid activity-grid">
 
-         <TokenCard event={mostRecent} />
-         <TokenCard event={upcoming} />
-         <TokenCard event={mostClaimed} />
-         <TokenCard event={highestPoapPower} />
+         <EventCard event={mostRecent} showHeading={true} />
+         <EventCard event={upcoming} showHeading={true} />
+         <EventCard event={mostClaimed} showHeading={true} />
 
         </div>
 
@@ -146,83 +144,4 @@ function CreateTable({transfers, loading}) {
               </tbody>
       </table>
   )
-}
-
-
-
-function TokenCard({ event }) {
-  return (
-    <Link to={'/event/' + event.id} className="gallery-card">
-      <div>
-        <h4>{event.heading}</h4>
-      </div>
-      <div
-        style={{
-          justifyContent: 'center',
-          alignItems: 'center',
-          display: 'flex',
-          width: '75px',
-          height: '75px',
-          overflow: 'hidden',
-          borderRadius: '50%',
-        }}
-      >
-        <img
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            borderRadius: '50%',
-          }}
-          src={event.image_url}
-          alt="POAP"
-        />
-      </div>
-      <div
-        style={{
-          overflow: 'auto',
-          width: '100%',
-        }}
-      >
-        <h3
-          title={event.name}
-          className="h4"
-          style={{
-            fontSize: '1rem',
-            textAlign: 'center',
-            margin: '.8rem 0',
-            overflowWrap: 'anywhere',
-          }}
-        >
-          {event.name}
-        </h3>
-      </div>
-      <div>
-        <div style={{ marginTop: '5px' }}>
-          {event.city ? <FontAwesomeIcon style={{ width: '1rem', marginRight: '.2rem' }} icon={faGlobe} /> : null}
-          {event.city ? ' ' + event.city.length > 15 ? event.city.substr(0, 15) + '…' : event.city : (
-            <div>
-              {' '}
-              <FontAwesomeIcon style={{ width: '1rem', marginRight: '.2rem' }} icon={faLaptop} /> virtual event{' '}
-            </div>
-          )}{' '}
-        </div>
-        <div style={{ marginTop: '5px' }}>
-          <FontAwesomeIcon style={{ width: '1rem', marginRight: '.2rem' }} icon={faCalendar} /> {event.start_date}
-        </div>
-        <div style={{ marginTop: '5px' }}>
-          <FontAwesomeIcon style={{ width: '1rem', marginRight: '.2rem' }} icon={faCoins} />{' '}
-          {event.tokenCount ? event.tokenCount + ' supply ' : ' None Claimed'}
-        </div>
-        <div style={{ marginTop: '5px' }}>
-          <FontAwesomeIcon style={{ width: '1rem', marginRight: '.2rem' }} icon={faFire} />{' '}
-          {event.power ? event.power +' power ' : '0 power'}
-        </div>
-        <div style={{ marginTop: '5px' }}>
-          <FontAwesomeIcon style={{ width: '1rem', marginRight: '.2rem' }} icon={faPaperPlane} />{' '}
-          {event.transferCount ? event.transferCount + ' transfers' : '0 transfers '}
-        </div>
-      </div>
-    </Link>
-  );
 }

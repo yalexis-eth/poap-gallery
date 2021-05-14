@@ -1,5 +1,4 @@
 import { createSlice, combineReducers, configureStore, createAsyncThunk, current  } from '@reduxjs/toolkit';
-// import storage from 'redux-persist/lib/storage' // defaults to localStorage for web
 import { getIndexPageData, getEventPageData } from './mutations';
 
 const initialEventsState = {
@@ -9,7 +8,6 @@ const initialEventsState = {
   mostClaimed: {},
   upcoming: {},
   mostRecent: {},
-  highestPoapPower: {},
   status: 'idle',
   error: null,
   eventStatus: 'idle',
@@ -31,12 +29,11 @@ const eventsSlice = createSlice({
       state.status = 'loading'
     },
     [fetchIndexData.fulfilled]: (state, action) => {
-      const { poapEvents, mostRecent, mostClaimed, upcoming, highestPoapPower } = action.payload
+      const { poapEvents, mostRecent, mostClaimed, upcoming } = action.payload
       state.events = poapEvents
       state.mostRecent = mostRecent
       state.mostClaimed = mostClaimed
       state.upcoming = upcoming
-      state.highestPoapPower = highestPoapPower
       state.status = 'succeeded'
     },
     [fetchIndexData.rejected]: (state, action) => {
@@ -84,7 +81,6 @@ export const selectRecentEvents = state => state.events.events.filter(event => {
 export const selectMostRecent = state => state.events.mostRecent
 export const selectMostClaimed = state => state.events.mostClaimed
 export const selectUpcoming = state => state.events.upcoming
-export const selectHighestPoapPower = state => state.events.highestPoapPower
 
 const rootReducer = combineReducers({
   events: eventsSlice.reducer,
