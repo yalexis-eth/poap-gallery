@@ -1,17 +1,14 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { useTable, usePagination } from 'react-table'
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {usePagination, useTable} from 'react-table'
 import ReactTooltip from 'react-tooltip';
-import { Switch, Route, useRouteMatch, useParams } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons'
-import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'
-import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
-import { faLaptop } from '@fortawesome/free-solid-svg-icons'
-import { Helmet } from 'react-helmet'
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchEventPageData } from '../store';
-import { CSVLink } from "react-csv";
-import { getEnsData } from './../store/mutations';
+import {Route, Switch, useParams, useRouteMatch} from 'react-router-dom';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faAngleLeft, faAngleRight, faLaptop, faQuestionCircle} from '@fortawesome/free-solid-svg-icons'
+import {Helmet} from 'react-helmet'
+import {useDispatch, useSelector} from 'react-redux';
+import {fetchEventPageData} from '../store';
+import {CSVLink} from "react-csv";
+import {getEnsData} from './../store/mutations';
 import _ from 'lodash'
 
 const GRAPH_LIMIT = 1000;

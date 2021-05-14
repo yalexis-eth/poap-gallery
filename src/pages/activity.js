@@ -1,15 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import ReactTooltip from 'react-tooltip';
-import {Link} from 'react-router-dom'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {
-  faCalendar,
-  faCoins,
-  faGlobe,
-  faLaptop,
-  faPaperPlane,
-  faQuestionCircle
-} from '@fortawesome/free-solid-svg-icons';
+import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons';
 import {Helmet} from 'react-helmet'
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchIndexData, selectHighestPoapPower, selectMostClaimed, selectMostRecent, selectUpcoming} from '../store';
