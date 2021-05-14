@@ -358,8 +358,6 @@ function tokenDetails(event, csv_data) {
   ];
   if (Array.isArray(csv_data) && csv_data.length > 1) {
     array1.push({ value: csv_data.length - 1, key: 'Supply' });
-  }
-  if (Array.isArray(csv_data) && csv_data.length > 1) {
     const power = csv_data.reduce((power, token, index) => {
       if(index === 0)
         return 0;
