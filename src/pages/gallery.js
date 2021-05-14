@@ -121,22 +121,6 @@ export default function Gallery() {
           return 0
         }
       });
-    } else if (type === 'power') {
-      sortedItems.sort((a, b) => {
-        if(a.power === undefined) {
-          a.power = 0
-        }
-        if(b.power === undefined) {
-          b.power = 0
-        }
-        if(a.power > b.power) {
-          return isAsc ? 1 : -1
-        } else if (b.power > a.power) {
-          return isAsc ? -1 : 1
-        } else {
-          return 0
-        }
-      });
     }
     setItems(sortedItems)
   };
@@ -216,7 +200,6 @@ export default function Gallery() {
                         <option value="holders">Holders</option>
                         <option value="transfers">Transactions</option>
                         <option value="city">City (A-Z)</option>
-                        <option value="power">Poap Power</option>
                       </select>
                     </div>
                   </div>

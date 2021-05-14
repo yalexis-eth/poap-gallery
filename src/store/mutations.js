@@ -71,19 +71,11 @@ export async function getIndexPageData() {
       const ev = poapEvents[i];
       ev.tokenCount = 0
       ev.transferCount = 0
-      ev.power = 0
       for (let j = 0; j < graphEvents.length; j++) {
         const gev = graphEvents[j];
         if(ev.id === parseInt(gev.id)) {
           ev.tokenCount += parseInt(gev.tokenCount)
-          for (let k = 0; k < gev.tokens.length; k++) {
-            const t = gev.tokens[k];
-            if (parseInt(t.owner.tokensOwned) < 0 || t.owner.id === ZERO_ADDRESS) {
-              continue
-            }
-            ev.power += parseInt(t.owner.tokensOwned)
-            ev.transferCount += parseInt(t.transferCount)
-          }
+          ev.transferCount = 0;
         }
       }
       let now = new Date().getTime()
@@ -102,15 +94,11 @@ export async function getIndexPageData() {
       if(ev.tokenCount > mC.tokenCount) {
         mC = ev
       }
-      if (ev.power > hPP.power) {
-        hPP = ev
-      }
     }
 
     mr.heading = "Most Recent"
     up.heading = "Upcoming Event"
     mC.heading = "Most Claimed Token"
-    hPP.heading = "Highest Poap Power"
 
     return {
       poapEvents: poapEvents,

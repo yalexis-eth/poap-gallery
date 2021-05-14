@@ -25,14 +25,6 @@ export async function getLayerEvents(url) {
         events(orderBy: id, orderDirection: desc, first: 1000) {
           id
           tokenCount
-          tokens(first: 1000) {
-            id
-            transferCount
-            owner {
-              id
-              tokensOwned
-            }
-          }
         }
       }
       `
