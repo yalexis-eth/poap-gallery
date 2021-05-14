@@ -192,6 +192,7 @@ a.gallery-card:hover {
   }
   .gallery-card {
     width: 250px;
+    height: 100%;
   }
   .gallery-grid.activity-grid {
     grid-template-columns: repeat(3, 1fr);
