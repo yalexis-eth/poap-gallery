@@ -105,7 +105,6 @@ export function Event() {
   const fetchData = useCallback(({pageSize, pageIndex}) => {
         const startRow = pageSize * pageIndex
         const endRow = startRow + pageSize
-        console.log('fetching data', startRow, ' - ', endRow);
   }, [])
 
   const columns = useMemo(

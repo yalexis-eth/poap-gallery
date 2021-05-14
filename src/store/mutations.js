@@ -73,12 +73,11 @@ export async function getIndexPageData() {
         const gev = graphEvents[j];
         if(ev.id === parseInt(gev.id)) {
           ev.tokenCount += parseInt(gev.tokenCount)
-          ev.transferCount = 0;
+          ev.transferCount += parseInt(gev.transferCount)
         }
       }
       let now = new Date().getTime()
       let evDate = new Date(ev.start_date.replace(/-/g, ' ')).getTime()
-
 
       if(evDate > now) {
         up = ev
