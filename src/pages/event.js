@@ -9,6 +9,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {fetchEventPageData} from '../store';
 import {CSVLink} from "react-csv";
 import {getEnsData} from './../store/mutations';
+import Loader from '../components/loader'
 import _ from 'lodash'
 
 const GRAPH_LIMIT = 1000;
@@ -136,10 +137,7 @@ export function Event() {
           <meta property="og:title" content="POAP Gallery - Event"></meta>
         </Helmet>
         <div style={{display: 'flex', justifyContent: 'center'}}>
-          <div className="spinner">
-            <div className="cube1"></div>
-            <div className="cube2"></div>
-          </div>
+          <Loader></Loader>
         </div>
       </main>
     )

@@ -5,6 +5,7 @@ import {Helmet} from 'react-helmet';
 import {fetchIndexData, selectEventError, selectEventStatus, selectRecentEvents} from '../store';
 import {useDispatch, useSelector} from 'react-redux';
 import {EventCard} from "../components/eventCard";
+import Loader from '../components/loader'
 
 
 export default function Gallery() {
@@ -240,26 +241,20 @@ export default function Gallery() {
           ) : eventStatus === 'succeeded' ? (
             <Cards events={search && search.length ? search : items} length={search.length || length} />
           ) : (
-            <div className="spinner">
-              <div className="cube1"></div>
-              <div className="cube2"></div>
-            </div>
+            <Loader></Loader>
           )}
         </div>
-        <InView
-          threshold={1}
-          onChange={(inView, entry) => {
-            if (inView && items && items.length) {
+        <button onClick={() => {
+            if (items && items.length) {
               if (length + 20 < items.length) {
                 setLength(length + 20);
               } else {
                 setLength(items.length);
               }
             }
-          }}
-        >
-          {({ inView, ref, entry }) => <div ref={ref}></div>}
-        </InView>
+          }}>
+          Load more
+        </button>
       </div>
     </main>
   );
