@@ -10,6 +10,7 @@
    ================================================================ */
 
 @import 'variables';
+@import 'globals/fonts';
 @import 'globals/utilities';
 @import 'globals/normalize';
 @import 'globals/boilerplate';
@@ -27,6 +28,7 @@
 @import 'components/poapapp';
 @import 'components/burgermenu';
 @import 'components/backoffice';
+@import 'components/footer';
 
 /* ================================================================
    Vendor Imports

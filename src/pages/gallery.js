@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import {InView} from 'react-intersection-observer';
 import ActivityTable from '../components/activityTable'
 import {Helmet} from 'react-helmet';
 import {fetchIndexData, selectEventError, selectEventStatus, selectRecentEvents} from '../store';

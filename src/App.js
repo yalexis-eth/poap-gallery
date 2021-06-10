@@ -29,7 +29,7 @@ function App() {
           <Gallery />
         </Route>
       </Switch>
-    <Footer />
+      <Footer />
     </div>
     </BrowserRouter>
   );

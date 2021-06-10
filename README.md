@@ -1,4 +1,4 @@
-# POAP gallary
+# POAP gallery
 
 * https://www.reddit.com/r/ethdev/comments/icfzhn/poap_proof_of_attendance_protocol_is_interested/g22d6ly/
 * https://etherscan.io/token/0x22c1f6050e56d2876009903609a2cc3fef83b415

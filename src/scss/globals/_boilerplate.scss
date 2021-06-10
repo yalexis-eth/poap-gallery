@@ -25,6 +25,7 @@ main {
 
 #root .landing {
   min-height: 100vh;
+  overflow-y: hidden;
   display: flex;
   justify-content: space-between;
   flex-direction: column;
