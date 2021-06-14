@@ -135,7 +135,7 @@
       }
 
       .error {
-        color: $color-error;
+        color: $error-red;
         max-width: 400px;
         margin: 0 auto;
         @include x-rem(font-size, 20px);

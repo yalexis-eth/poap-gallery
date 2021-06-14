@@ -458,21 +458,21 @@ textarea {
 }
 
 .modal-select-error {
-  border: 2px solid $color-error !important;
-  outline-color: $color-error;
-  color: $color-error;
+  border: 2px solid $error-red !important;
+  outline-color: $error-red;
+  color: $error-red;
   background-image: $red-select-arrow;
 }
 
 .modal-input-error {
-  border: 2px solid $color-error !important;
-  outline-color: $color-error !important;
+  border: 2px solid $error-red !important;
+  outline-color: $error-red !important;
   &::placeholder {
-    color: $color-error !important;
+    color: $error-red !important;
   }
 
   &.authentication-modal {
-    color: $color-error;
+    color: $error-red;
   }
 }
 

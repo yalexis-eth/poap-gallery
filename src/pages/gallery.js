@@ -261,12 +261,9 @@ export default function Gallery() {
 
 function Cards({ events, length }) {
   let cards = [];
-  if (events && events.length && length <= events.length) {
-    for (let i = 0; i < length; i++) {
-      cards.push(<EventCard key={i} event={events[i]} />);
-    }
-  } else if(events && events.length) {
-    for (let i = 0; i < events.length; i++) {
+  if (events && events.length) {
+    let len = (length <= events.length) ? length : events.length;
+    for (let i = 0; i < len; i++) {
       cards.push(<EventCard key={i} event={events[i]} />)
     }
   }

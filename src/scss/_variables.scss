@@ -3,31 +3,47 @@
    ================================================================ */
 
 // Color Variables
-$color-base: #4b4b4b; //Black
-$color-invert: #fff;
-$color-disabled-field: #f2f2f2;
-$bg-color: #F1F5FD; //light blue
-$color-primary: #8076FA; //violet
-$color-secondary: #bbc4ef; //light violet
-$color-third: #52d2bd; // green
-$color-fourth: #f9879a; //rose
+$violet1: #9289FF; // backgrounds
+$violet2: #8076FA; // text
+$violet3: #7168DE;
+$violet4: #B1AFFF;
+$violet5: #DDDBFF;
 
-// TODO: erase these variables if not used
-$color-fourth-lighter:#FFEDF0; //rose
-$color-fifth: #8492CE;
-$color-sixth: #6873A4;
+$grayscale6: #4D5680;
+$grayscale5: #6873A4;
+$grayscale4: #8492CE;
+$grayscale3: #C4CAE8;
+$grayscale2: #D5DCF3;
+$grayscale1: #E6EDFE;
+$grayscale0: #F1F5FD;
 
-$color-medium-violet: #9b9cd5;
+$success-light: #40DD7F;
+$error-red: #FB4E4E;
+$pink2: #F87588;
+$pink5: #FCCDD3;
+$white: #FFF;
+
+
+$color-base: $grayscale6;
+$color-invert: $white;
+$color-disabled-field: $grayscale1;
+$bg-color: $white;
+$color-primary: $violet2;
+$color-secondary: $violet5;
+$a: $grayscale1;
+$color-third: $success-light;
+$color-fourth: $pink2;
+
+$color-medium-violet: $grayscale4;
 $color-light-violet: #cabdf3;
 $color-light-grey: #eef0fb;
 $color-grey: #878787;
-$color-error: #e13d5e;
 
 $violet-select-arrow: linear-gradient(45deg, transparent 50%, $color-primary 50%),
   linear-gradient(135deg, $color-primary 50%, transparent 50%);
 
-$red-select-arrow: linear-gradient(45deg, transparent 50%, $color-error 50%),
-  linear-gradient(135deg, $color-error 50%, transparent 50%);
+$red-select-arrow: linear-gradient(45deg, transparent 50%, $error-red 50%),
+  linear-gradient(135deg, $error-red 50%, transparent 50%);
 
 // Typography
 $font-family: 'Noway Round', 'Archivo', sans-serif;

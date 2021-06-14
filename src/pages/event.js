@@ -11,6 +11,7 @@ import {CSVLink} from "react-csv";
 import {getEnsData} from './../store/mutations';
 import Loader from '../components/loader'
 import _ from 'lodash'
+import { EventCard } from '../components/eventCard';
 
 const GRAPH_LIMIT = 1000;
 
@@ -185,7 +186,7 @@ export function Event() {
               <a href={parseInt(eventId)+1} ><FontAwesomeIcon icon={faAngleRight}> </FontAwesomeIcon></a>
             </div>
             <div style={{minHeight: '200px', margin: '0 auto'}}>
-              <TokenCard event={event} />
+              <EventCard key={0} event={event} size='l' />
             </div>
           </div>
           <div style={{flex: '1 1 18rem', maxWidth: '500px', overflowWrap: 'anywhere'}}>
@@ -273,58 +274,6 @@ function CreateTable({loading, pageCount: pc, columns, data, event}) {
     </table>
    </div>
   )
-}
-
-function TokenCard({ event }) {
-  return (
-    <div
-      style={{
-        borderRadius: '.5rem',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: '1rem 0rem',
-        width: '300px',
-      }}
-    >
-      <div
-        style={{
-          justifyContent: 'center',
-          alignItems: 'center',
-          display: 'flex',
-          width: '150px',
-          height: '150px',
-          borderRadius: '50%',
-          overflow: 'hidden'
-        }}
-      >
-        <img
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            borderRadius: '50%'
-          }}
-          src={event.image_url}
-          alt="POAP"
-        />
-      </div>
-      <div>
-        <h3
-        title={event.name}
-        className="h4"
-        style={{
-          fontSize: '1.15rem',
-          textAlign: 'center',
-          margin: '.8rem 0',
-          overflowWrap: 'anywhere',
-        }}
-        >{event.name}</h3>
-      </div>
-      <div></div>
-    </div>
-  );
 }
 
 function tokenDetails(event, csv_data) {

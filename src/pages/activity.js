@@ -84,9 +84,9 @@ export default function Activity() {
 
       <div className="gallery-grid activity-grid">
 
-         <EventCard event={mostRecent} showHeading={true} />
-         <EventCard event={upcoming} showHeading={true} />
-         <EventCard event={mostClaimed} showHeading={true} />
+         <EventCard event={mostRecent} size='m' type='most-recent' />
+         <EventCard event={upcoming} size='m' type='upcoming' />
+         <EventCard event={mostClaimed} size='m' type='most-claimed' />
 
         </div>
 
