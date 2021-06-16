@@ -131,7 +131,7 @@ export function Event() {
 
   if (loadingEvent === 'loading' || loadingEvent === 'idle') {
     return (
-      <main id="site-main" role="main" className="app-content">
+      <main id="site-main" role="main" className="app-content event-main">
         <Helmet>
           <title>POAP Gallery - Event</title>
           <link rel="canonical" href={"https://poap.gallery/event/" + eventId}/>
@@ -147,7 +147,7 @@ export function Event() {
 
   if (errorEvent || Object.keys(event).length === 0) {
     return (
-      <main id="site-main" role="main" className="app-content">
+      <main id="site-main" role="main" className="app-content event-main">
         <Helmet>
           <title>POAP Gallery - Event</title>
           <link rel="canonical" href={"https://poap.gallery/event/" + eventId}/>
@@ -165,7 +165,7 @@ export function Event() {
   }
 
   return (
-    <main id="site-main" role="main" className="app-content">
+    <main id="site-main" role="main" className="app-content event-main">
       <Helmet>
         <title>POAP Gallery - Event</title>
         <link rel="canonical" href={"https://poap.gallery/event/" + eventId}/>

@@ -71,7 +71,7 @@ export default function Activity() {
 
 
   return (
-    <main id="site-main" role="main" className="app-content">
+    <main id="site-main" role="main" className="app-content activity-main">
       <Helmet>
         <title>POAP Gallery - Activity</title>
         <link rel="canonical" href="https://poap.gallery/activity"/>

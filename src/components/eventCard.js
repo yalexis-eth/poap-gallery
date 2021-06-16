@@ -41,7 +41,7 @@ export function EventCard({ event, size = 's', type = '', power = 0}) {
         {/* titulo */}
         <h3
           title={event.name}
-          className="h4 content-title"
+          className="h4 content-title ellipsis"
           style={{
             fontSize: '1rem',
             textAlign: 'center',
@@ -54,7 +54,7 @@ export function EventCard({ event, size = 's', type = '', power = 0}) {
         {
         size === 'l' ?
         <div className='content-description'>
-          {event.description}
+          <div className='content-description-main'>{event.description}</div>
           <br/><br/>
           <a href={event.event_url} className='content-description-url'>{event.event_url}</a>
         </div>

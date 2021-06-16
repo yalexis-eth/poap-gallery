@@ -185,11 +185,8 @@
 
 .poap-app {
   header {
-    height: 200px;
-    background-image: url('../../assets/images/bg-header-m.png');
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: top center;
+    height: 70px;
+    box-shadow: 0px 3px 6px 0px #BBC4EF5B;
 
     -webkit-overflow-scrolling: touch;
     -webkit-transition: all 0.5s ease-in-out-ut;
@@ -203,7 +200,6 @@
     padding: 20px 0 0;
 
     @media (min-width: $bp-sw) {
-      background-image: url('../../assets/images/bg-header.png');
       padding: 0;
     }
 
@@ -218,19 +214,37 @@
       transition: all 0.5s ease-in-out;
       -webkit-backface-visibility: hidden;
       backface-visibility: hidden;
-
-      background-image: url('../../assets/images/bg-header-m-fixed.png');
-
-      @media (min-width: $bp-sw) {
-        background-image: url('../../assets/images/bg-header-fixed.png');
-      }
     }
 
     .container {
-      max-width: 470px;
+      max-width: none;
+      width: auto;
+      margin: 0 58px;
+      padding: 0;
+      display: flex;
+      flex-direction: row;
 
-      @media (min-width: $bp-mw) {
-        max-width: 690px;
+      height: inherit;
+      & > div {
+        height: inherit;
+      }
+      .pull-left {
+        .logo {
+          width: 63px;
+          height: 82.74px;
+          margin-right: 16px;
+        }
+        span {
+          display: flex;
+          align-items: center;
+          padding-left: 14px;
+          margin: 29px 0 21px 0;
+          border-left: 1px solid $grayscale2;
+          color: $grayscale4;
+          font-family: 'Comfortaa';
+          font-weight: $fontWeight-normal;
+          font-size: 1.125rem;
+        }
       }
     }
 
@@ -239,16 +253,17 @@
       float: left;
     }
 
-    .page-title {
-      text-align: right;
-      @include x-rem(font-size, 40px);
-      font-weight: $fontWeight-bold;
+    .link {
+      font-size: 1rem;
+      font-weight: $fontWeight-normal;
       color: $color-primary;
-      font-family: $font-family-narrow;
-      padding: 30px 30px 0;
+      font-family: $font-family;
+      display: flex;
+      align-items: center;
+      height: 100%;
 
       @media (max-width: $bp-m) {
-        @include x-rem(font-size, 20px);
+        font-size: 0.5rem;
       }
     }
   }
@@ -398,6 +413,14 @@
       }
     }
   }
+}
+
+.event-main {
+  margin-top: 39px;
+}
+
+.activity-main {
+  margin-top: 62px;
 }
 
 .loading-content {

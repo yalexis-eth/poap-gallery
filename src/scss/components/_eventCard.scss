@@ -218,6 +218,9 @@ $height-content-first-large: calc(#{$height-content-large} - #{$height-content-s
         .content-description {
           grid-area: description;
           color: $grayscale4;
+          &-main {
+            height: 4rem;
+          }
           &-url {
             pointer-events: auto;
             color: $violet2;
