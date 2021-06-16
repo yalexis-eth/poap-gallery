@@ -1,0 +1,11 @@
+[[redirects]]
+  from = "/event/*"
+  to = "https://gallery-prerender.netlify.app/.netlify/functions/render/:route"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false
