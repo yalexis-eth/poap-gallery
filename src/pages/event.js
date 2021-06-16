@@ -3,7 +3,7 @@ import {usePagination, useTable} from 'react-table'
 import ReactTooltip from 'react-tooltip';
 import {Route, Switch, useParams, useRouteMatch} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faAngleLeft, faAngleRight, faLaptop, faQuestionCircle} from '@fortawesome/free-solid-svg-icons'
+import {faAngleLeft, faAngleRight, faQuestionCircle} from '@fortawesome/free-solid-svg-icons'
 import {Helmet} from 'react-helmet'
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchEventPageData} from '../store';
@@ -44,6 +44,7 @@ export function Event() {
   const [csv_data, setCsv_data] = useState([]);
   const [ensNames, setEnsNames] = useState([]);
   const pageCount = useMemo( () => event.tokenCount % 50 !== 0 ? Math.floor(event.tokenCount / 50) + 1 : event.tokenCount, [event])
+  const power = calculatePower(csv_data);
   useEffect(() => {
     if (eventId) {
       dispatch(fetchEventPageData({ eventId, first: GRAPH_LIMIT, skip: GRAPH_LIMIT*pageIndex  }))
@@ -186,15 +187,9 @@ export function Event() {
               <a href={parseInt(eventId)+1} ><FontAwesomeIcon icon={faAngleRight}> </FontAwesomeIcon></a>
             </div>
             <div style={{minHeight: '200px', margin: '0 auto'}}>
-              <EventCard key={0} event={event} size='l' />
+              <EventCard key={0} event={event} size='l' power={power} />
             </div>
           </div>
-          <div style={{flex: '1 1 18rem', maxWidth: '500px', overflowWrap: 'anywhere'}}>
-            {tokenDetails(event, csv_data)}
-          </div>
-        </div>
-        <div style={{display: 'flex', justifyContent:'center',textAlign: 'center'}}>
-          <div style={{maxWidth: '50rem'}}>{event.description}</div>
         </div>
         <div style={{display: 'flex', justifyContent: 'flex-end', overflow: 'auto'}}>
           <CSVLink
@@ -276,50 +271,57 @@ function CreateTable({loading, pageCount: pc, columns, data, event}) {
   )
 }
 
-function tokenDetails(event, csv_data) {
-  let array1 = [
-    { value: event.city, key: 'City' },
-    { value: event.country, key: 'Country' },
-    { value: event.start_date, key: 'Start date' },
-    { value: event.end_date, key: 'End date' },
-    { value: event.event_url, key: 'Website', render: (value) => {
-      let host = new URL(value).hostname
-      return (
-      <a href={value} className="href" target="_blank" rel="noopener noreferrer">{host}</a>
-      )
-    }},
-  ];
-  if (Array.isArray(csv_data) && csv_data.length > 1) {
-    array1.push({ value: csv_data.length - 1, key: 'Supply' });
-    const power = csv_data.reduce((power, token, index) => {
-      if(index === 0)
-        return 0;
-      return power + token[5]
-    }, 0)
-    array1.push({ value: power, key: 'Power' });
+function calculatePower(csv_data) {
+  if (!Array.isArray(csv_data) || csv_data.length <= 1) {
+    return 0;
   }
-  let array2 = [];
-
-  for (let i = 0; i < array1.length; i++) {
-    if(array1[0].value === ''){
-      array1[0].value = <span> Virtual event  <FontAwesomeIcon icon={faLaptop}></FontAwesomeIcon> </span>
-    }
-    if(array1[1].value === array1[2].value){
-      //array1.shift();
-      array1[1].value = null;
-      array1[2] = {value: event.end_date, key: 'Date'}
-    } //todo: if 1 == 2 , it pushes the the table down
-    if(array1[i].value){
-      let e = (
-        <div key={i} style={{ display: 'flex', padding: '0 1rem'}}>
-          <h4 style={{ flex: '0 0 7rem'}}> {array1[i].key} </h4>
-          <div style={{ flex: '1 1 8rem'}}> {array1[i].render ? array1[i].render(array1[i].value) : array1[i].value} </div>
-        </div>
-      );
-      array2.push(e);
-    }
-  }
-  return array2;
+  const power = csv_data.reduce((power, token, index) => {
+    if(index === 0)
+      return 0;
+    return power + token[5]
+  }, 0)
+  return power;
 }
+
+// function tokenDetails(event, csv_data, power) {
+//   let array1 = [
+//     { value: event.city, key: 'City' },
+//     { value: event.country, key: 'Country' },
+//     { value: event.start_date, key: 'Start date' },
+//     { value: event.end_date, key: 'End date' },
+//     { value: event.event_url, key: 'Website', render: (value) => {
+//       let host = new URL(value).hostname
+//       return (
+//       <a href={value} className="href" target="_blank" rel="noopener noreferrer">{host}</a>
+//       )
+//     }},
+//   ];
+//   if (Array.isArray(csv_data) && csv_data.length > 1) {
+//     array1.push({ value: csv_data.length - 1, key: 'Supply' });
+//   }
+//   array1.push({ value: power, key: 'Power' });
+//   let array2 = [];
+
+//   for (let i = 0; i < array1.length; i++) {
+//     if(array1[0].value === ''){
+//       array1[0].value = <span> Virtual event  <FontAwesomeIcon icon={faLaptop}></FontAwesomeIcon> </span>
+//     }
+//     if(array1[1].value === array1[2].value){
+//       //array1.shift();
+//       array1[1].value = null;
+//       array1[2] = {value: event.end_date, key: 'Date'}
+//     } //todo: if 1 == 2 , it pushes the the table down
+//     if(array1[i].value){
+//       let e = (
+//         <div key={i} style={{ display: 'flex', padding: '0 1rem'}}>
+//           <h4 style={{ flex: '0 0 7rem'}}> {array1[i].key} </h4>
+//           <div style={{ flex: '1 1 8rem'}}> {array1[i].render ? array1[i].render(array1[i].value) : array1[i].value} </div>
+//         </div>
+//       );
+//       array2.push(e);
+//     }
+//   }
+//   return array2;
+// }
 
 

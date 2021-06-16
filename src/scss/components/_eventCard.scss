@@ -12,6 +12,16 @@ $height-content-medium: calc(#{$height-card-medium} - #{$height-header-medium});
 $height-content-second-medium: 67px;
 $height-content-first-medium: calc(#{$height-content-medium} - #{$height-content-second-medium});
 
+$width-card-large: 760px;
+$height-card-large: 323px;
+$width-header-large: 292px;
+$height-header-large: $height-card-large; 
+$width-content-large: calc(#{$width-card-large} - #{$width-header-large});
+$margin-content-large: 32px;
+$height-content-large: $height-card-large;
+$height-content-second-large: 32px;
+$height-content-first-large: calc(#{$height-content-large} - #{$height-content-second-large} - #{$margin-content-large} - #{$margin-content-large});
+
 .gallery-card {
   cursor: pointer;
   position: relative;
@@ -45,7 +55,6 @@ $height-content-first-medium: calc(#{$height-content-medium} - #{$height-content
 
     &-first {
       height: $height-content-first-small;
-      padding: 0 1rem!important;
 
       h3 {
         font-family: 'Comfortaa';
@@ -62,7 +71,8 @@ $height-content-first-medium: calc(#{$height-content-medium} - #{$height-content
       .content-time-place {
         display: flex;
         flex-direction: row;
-        justify-content: space-between;
+        justify-content: center;
+        gap: 6px;
       }
     }
     hr {
@@ -74,7 +84,6 @@ $height-content-first-medium: calc(#{$height-content-medium} - #{$height-content
     }
     &-second {
       height: $height-content-second-small;
-      padding: 0 1rem!important;
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -101,6 +110,14 @@ $height-content-first-medium: calc(#{$height-content-medium} - #{$height-content
         margin-top: 16px;
       }
     }
+    .content {
+      &-first {
+        padding: 0 1rem!important;
+      }
+      &-second {
+        padding: 0 1rem!important;
+      }
+    }
   }
   &.medium {
     width: $width-card-medium;
@@ -124,6 +141,7 @@ $height-content-first-medium: calc(#{$height-content-medium} - #{$height-content
     .content {
       height: $height-content-medium;
       &-first {
+        padding: 0 1rem!important;
         height: $height-content-first-medium;
         .event-type {
           margin: auto;
@@ -149,18 +167,71 @@ $height-content-first-medium: calc(#{$height-content-medium} - #{$height-content
         }
       }
       &-second {
+        padding: 0 1rem!important;
         height: $height-content-second-medium;
       }
     }
   }
   &.large {
     pointer-events: none;
+    display: flex;
+    flex-direction: row;
+    height: $height-card-large;
     .header {
-      // background-image: url('../../assets/images/card-bg-top.svg');
+      width: $width-header-large;
+      height: $height-header-large;
+      background-image: url('../../assets/images/card-bg-top-large.svg');
       img {
-        // width: px;
-        // height: px;
-        // margin-top: px;
+        width: 200px;
+        height: 200px;
+        margin: 61.5px 46px;
+      }
+    }
+    .content {
+      margin: 0;
+      width: $width-content-large;
+      height: $height-content-large;
+      overflow: hidden;
+      &-first {
+        width: calc(100% - #{$margin-content-large} - #{$margin-content-large})!important;
+        height: $height-content-first-large;
+        margin: $margin-content-large $margin-content-large 0 $margin-content-large;
+        padding: 0!important;
+        display: grid;
+        grid-template-rows: 29px 2.1rem 4.1rem;
+        gap: 16px;
+        grid-template-areas:
+          "time-place"
+          "title"
+          "description"
+          ;
+        .content-time-place {
+          grid-area: time-place;
+          justify-content: flex-start;
+        }
+        h3 {
+          grid-area: title;
+          text-align: start!important;
+          font-size: 1.375rem!important;
+          font-weight: 500;
+        }
+        .content-description {
+          grid-area: description;
+          color: $grayscale4;
+          &-url {
+            pointer-events: auto;
+            color: $violet2;
+          }
+        }
+      }
+      &-second {
+        padding: 0!important;
+        width: calc(100% - #{$margin-content-large} - #{$margin-content-large} - 90px)!important;
+        margin: 0 $margin-content-large $margin-content-large 10px;
+        font-size: 1.25rem;
+        .title {
+          font-size: 0.75rem;
+        }
       }
     }
   }
@@ -187,6 +258,14 @@ a.gallery-card:hover {
   color: $grayscale5;
   border-radius: 8px;
   width: fit-content;
+  height: 1.8rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-size: .875rem;
   padding: .35rem;
+}
+
+.hidden {
+  display: none;
 }

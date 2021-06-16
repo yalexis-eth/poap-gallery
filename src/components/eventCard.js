@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faCoins, faGlobe, faHashtag, faLaptop, faPaperPlane, faClock, faFire } from "@fortawesome/free-solid-svg-icons";
 import React from "react";
 
-export function EventCard({ event, size = 's', type = ''}) {
+export function EventCard({ event, size = 's', type = '', power = 0}) {
   const validateType = (type) => {
     if (size !== 'm') return '';
     if (type !== 'most-recent' && type !== 'upcoming' && type !== 'most-claimed') return '';
@@ -41,7 +41,7 @@ export function EventCard({ event, size = 's', type = ''}) {
         {/* titulo */}
         <h3
           title={event.name}
-          className="h4"
+          className="h4 content-title"
           style={{
             fontSize: '1rem',
             textAlign: 'center',
@@ -50,16 +50,25 @@ export function EventCard({ event, size = 's', type = ''}) {
           }}>
           {event.name}
         </h3>
-        
-        {/* id */}
-        <div className="content-id">
+
+        {
+        size === 'l' ?
+        <div className='content-description'>
+          {event.description}
+          <br/><br/>
+          <a href={event.event_url} className='content-description-url'>{event.event_url}</a>
+        </div>
+        :
+        /* id */
+        <div className='content-id'>
           <FontAwesomeIcon style={{ width: '1rem', marginRight: '.2rem' }} icon={faHashtag} />
           {event.id}
         </div>
+        }
 
         {/* fecha y lugar */}
         <div className="content-time-place">
-          <div className="pill">
+          <div className="pill" style={{ minWidth: '110px'}}>
             <FontAwesomeIcon style={{ width: '1rem', marginRight: '.2rem' }} icon={faCalendar} /> {event.start_date}
           </div>
           <div className="pill">
@@ -74,7 +83,7 @@ export function EventCard({ event, size = 's', type = ''}) {
         </div>
       </div>
       
-      <hr />
+      {size !== 'l' && <hr />}
 
       <div
         className="content-second"
@@ -90,6 +99,15 @@ export function EventCard({ event, size = 's', type = ''}) {
           </div>
           {event.tokenCount ? event.tokenCount : ' None Claimed'}
         </div>
+        {
+        size === 'l' &&
+        <div>
+          <div className="title">
+            <FontAwesomeIcon style={{ width: '1rem', marginRight: '.4rem' }} icon={faFire} />{'POWER'}
+          </div>
+          {power}
+        </div>
+        }
         <div>
           <div className="title">
             <FontAwesomeIcon style={{ width: '1rem', marginRight: '.4rem' }} icon={faPaperPlane} />{'TRANSFERS'}
