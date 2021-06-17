@@ -10,6 +10,10 @@ export function EventCard({ event, size = 's', type = '', power = 0}) {
     return type;
   }
   type = validateType(type);
+
+  const nl2br = (text) => (text.split('\n').map((item, key) => {
+    return <>{item}<br/></>
+  }));
   
   const Header = () => (
     <div className={`header ${type}`}>
@@ -28,7 +32,7 @@ export function EventCard({ event, size = 's', type = '', power = 0}) {
           padding: '1rem'
         }}>
 
-        {/* tipo de evento */}
+        {/* event type */}
         <div className={`${type === '' ? 'hidden' : 'pill event-type'} ${type}`}>
           {
             type === 'most-recent' ? <div><FontAwesomeIcon style={{ width: '1rem', marginRight: '.2rem' }} icon={faClock} />Most recent</div> :
@@ -38,7 +42,7 @@ export function EventCard({ event, size = 's', type = '', power = 0}) {
           }
         </div>
 
-        {/* titulo */}
+        {/* title */}
         <h3
           title={event.name}
           className="h4 content-title ellipsis"
@@ -51,10 +55,11 @@ export function EventCard({ event, size = 's', type = '', power = 0}) {
           {event.name}
         </h3>
 
+        {/* description */}
         {
         size === 'l' ?
         <div className='content-description'>
-          <div className='content-description-main'>{event.description}</div>
+          <div className='content-description-main'>{nl2br(event.description)}</div>
           <br/><br/>
           <a href={event.event_url} className='content-description-url'>{event.event_url}</a>
         </div>
@@ -73,7 +78,8 @@ export function EventCard({ event, size = 's', type = '', power = 0}) {
           </div>
           <div className="pill">
             {event.city ? <FontAwesomeIcon style={{ width: '1rem', marginRight: '.2rem' }} icon={faGlobe} /> : null}
-            {event.city ? ' ' + event.city.length > 15 ? event.city.substr(0, 15) + '…' : event.city : (
+            {event.city ?
+              ' ' + event.city : (
               <div>
                 {' '}
                 <FontAwesomeIcon style={{ width: '1rem', marginRight: '.2rem' }} icon={faLaptop} /> Virtual event{' '}

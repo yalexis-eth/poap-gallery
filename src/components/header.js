@@ -13,7 +13,8 @@ export default function () {
           <span>Gallery</span>
         </div>
         <div style={{marginLeft: 'auto'}}>
-          <Link to="#" className="link">FAQ</Link>
+          {/* Ready for future links if needed */}
+          {/* <Link to="#" className="link">FAQ</Link> */}
         </div>
       </div>
     </header>

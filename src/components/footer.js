@@ -9,7 +9,7 @@ import RedditLogo from '../assets/images/logo-reddit-grey.svg'
 
 export default function () {
   return (
-    <>
+    <div style={{marginTop: 100}}>
     <hr className='footer-divider' />
     <footer className={`footer footer-grid`}>
       {/* FIX: 'a' elements generate a js error when hovered */}
@@ -39,7 +39,7 @@ export default function () {
         <img src={BuiltOnEth} alt="Built on Ethereum" />
       </div>
     </footer>
-    </>
+    </div>
       // <footer
       //   id="footer"
       //   role="contentinfo"
