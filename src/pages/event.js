@@ -105,11 +105,11 @@ export function Event() {
   const columns = useMemo(
     () => [
       {
-        Header: 'ID',
+        Header: 'POAP ID',
         accessor: 'col1', // accessor is the "key" in the data
       },
       {
-        Header: 'Owner',
+        Header: 'Address',
         accessor: 'col2',
       },
       {
@@ -117,7 +117,7 @@ export function Event() {
         accessor: 'col3',
       },
       {
-        Header: 'Tx Count',
+        Header: 'TX Count',
         accessor: 'col4',
       },
       {
@@ -179,12 +179,13 @@ export function Event() {
           flexWrap: 'wrap',
           alignContent: 'space-around',
           justifyContent: 'space-around',
-        }}>
+          marginBottom: 82,
+          }}>
           <div style={{flex: '0 0 18rem', display: 'flex', flexDirection: "column", justifyContent: "center"}}>
-            <div style={{display: 'flex', justifyContent: "space-between"}}>
-              <a href={parseInt(eventId)-1} ><FontAwesomeIcon icon={faAngleLeft}> </FontAwesomeIcon> </a>
-              <h4 style={{marginBottom: '0'}}> Event Id: {eventId} </h4>
-              <a href={parseInt(eventId)+1} ><FontAwesomeIcon icon={faAngleRight}> </FontAwesomeIcon></a>
+            <div className='prev-next-buttons' style={{display: 'flex', justifyContent: 'space-between', marginBottom: 38,}}>
+              <a href={parseInt(eventId)-1} ><FontAwesomeIcon icon={faAngleLeft}/>{'  Prev'}</a>
+              <h4 style={{marginBottom: '0'}}><div className='event-title'>EVENT ID</div><div className='event-id'>#{eventId}</div> </h4>
+              <a href={parseInt(eventId)+1} >{'Next  '}<FontAwesomeIcon icon={faAngleRight}/></a>
             </div>
             <div style={{minHeight: '200px', margin: '0 auto'}}>
               <EventCard key={0} event={event} size='l' power={power} />
@@ -197,7 +198,7 @@ export function Event() {
             target="_blank"
             className="btn"
             style={{
-              fontSize: '0.9rem', width: 'fit-content', borderRadius: '10px',
+              fontSize: '0.9rem', width: 'fit-content',
               boxShadow: 'none', minHeight: 'fit-content', minWidth: 'auto',
               marginBottom: '0px'
             }}
@@ -224,8 +225,8 @@ function CreateTable({loading, pageCount: pc, columns, data, event}) {
   } = useTable({ columns, data, pageCount: pc, initialState: { pageIndex: 0 }, manualPagination: true }, usePagination)
 
   return (
-    <div style={{width: '100%'}}>
-      <table className="activityTable" style={{ width: '100%', border: 'none' }} {...getTableProps()}>
+    <div style={{width: '100%'}} className='table-container'>
+      <table style={{ width: '100%' }} {...getTableProps()}>
       <thead>
         {// Loop over the header rows
         headerGroups.map(headerGroup => (
@@ -260,8 +261,9 @@ function CreateTable({loading, pageCount: pc, columns, data, event}) {
               <td colSpan="10000">Loading...</td>
             ) : (
               <td colSpan="10000">
-                Showing {page.length} of {page.length}{' '}
-                results
+                
+                {/* Showing {page.length} of {page.length}{' '}
+                results */}
               </td>
             )}
           </tr>

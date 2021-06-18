@@ -90,7 +90,7 @@ export default function Activity() {
 
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', overflowX: 'auto', minWidth: '100%' }}>
+        <div style={{ marginTop: 50, display: 'flex', alignItems: 'center', overflowX: 'auto', minWidth: '100%' }}>
           <CreateTable loading={loading} transfers={transfers} ></CreateTable>
         </div>
       </div>
@@ -128,6 +128,7 @@ function CreateTable({transfers, loading}) {
     tfers.push(<TokenRow key={t.id} transfer={t}></TokenRow>)
   }
   return (
+    <div style={{width: '100%'}} className='table-container'>
       <table className="table" style={{ width: '100%', fontSize: '.93rem', whiteSpace: 'nowrap', border: 'none' }}>
               <thead>
                 <tr>
@@ -143,5 +144,6 @@ function CreateTable({transfers, loading}) {
                 {loading ?<tr style={{height: '600px', width: 'inherit'}}><td className="loading" colSpan="6"></td></tr>  : tfers && tfers.length? tfers : (<tr><td style={{textAlign: 'center'}} colSpan="7">No Tokens Transferred</td></tr>)}
               </tbody>
       </table>
+    </div>
   )
 }

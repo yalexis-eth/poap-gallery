@@ -398,6 +398,34 @@
 
 .event-main {
   margin-top: 39px;
+
+  .container {
+    .prev-next-buttons {
+      a {
+        display: flex;
+        align-items: flex-end;
+        svg {
+          margin: 0 11px;
+        }
+      }
+      h4 {
+        text-align: center;
+
+        .event-title {
+          font-size: 0.75rem;
+          font-weight: $fontWeight-normal;
+          color: $grayscale4;
+        }
+        .event-id {
+          margin-top: 8px;
+          font-weight: 500;
+          font-family: 'Comfortaa';
+          color: $grayscale5;
+          font-size: 1.25rem;
+        }
+      }
+    }
+  }
 }
 
 .activity-main {
@@ -411,5 +439,54 @@
 
   img {
     max-width: 38px;
+  }
+}
+
+.table-container {
+  margin-top: 1em;
+
+  table {
+    border: 1px solid $grayscale1;
+    border-radius: 20px;
+    overflow: hidden;
+    border-spacing: 0;
+    empty-cells: show;
+
+    thead {
+      tr {
+        height: 42px;
+        th {
+          background: rgba($grayscale1, 0.6);
+          color: $grayscale6;
+          font-size: 0.875rem;
+          font-weight: $fontWeight-normal;
+        }
+      }
+    }
+    tbody {
+      tr {
+        text-align: center;
+        * {
+          color: $grayscale4;
+        }
+        a:hover {
+          color: $violet2;
+        }
+        td {
+          border: none;
+
+        }
+        &:last-child {
+          height: 20px;
+          background: $grayscale1;
+        }
+      }
+    }
+    tr {
+      height: 67px;
+      &:nth-child(even) td {
+        background: rgba($grayscale1, 0.3);
+      }
+    }
   }
 }
