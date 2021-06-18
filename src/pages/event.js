@@ -66,7 +66,7 @@ export function Event() {
     for (let i = 0; i < tokens.length; i++) {
       const displayName = `${tokens[i].owner.id.substr(0,10)}…${tokens[i].ens ? tokens[i].ens : tokens[i].owner.id.substr(32)}`
       _data.push({
-        col1:  (<a href={"https://app.poap.xyz/token/" + tokens[i].id} target="_blank" rel="noopener noreferrer">{tokens[i].id}</a>) ,
+        col1:  (<a href={"https://app.poap.xyz/token/" + tokens[i].id} target="_blank" rel="noopener noreferrer">{'#'}{tokens[i].id}</a>) ,
         col2: (<a href={"https://app.poap.xyz/scan/" + tokens[i].owner.id} target="_blank" rel="noopener noreferrer"> {displayName}</a>),
         col3: new Date(tokens[i].created * 1000).toLocaleDateString(),
         col4: tokens[i].transferCount,
@@ -109,7 +109,7 @@ export function Event() {
         accessor: 'col1', // accessor is the "key" in the data
       },
       {
-        Header: 'Address',
+        Header: 'Owner',
         accessor: 'col2',
       },
       {

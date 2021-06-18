@@ -430,6 +430,45 @@
 
 .activity-main {
   margin-top: 62px;
+
+  .recent-activity {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+
+    svg {
+      margin-left: 10px;
+    }
+    a {
+      margin: 0 24px;
+    }
+    &-content {
+      display: grid;
+      grid-template-rows: 21px 19px;
+      grid-template-columns: 53px 300px;
+      gap: 6px;
+      grid-template-areas: 
+        'activity-type-pill  time'
+        'description description'
+        ;
+
+      .activity-type-pill {
+        grid-area: activity-type-pill;
+        display: flex;
+        align-items: flex-end;
+      }
+      .time {
+        grid-area: time;
+        text-align: start;
+        display: flex;
+        align-items: flex-start;
+      }
+      .description {
+        grid-area: description;
+        text-align: start;
+      }
+    }
+  }
 }
 
 .loading-content {
@@ -444,49 +483,49 @@
 
 .table-container {
   margin-top: 1em;
+}
 
-  table {
-    border: 1px solid $grayscale1;
-    border-radius: 20px;
-    overflow: hidden;
-    border-spacing: 0;
-    empty-cells: show;
+table {
+  border: 1px solid $grayscale1;
+  border-radius: 20px;
+  overflow: hidden;
+  border-spacing: 0;
+  empty-cells: show;
 
-    thead {
-      tr {
-        height: 42px;
-        th {
-          background: rgba($grayscale1, 0.6);
-          color: $grayscale6;
-          font-size: 0.875rem;
-          font-weight: $fontWeight-normal;
-        }
-      }
-    }
-    tbody {
-      tr {
-        text-align: center;
-        * {
-          color: $grayscale4;
-        }
-        a:hover {
-          color: $violet2;
-        }
-        td {
-          border: none;
-
-        }
-        &:last-child {
-          height: 20px;
-          background: $grayscale1;
-        }
-      }
-    }
+  thead {
     tr {
-      height: 67px;
-      &:nth-child(even) td {
-        background: rgba($grayscale1, 0.3);
+      height: 42px;
+      th {
+        background: rgba($grayscale1, 0.6);
+        color: $grayscale6;
+        font-size: 0.875rem;
+        font-weight: $fontWeight-normal;
       }
+    }
+  }
+  tbody {
+    tr {
+      text-align: center;
+      * {
+        color: $grayscale4;
+      }
+      a:hover {
+        color: $violet2;
+      }
+      td {
+        border: none;
+
+      }
+      &:last-child {
+        height: 20px;
+        background: $grayscale1;
+      }
+    }
+  }
+  tr {
+    height: 67px;
+    &:nth-child(even) td {
+      background: rgba($grayscale1, 0.3);
     }
   }
 }

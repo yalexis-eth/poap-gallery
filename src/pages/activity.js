@@ -7,6 +7,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {fetchIndexData, selectMostClaimed, selectMostRecent, selectUpcoming} from '../store';
 import {getMainnetTransfers, getxDaiTransfers, POAP_API_URL} from "../store/api";
 import {EventCard} from "../components/eventCard";
+import { Pill } from '../components/pill';
 
 
 export default function Activity() {
@@ -99,24 +100,30 @@ export default function Activity() {
 }
 
 function TokenRow({transfer}) {
+  console.log(transfer)
   return (
     <tr>
       {/* <td><a href={"https://app.poap.xyz/token/" + transfer.id}>{transfer.id}</a></td> */}
-      <td><a href={"https://app.poap.xyz/token/" + transfer.token.id}>{transfer.token.id}</a></td>
-      <td><a href={"https://app.poap.xyz/scan/" + transfer.from.id}> {transfer.from.id.substring(0,16)+ '…'} </a></td>
-      <td><a href={"https://app.poap.xyz/scan/" + transfer.to.id}> {transfer.to.id.substring(0,16)+ '…'} </a></td>
-      <td> { new Date(transfer.timestamp * 1000).toLocaleDateString('en-UK') } </td>
-      <td> {transfer.token.transferCount && transfer.token.transferCount > 0 ? transfer.token.transferCount : 'Claimed'} </td>
-      <td style={{width:'50px', padding: '.5rem', height: '50px'}}>
+      <td className='recent-activity' style={{width:'100%', padding: 14}}>
+        <FontAwesomeIcon icon={faQuestionCircle} />
         <a href={"https://app.poap.xyz/token/"+transfer.token.id}>
           <img style={{
-            width: '100%',
-            height: '100%',
+            width: 80,
+            height: 80,
             objectFit: 'cover',
             borderRadius: '50%'
-        }} src={`${POAP_API_URL}/token/${transfer.token.id}/image`} alt=""/>
+          }} src={`${POAP_API_URL}/token/${transfer.token.id}/image`} alt=""/>
         </a>
+        <div className='recent-activity-content'>
+          <div className='activity-type-pill'><Pill text={'Activity type placeholder'} tooltip={true} /></div>
+          <div className='time ellipsis'>{timeSince(transfer.timestamp * 1000)}</div>
+          <div className='description ellipsis'>{'Description placeholder'}</div>
+        </div>
       </td>
+      <td style={{padding: 14}}><a href={"https://app.poap.xyz/token/" + transfer.token.id}>{'#'}{transfer.token.id}</a></td>
+      <td style={{padding: 14}}><a href={"https://app.poap.xyz/scan/" + transfer.to.id}> {transfer.to.id.substring(0,16)+ '…'} </a></td>
+      <td style={{padding: 14}}> {transfer.token.transferCount && transfer.token.transferCount > 0 ? transfer.token.transferCount : 'Claimed'} </td>
+      <td style={{padding: 14}}> { new Date(transfer.timestamp * 1000).toLocaleDateString('en-UK') } </td>
     </tr>
   )
 }
@@ -127,23 +134,71 @@ function CreateTable({transfers, loading}) {
     const t = transfers[i];
     tfers.push(<TokenRow key={t.id} transfer={t}></TokenRow>)
   }
+  if (tfers && tfers.length) {
+    tfers.push(<tr><td/><td/><td/><td/><td/></tr>)
+  }
   return (
     <div style={{width: '100%'}} className='table-container'>
-      <table className="table" style={{ width: '100%', fontSize: '.93rem', whiteSpace: 'nowrap', border: 'none' }}>
+      <table className="table" style={{ width: '100%', fontSize: '.93rem', whiteSpace: 'nowrap' }}>
               <thead>
                 <tr>
-                  <th>Id</th>
-                  <th>From</th>
-                  <th>To</th>
-                  <th>Time</th>
-                  <th>Tx count <FontAwesomeIcon icon={faQuestionCircle} data-tip="The amount of transactions this POAP has done since it the day it been claimed." /> <ReactTooltip /> </th>
-                  <th>Img</th>
+                  <th>Recent Activity</th>
+                  <th>POAP ID</th>
+                  <th>Owner</th>
+                  <th>TX count <FontAwesomeIcon icon={faQuestionCircle} data-tip="The amount of transactions this POAP has done since it the day it been claimed." /> <ReactTooltip /> </th>
+                  <th>Date</th>
                 </tr>
               </thead>
               <tbody>
-                {loading ?<tr style={{height: '600px', width: 'inherit'}}><td className="loading" colSpan="6"></td></tr>  : tfers && tfers.length? tfers : (<tr><td style={{textAlign: 'center'}} colSpan="7">No Tokens Transferred</td></tr>)}
+                {loading ? <tr style={{height: '600px', width: 'inherit'}}><td className="loading" colSpan="6"></td></tr> : tfers && tfers.length? tfers : (<tr><td style={{textAlign: 'center'}} colSpan="7">No Tokens Transferred</td></tr>)}
               </tbody>
       </table>
     </div>
   )
 }
+
+function timeSince(date) {
+  if (typeof date === 'string') {
+    date = new Date(parseFloat(date));
+  }
+  if (typeof date !== 'object') {
+    date = new Date(date);
+  }
+
+  var seconds = Math.floor((new Date() - date) / 1000);
+  var intervalType;
+
+  var interval = Math.floor(seconds / 31536000);
+  if (interval >= 1) {
+    intervalType = 'year';
+  } else {
+    interval = Math.floor(seconds / 2592000);
+    if (interval >= 1) {
+      intervalType = 'month';
+    } else {
+      interval = Math.floor(seconds / 86400);
+      if (interval >= 1) {
+        intervalType = 'day';
+      } else {
+        interval = Math.floor(seconds / 3600);
+        if (interval >= 1) {
+          intervalType = "hour";
+        } else {
+          interval = Math.floor(seconds / 60);
+          if (interval >= 1) {
+            intervalType = "minute";
+          } else {
+            interval = seconds;
+            intervalType = "second";
+          }
+        }
+      }
+    }
+  }
+
+  if (interval > 1 || interval === 0) {
+    intervalType += 's';
+  }
+
+  return interval + ' ' + intervalType;
+};
