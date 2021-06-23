@@ -258,20 +258,3 @@ a.gallery-card:hover {
 //     margin: 0rem;
 //   }
 // }
-
-.pill {
-  background-color: $grayscale0;
-  color: $grayscale5;
-  border-radius: 8px;
-  width: fit-content;
-  height: 1.8rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-size: .875rem;
-  padding: .35rem;
-}
-
-.hidden {
-  display: none;
-}

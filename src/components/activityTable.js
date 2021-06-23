@@ -14,10 +14,11 @@ export default function ActivityTable() {
   const [transfers, setTransfers] = useState([])
   const [daitransfers, setDaiTransfers] = useState([])
   const [mainnetTransfers, setMainnetTransfers] = useState([])
+  const transferLimit = 3
 
   useEffect(() => {
     setLoading(true)
-    getMainnetTransfers(2)
+    getMainnetTransfers(transferLimit)
       .then(
         (result) => {
           let tfrs = result.data.transfers
@@ -34,7 +35,7 @@ export default function ActivityTable() {
 
   useEffect(() => {
     setLoading(true)
-    getxDaiTransfers(2)
+    getxDaiTransfers(transferLimit)
       .then(
         (result) => {
           let tfrs = result.data.transfers
@@ -55,7 +56,7 @@ export default function ActivityTable() {
       return b.timestamp - a.timestamp
     })
 
-    setTransfers(tfrs.slice(0, 2))
+    setTransfers(tfrs.slice(0, transferLimit))
   }, [daitransfers, mainnetTransfers])
 
   return (
@@ -100,9 +101,32 @@ function Transfer({transfer}) {
           borderRadius: '50%'
         }} src={`${POAP_API_URL}/token/${transfer.token.id}/image`} alt=""/>
       </a>
-      <span> was transferred from <a
-        href={"https://app.poap.xyz/scan/" + transfer.from.id}> {transfer.from.id.substring(0, 16) + '…'} </a> to <a
-        href={"https://app.poap.xyz/scan/" + transfer.to.id}> {transfer.to.id.substring(0, 16) + '…'} </a> {dayjs(transfer.timestamp * 1000).fromNow()} {transfer.network} </span>
+      <span> was transferred from
+        <a href={"https://app.poap.xyz/scan/" + transfer.from.id}> {transfer.from.id.substring(0, 16) + '…'} </a>
+        to 
+        <a href={"https://app.poap.xyz/scan/" + transfer.to.id}> {transfer.to.id.substring(0, 16) + '…'} </a>
+        {dayjs(transfer.timestamp * 1000).fromNow()} on {transfer.network}
+      </span>
+    </div>
+  )
+}
+
+function Migration({transfer}) {
+  return (
+    <div style={{margin: '.8rem 0'}}>
+      <span>Token </span>
+      <a style={{width: '1.3rem'}} href={"https://app.poap.xyz/token/" + transfer.token.id}>
+        <img style={{
+          width: "1.3rem",
+          height: '1.3rem',
+          objectFit: 'cover',
+          borderRadius: '50%'
+        }} src={`${POAP_API_URL}/token/${transfer.token.id}/image`} alt=""/>
+      </a>
+      <span> was migrated to 
+        <a href={"https://app.poap.xyz/scan/" + transfer.to.id}> {transfer.to.id.substring(0, 16) + '…'} </a>
+        {dayjs(transfer.timestamp * 1000).fromNow()} on {transfer.network}
+      </span>
     </div>
   )
 }
@@ -111,8 +135,12 @@ function Transfers({transfers, loading}) {
   const tfers = []
   for (let i = 0; i < transfers.length; i++) {
     const t = transfers[i];
-    if (t.from.id === '0x0000000000000000000000000000000000000000') {
-      tfers.push(<Claim key={t.id} transfer={t}></Claim>)
+    if (t.from?.id === '0x0000000000000000000000000000000000000000') {
+      if (t.network === 'mainnet') {
+        tfers.push(<Migration key={t.id} transfer={t}></Migration>)
+      } else {
+        tfers.push(<Claim key={t.id} transfer={t}></Claim>)
+      }
     } else {
       tfers.push(<Transfer key={t.id} transfer={t}></Transfer>)
     }

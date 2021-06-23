@@ -192,7 +192,8 @@ export function Event() {
             </div>
           </div>
         </div>
-        <div style={{display: 'flex', justifyContent: 'flex-end', overflow: 'auto'}}>
+        <div style={{display: 'flex', overflow: 'hidden', alignItems: 'flex-end'}}>
+          <div className='table-title'>Owners <span>({tokens.length})</span></div>
           <CSVLink
             filename={`${event.name}.csv`}
             target="_blank"
@@ -200,7 +201,8 @@ export function Event() {
             style={{
               fontSize: '0.9rem', width: 'fit-content',
               boxShadow: 'none', minHeight: 'fit-content', minWidth: 'auto',
-              marginBottom: '0px'
+              marginBottom: '0px',
+              marginLeft: 'auto'
             }}
             data={csv_data}
           >

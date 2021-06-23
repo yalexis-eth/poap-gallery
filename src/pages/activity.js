@@ -8,7 +8,13 @@ import {fetchIndexData, selectMostClaimed, selectMostRecent, selectUpcoming} fro
 import {getMainnetTransfers, getxDaiTransfers, POAP_API_URL} from "../store/api";
 import {EventCard} from "../components/eventCard";
 import { Pill } from '../components/pill';
+import Migration from '../assets/images/migrate.svg'
+import Claim from '../assets/images/claim.svg'
+import Transfer from '../assets/images/transfer.svg'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
 
+dayjs.extend(relativeTime)
 
 export default function Activity() {
   const dispatch = useDispatch()
@@ -26,11 +32,11 @@ export default function Activity() {
   const mostClaimed = useSelector(selectMostClaimed)
   const mostRecent = useSelector(selectMostRecent)
   const upcoming = useSelector(selectUpcoming)
-
+  const transferLimit = 15
 
   useEffect(() => {
       setLoading(true)
-      getMainnetTransfers(15)
+      getMainnetTransfers(transferLimit)
         .then(
           (result) => {
             let tfrs = result.data.transfers
@@ -46,7 +52,7 @@ export default function Activity() {
 
   useEffect(() => {
       setLoading(true)
-      getxDaiTransfers(15)
+      getxDaiTransfers(transferLimit)
         .then(
           (result) => {
             let tfrs = result.data.transfers
@@ -61,15 +67,12 @@ export default function Activity() {
   }, []);
 
   useEffect(() => {
-
     let tfrs = daitransfers.concat(mainnetTransfers)
     tfrs.sort((a, b) => {
       return b.timestamp - a.timestamp
     })
-    setTransfers(tfrs.slice(0, 15))
+    setTransfers(tfrs.slice(0, transferLimit))
   }, [daitransfers, mainnetTransfers])
-
-
 
   return (
     <main id="site-main" role="main" className="app-content activity-main">
@@ -80,44 +83,58 @@ export default function Activity() {
         <meta property="og:title" content="POAP Gallery - Activity"></meta>
       </Helmet>
       <div className="activityContainer container" style={{
-        padding: '0 1rem',
+        padding: '0 4rem',
+        maxWidth: 'none'
       }}>
 
-      <div className="gallery-grid activity-grid">
-
-         <EventCard event={mostRecent} size='m' type='most-recent' />
-         <EventCard event={upcoming} size='m' type='upcoming' />
-         <EventCard event={mostClaimed} size='m' type='most-claimed' />
-
+        <div className="gallery-grid activity-grid" style={{ display: 'flex', justifyContent: 'center' }}>
+          <EventCard event={mostRecent} size='m' type='most-recent' />
+          <EventCard event={upcoming} size='m' type='upcoming' />
+          <EventCard event={mostClaimed} size='m' type='most-claimed' />
         </div>
 
         <div style={{ marginTop: 50, display: 'flex', alignItems: 'center', overflowX: 'auto', minWidth: '100%' }}>
           <CreateTable loading={loading} transfers={transfers} ></CreateTable>
         </div>
+
       </div>
     </main>
   )
 }
 
 function TokenRow({transfer}) {
-  console.log(transfer)
+  const type = (transfer.from?.id === '0x0000000000000000000000000000000000000000') ? 
+                  (transfer.network === 'mainnet') ? 'Migration':'Claim'
+                  : 'Transfer'
   return (
     <tr>
       {/* <td><a href={"https://app.poap.xyz/token/" + transfer.id}>{transfer.id}</a></td> */}
       <td className='recent-activity' style={{width:'100%', padding: 14}}>
-        <FontAwesomeIcon icon={faQuestionCircle} />
+        {
+          (type === 'Migration') ? <img src={Migration} alt="Migration" /> :
+          (type === 'Claim') ?<img src={Claim} alt="Claim" /> :
+          <img src={Transfer} alt="Transfer" />
+        }
         <a href={"https://app.poap.xyz/token/"+transfer.token.id}>
           <img style={{
             width: 80,
             height: 80,
             objectFit: 'cover',
-            borderRadius: '50%'
+            borderRadius: '50%',
+            margin: '0 24px'
           }} src={`${POAP_API_URL}/token/${transfer.token.id}/image`} alt=""/>
         </a>
         <div className='recent-activity-content'>
-          <div className='activity-type-pill'><Pill text={'Activity type placeholder'} tooltip={true} /></div>
-          <div className='time ellipsis'>{timeSince(transfer.timestamp * 1000)}</div>
-          <div className='description ellipsis'>{'Description placeholder'}</div>
+          <div className='activity-type-pill'><Pill className={`${type}`} text={type} tooltip={false} /></div>
+          <div className='time ellipsis'>{dayjs(transfer.timestamp * 1000).fromNow()}</div>
+          <div className='description ellipsis'>{
+            (type === 'Migration') ? 'POAP migrated to mainnet' :
+            (type === 'Claim') ? <span> New claim on event <a href={`https://poap.gallery/event/${transfer.token.event.id}`}>#{transfer.token.event.id}</a></span> :
+            <span>POAP transferred from 
+              <a href={`https://app.poap.xyz/scan/${transfer.from.id}`}> {transfer.from.id.substring(0, 8) + '…'} </a> to
+              <a href={`https://app.poap.xyz/scan/${transfer.to.id}`}> {transfer.to.id.substring(0, 8) + '…'}</a>
+            </span>
+          }</div>
         </div>
       </td>
       <td style={{padding: 14}}><a href={"https://app.poap.xyz/token/" + transfer.token.id}>{'#'}{transfer.token.id}</a></td>
@@ -156,49 +173,3 @@ function CreateTable({transfers, loading}) {
     </div>
   )
 }
-
-function timeSince(date) {
-  if (typeof date === 'string') {
-    date = new Date(parseFloat(date));
-  }
-  if (typeof date !== 'object') {
-    date = new Date(date);
-  }
-
-  var seconds = Math.floor((new Date() - date) / 1000);
-  var intervalType;
-
-  var interval = Math.floor(seconds / 31536000);
-  if (interval >= 1) {
-    intervalType = 'year';
-  } else {
-    interval = Math.floor(seconds / 2592000);
-    if (interval >= 1) {
-      intervalType = 'month';
-    } else {
-      interval = Math.floor(seconds / 86400);
-      if (interval >= 1) {
-        intervalType = 'day';
-      } else {
-        interval = Math.floor(seconds / 3600);
-        if (interval >= 1) {
-          intervalType = "hour";
-        } else {
-          interval = Math.floor(seconds / 60);
-          if (interval >= 1) {
-            intervalType = "minute";
-          } else {
-            interval = seconds;
-            intervalType = "second";
-          }
-        }
-      }
-    }
-  }
-
-  if (interval > 1 || interval === 0) {
-    intervalType += 's';
-  }
-
-  return interval + ' ' + intervalType;
-};

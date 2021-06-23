@@ -5,6 +5,8 @@
   .loading {
     background: linear-gradient(90deg, #e6e6e6 25%, #fff 37%, #e6e6e6 63%);
     border-radius: 1rem;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
     background-size: 400% 100%;
     animation: loading 3s ease infinite;
   }
@@ -426,6 +428,18 @@
       }
     }
   }
+  .table-title {
+    font-size: 1.25rem;
+    color: $grayscale5;
+    font-weight: 500;
+    font-family: 'Comfortaa';
+    span {
+      font-size: 1rem;
+      color: $grayscale4;
+      font-weight: $fontWeight-normal;
+      font-family: 'Noway Round';
+    }
+  }
 }
 
 .activity-main {
@@ -439,13 +453,10 @@
     svg {
       margin-left: 10px;
     }
-    a {
-      margin: 0 24px;
-    }
     &-content {
       display: grid;
       grid-template-rows: 21px 19px;
-      grid-template-columns: 53px 300px;
+      grid-template-columns: auto 1fr;
       gap: 6px;
       grid-template-areas: 
         'activity-type-pill  time'
@@ -456,6 +467,19 @@
         grid-area: activity-type-pill;
         display: flex;
         align-items: flex-end;
+
+        .Claim {
+          color: #0FCEAD!important;
+          background-color: #DCFFF9!important;
+        }
+        .Transfer {
+          color: $violet2!important;
+          background-color: #EEEDFF!important;
+        }
+        .Migration {
+          color: #3FADF6!important;
+          background-color: #E7F5FF!important;
+        }
       }
       .time {
         grid-area: time;
@@ -528,4 +552,21 @@ table {
       background: rgba($grayscale1, 0.3);
     }
   }
+}
+
+.pill {
+  background-color: $grayscale0;
+  color: $grayscale5;
+  border-radius: 8px;
+  width: fit-content;
+  height: 1.8rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: .875rem;
+  padding: .35rem;
+}
+
+.hidden {
+  display: none;
 }
