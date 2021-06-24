@@ -651,7 +651,10 @@ table {
   tr {
     height: 67px;
     &:nth-child(even) td {
-      background: rgba($grayscale1, 0.3);
+      background: rgb(248,250,255); // equivalent to rgba($grayscale1, 0.3)
+    }
+    &:nth-child(odd) td {
+      background: $white;
     }
   }
 }

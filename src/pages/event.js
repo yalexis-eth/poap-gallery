@@ -13,6 +13,7 @@ import {getEnsData} from './../store/mutations';
 import Loader from '../components/loader'
 import _ from 'lodash'
 import { EventCard } from '../components/eventCard';
+import { Foliage } from '../components/foliage';
 
 const GRAPH_LIMIT = 1000;
 
@@ -139,6 +140,7 @@ export function Event() {
           <meta property="og:url" content={"https://poap.gallery/event/" + eventId }></meta>
           <meta property="og:title" content="POAP Gallery - Event"></meta>
         </Helmet>
+        <Foliage />
         <div style={{display: 'flex', justifyContent: 'center'}}>
           <Loader></Loader>
         </div>
@@ -155,6 +157,7 @@ export function Event() {
           <meta property="og:url" content={"https://poap.gallery/event/" + eventId }></meta>
           <meta property="og:title" content="POAP Gallery - Event"></meta>
         </Helmet>
+        <Foliage />
         <div style={{display: 'flex', justifyContent: 'center', flexDirection: 'column', margin: '0 auto', textAlign: 'center'}}>
           <h2>{errorEvent || 'Token not found'}</h2>
           <div >
@@ -173,6 +176,7 @@ export function Event() {
         <meta property="og:url" content={"https://poap.gallery/event/" + eventId }></meta>
         <meta property="og:title" content="POAP Gallery - Event"></meta>
       </Helmet>
+      <Foliage />
       <div className="container">
         <div style={{
           display: 'flex',
@@ -227,7 +231,6 @@ function CreateTable({loading, pageCount: pc, columns, data, event}) {
     prepareRow,
     page,
     setPageSize,
-    state: { pageIndex, pageSize },
   } = useTable({ columns, data, pageCount: pc, initialState: { pageSize: length } }, usePagination)
 
   return (
@@ -280,10 +283,8 @@ function CreateTable({loading, pageCount: pc, columns, data, event}) {
         threshold={1}
         onChange={(inView, entry) => {
           if (inView) {
-            setTimeout(() => {
-              setLength(length + 20)
-              setPageSize(length)
-            }, 200);
+            setLength(length + 20)
+            setPageSize(length)
           }
         }}
       >

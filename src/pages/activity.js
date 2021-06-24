@@ -13,6 +13,7 @@ import Claim from '../assets/images/claim.svg'
 import Transfer from '../assets/images/transfer.svg'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
+import { Foliage } from '../components/foliage';
 
 dayjs.extend(relativeTime)
 
@@ -82,6 +83,7 @@ export default function Activity() {
         <meta property="og:url" content="https://poap.gallery/activity"></meta>
         <meta property="og:title" content="POAP Gallery - Activity"></meta>
       </Helmet>
+      <Foliage />
       <div className="activityContainer container" style={{
         padding: '0 4rem',
         maxWidth: 'none'
