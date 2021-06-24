@@ -122,7 +122,7 @@ input[type='file'] {
   height: 50px;
   padding: 12px;
   box-shadow: none;
-  border: 2px solid $color-invert;
+  border: 2px solid $grayscale3;
   background: $color-invert;
   transition: right 0.2s ease-out;
   border-radius: 4px;
@@ -264,9 +264,9 @@ select {
   width: 100%;
   padding: 12px;
   box-shadow: none;
-  border: 2px solid $color-invert;
+  border: 2px solid $grayscale2;
   background: $color-invert;
-  color: $color-primary;
+  color: $grayscale5;
   transition: right 0.2s ease-out;
   border-radius: 4px;
   margin: 0 0 24px;
@@ -275,7 +275,7 @@ select {
 
   appearance: none;
 
-  background-image: $violet-select-arrow;
+  background-image: $gray-select-arrow;
   background-position: calc(100% - 20px) calc(1em + 2px), calc(100% - 15px) calc(1em + 2px),
     calc(100% - 2.5em) 0.5em;
   background-size: 5px 5px, 5px 5px, 1px 1.5em;
@@ -558,6 +558,29 @@ textarea {
     li {
       color: $color-primary;
       margin: 5px 0;
+    }
+  }
+}
+
+.home-main {
+  .container {
+    position: relative;
+    .background {
+      position: absolute;
+      background-repeat: no-repeat;
+      z-index: -2;
+      width: 100%;
+      height: 654px;
+      background-image: url('../../assets/images/city-02-Pittsburg_1.svg');
+      background-position: top 0 right 0;
+    }
+    .gradient-background {
+      position: absolute;
+      pointer-events: none;
+      z-index: -1;
+      right:0; top: 240px; left:0;
+      height: 425px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #FFFFFF 48.44%, #FFFFFF 100%);
     }
   }
 }

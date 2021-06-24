@@ -115,13 +115,14 @@ function TokenRow({transfer}) {
           (type === 'Claim') ?<img src={Claim} alt="Claim" /> :
           <img src={Transfer} alt="Transfer" />
         }
-        <a href={"https://app.poap.xyz/token/"+transfer.token.id}>
+        <a
+          href={"https://app.poap.xyz/token/"+transfer.token.id}>
           <img style={{
             width: 80,
             height: 80,
             objectFit: 'cover',
             borderRadius: '50%',
-            margin: '0 24px'
+            margin: '0 24px 0 14px'
           }} src={`${POAP_API_URL}/token/${transfer.token.id}/image`} alt=""/>
         </a>
         <div className='recent-activity-content'>
@@ -129,7 +130,8 @@ function TokenRow({transfer}) {
           <div className='time ellipsis'>{dayjs(transfer.timestamp * 1000).fromNow()}</div>
           <div className='description ellipsis'>{
             (type === 'Migration') ? 'POAP migrated to mainnet' :
-            (type === 'Claim') ? <span> New claim on event <a href={`https://poap.gallery/event/${transfer.token.event.id}`}>#{transfer.token.event.id}</a></span> :
+            (type === 'Claim') ? <span> New claim on event 
+              <a href={`https://poap.gallery/event/${transfer.token.event.id}`}>#{transfer.token.event.id}</a></span> :
             <span>POAP transferred from 
               <a href={`https://app.poap.xyz/scan/${transfer.from.id}`}> {transfer.from.id.substring(0, 8) + '…'} </a> to
               <a href={`https://app.poap.xyz/scan/${transfer.to.id}`}> {transfer.to.id.substring(0, 8) + '…'}</a>
@@ -159,7 +161,7 @@ function CreateTable({transfers, loading}) {
       <table className="table" style={{ width: '100%', fontSize: '.93rem', whiteSpace: 'nowrap' }}>
               <thead>
                 <tr>
-                  <th>Recent Activity</th>
+                  <th style={{paddingLeft: '20px', textAlign: 'start'}}>Recent Activity</th>
                   <th>POAP ID</th>
                   <th>Owner</th>
                   <th>TX count <FontAwesomeIcon icon={faQuestionCircle} data-tip="The amount of transactions this POAP has done since it the day it been claimed." /> <ReactTooltip /> </th>

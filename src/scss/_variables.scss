@@ -39,8 +39,8 @@ $color-light-violet: #cabdf3;
 $color-light-grey: #eef0fb;
 $color-grey: #878787;
 
-$violet-select-arrow: linear-gradient(45deg, transparent 50%, $color-primary 50%),
-  linear-gradient(135deg, $color-primary 50%, transparent 50%);
+$gray-select-arrow: linear-gradient(45deg, transparent 50%, $grayscale4 50%),
+  linear-gradient(135deg, $grayscale4 50%, transparent 50%);
 
 $red-select-arrow: linear-gradient(45deg, transparent 50%, $error-red 50%),
   linear-gradient(135deg, $error-red 50%, transparent 50%);

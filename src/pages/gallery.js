@@ -126,15 +126,19 @@ export default function Gallery() {
   };
 
   return (
-    <main id="site-main" role="main" className="app-content">
+    <main id="site-main" role="main" className="app-content home-main">
       <Helmet>
         <title>POAP Gallery - Home</title>
         <link rel="canonical" href="https://poap.gallery"/>
         <meta property="og:url" content="https://poap.gallery"></meta>
         <meta property="og:title" content="POAP Gallery - Home"></meta>
       </Helmet>
-      <div className="container" style={{ padding: '1rem' }}>
+      <div className="container">
+        <div className="gradient-background"></div>
+        <div className='background'></div>
         <ActivityTable />
+        <div className="gallery-title">Explore</div>
+        <hr />
         <div className="gallery-grid">
           <div className="gallery-search">
             <input onChange={handleSearch} type="text" placeholder="Search.." />{' '}
@@ -166,9 +170,10 @@ export default function Gallery() {
                   flex: '1 1 60px',
                   textAlign: 'right',
                   marginRight: '1rem',
+                  color: '#8492CE'
                 }}
               >
-                Sort by{' '}
+                Order by{' '}
               </span>
               <div style={{ flex: '2 1 160px' }} className="sort-options">
                 <div
@@ -243,7 +248,7 @@ export default function Gallery() {
             <Loader></Loader>
           )}
         </div>
-        <button onClick={() => {
+        <button style={{marginTop: '40px'}} className='btn' onClick={() => {
             if (items && items.length) {
               if (length + 20 < items.length) {
                 setLength(length + 20);

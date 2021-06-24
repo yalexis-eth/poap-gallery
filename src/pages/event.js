@@ -1,5 +1,6 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import {usePagination, useTable} from 'react-table'
+import {InView} from 'react-intersection-observer';
 import ReactTooltip from 'react-tooltip';
 import {Route, Switch, useParams, useRouteMatch} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
@@ -192,7 +193,7 @@ export function Event() {
             </div>
           </div>
         </div>
-        <div style={{display: 'flex', overflow: 'hidden', alignItems: 'flex-end'}}>
+        <div style={{display: 'flex', overflow: 'hidden', alignItems: 'flex-end', margin: '0 98px'}}>
           <div className='table-title'>Owners <span>({tokens.length})</span></div>
           <CSVLink
             filename={`${event.name}.csv`}
@@ -209,7 +210,7 @@ export function Event() {
             Download CSV
           </CSVLink>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', overflow: 'auto' }}>
+        <div style={{ display: 'flex', alignItems: 'center', overflow: 'hidden', margin: '0 98px' }}>
           <CreateTable event={event} loading={loadingEvent !== 'succeeded'} columns={columns} data={data} pageCount={pageCount} ></CreateTable>
         </div>
       </div>
@@ -218,13 +219,16 @@ export function Event() {
 }
 
 function CreateTable({loading, pageCount: pc, columns, data, event}) {
+  const [length, setLength] = useState(20);
   const {
     getTableProps,
     getTableBodyProps,
     headerGroups,
     prepareRow,
     page,
-  } = useTable({ columns, data, pageCount: pc, initialState: { pageIndex: 0 }, manualPagination: true }, usePagination)
+    setPageSize,
+    state: { pageIndex, pageSize },
+  } = useTable({ columns, data, pageCount: pc, initialState: { pageSize: length } }, usePagination)
 
   return (
     <div style={{width: '100%'}} className='table-container'>
@@ -271,6 +275,21 @@ function CreateTable({loading, pageCount: pc, columns, data, event}) {
           </tr>
         </tbody>
     </table>
+    <div className="pagination">
+      <InView
+        threshold={1}
+        onChange={(inView, entry) => {
+          if (inView) {
+            setTimeout(() => {
+              setLength(length + 20)
+              setPageSize(length)
+            }, 200);
+          }
+        }}
+      >
+        {({ inView, ref, entry }) => <div ref={ref}></div>}
+      </InView>
+    </div>
    </div>
   )
 }
