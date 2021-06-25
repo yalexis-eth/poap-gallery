@@ -197,7 +197,7 @@ export function Event() {
             </div>
           </div>
         </div>
-        <div style={{display: 'flex', overflow: 'hidden', alignItems: 'flex-end', margin: '0 98px'}}>
+        <div className='table-header'>
           <div className='table-title'>Owners <span>({tokens.length})</span></div>
           <CSVLink
             filename={`${event.name}.csv`}
@@ -214,7 +214,7 @@ export function Event() {
             Download CSV
           </CSVLink>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', overflow: 'hidden', margin: '0 98px' }}>
+        <div className='table-container'>
           <CreateTable event={event} loading={loadingEvent !== 'succeeded'} columns={columns} data={data} pageCount={pageCount} ></CreateTable>
         </div>
       </div>
@@ -234,7 +234,7 @@ function CreateTable({loading, pageCount: pc, columns, data, event}) {
   } = useTable({ columns, data, pageCount: pc, initialState: { pageSize: length } }, usePagination)
 
   return (
-    <div style={{width: '100%'}} className='table-container'>
+    <div style={{width: '100%'}} className='event-table'>
       <table style={{ width: '100%' }} {...getTableProps()}>
       <thead>
         {// Loop over the header rows

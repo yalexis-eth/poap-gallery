@@ -25,7 +25,7 @@ $height-content-first-large: calc(#{$height-content-large} - #{$height-content-s
 .gallery-card {
   cursor: pointer;
   position: relative;
-  box-shadow: 0px 4px 16px rgba(187, 196, 239, 0.35);
+  box-shadow: 0 5px 16px rgba(100,100,100, 0.3), 0 5px 22px rgba(100,100,100, 0.2);
   transition: box-shadow .2s ease;
   border-radius: 20px;
   display: flex;
@@ -34,6 +34,10 @@ $height-content-first-large: calc(#{$height-content-large} - #{$height-content-s
   align-items: center;
   overflow: hidden;
   font-family: 'Noway Round';
+
+  @media (min-width: $bp-m) {
+    box-shadow: 0px 4px 16px rgba(187, 196, 239, 0.35);
+  }
   
   .header {
     width: 100%;
@@ -90,7 +94,6 @@ $height-content-first-large: calc(#{$height-content-large} - #{$height-content-s
       }
     }
   }
-
 
 
 
@@ -172,20 +175,34 @@ $height-content-first-large: calc(#{$height-content-large} - #{$height-content-s
     height: $height-card-large;
     .header {
       pointer-events: none;
-      width: $width-header-large;
+      display: none!important;
       height: $height-header-large;
+      width: calc(#{$width-header-large} - 100px);
+      display: flex;
+      align-items: center;
+      justify-items: center;
+      @media (min-width: $bp-m) {
+        width: calc(#{$width-header-large} - 50px);
+        display: inherit!important;
+      }
+      @media (min-width: $bp-mw) {
+        width: $width-header-large;
+        img {
+          width: 200px!important;
+          height: 200px!important;
+        }
+      }
       background-image: url('../../assets/images/card-bg-top-large.svg');
       img {
-        width: 200px;
-        height: 200px;
-        margin: 61.5px 46px;
+        width: 150px;
+        height: 150px;
       }
     }
     .content {
       margin: 0;
-      width: $width-content-large;
-      height: $height-content-large;
+      width: calc(#{$width-content-large} - 200px);
       overflow: hidden;
+      height: $height-content-large;
       &-first {
         width: calc(100% - #{$margin-content-large} - #{$margin-content-large})!important;
         height: $height-content-first-large;
@@ -215,6 +232,7 @@ $height-content-first-large: calc(#{$height-content-large} - #{$height-content-s
           color: $grayscale4;
           &-main {
             height: 4.8rem;
+            margin-top: 2rem;
             overflow-y: scroll;
           }
           &-url {
@@ -225,11 +243,40 @@ $height-content-first-large: calc(#{$height-content-large} - #{$height-content-s
       }
       &-second {
         padding: 0!important;
-        width: calc(100% - #{$margin-content-large} - #{$margin-content-large} - 90px)!important;
-        margin: 0 $margin-content-large $margin-content-large 10px;
+        width: calc(100% - #{$margin-content-large} - #{$margin-content-large} - 50px)!important;
+        margin-left: 26px;
         font-size: 1.25rem;
         .title {
           font-size: 0.75rem;
+        }
+      }
+      @media (min-width: $bp-sw) {
+        width: calc(#{$width-content-large} - 100px);
+      }
+      @media (min-width: $bp-m) {
+        width: $width-content-large;
+        &-first {
+          // width: calc(100% - #{$margin-content-large} - #{$margin-content-large} - 90px - 200px)!important;
+          .content-description {
+            &-main {
+            }
+          }
+        }
+        &-second {
+          width: calc(100% - #{$margin-content-large} - #{$margin-content-large} - 90px)!important;
+          margin-left: 26px;
+        }
+      }
+      @media (min-width: $bp-mw) {
+        &-first {
+          .content-description {
+            &-main {
+            }
+          }
+        }
+        &-second {
+          width: calc(100% - #{$margin-content-large} - #{$margin-content-large} - 90px)!important;
+          margin-left: 10px;
         }
       }
     }
