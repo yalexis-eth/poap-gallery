@@ -284,7 +284,7 @@ function CreateTable({loading, pageCount: pc, columns, data, event}) {
         onChange={(inView, entry) => {
           if (inView) {
             setLength(length + 20)
-            setPageSize(length)
+            setPageSize(length + 20)
           }
         }}
       >
