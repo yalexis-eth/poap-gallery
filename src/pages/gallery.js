@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import ActivityTable from '../components/activityTable'
 import {Helmet} from 'react-helmet';
 import {fetchIndexData, selectEventError, selectEventStatus, selectRecentEvents} from '../store';
@@ -29,13 +29,27 @@ export default function Gallery() {
 
   useEffect(() => {
     setItems(events)
-  }, [events])
+    console.log('setting items', items.length);
+  }, [events, items])
 
-
-
+  const debounceFunction = (func, delay) => {
+    let timer;
+    return function() {
+      let self = this;
+      let args= arguments;
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        func.apply(self, args)
+      }, delay)
+    }
+  }
+  const debounceHandleSearch = useCallback(debounceFunction((nextValue, items) => handleNewSearchValue(nextValue, items), 800), [])
   const handleSearch = (event) => {
-    const value = event.target.value;
-    if (value && value.length) {
+    const value = event.target.value
+    debounceHandleSearch(value, items)
+  };
+  const handleNewSearchValue = (value, items) => {
+    if (value && value.length > 1) {
       const filteredItems = items.filter((item) => {
         return item.name.toLowerCase().indexOf(value.toLowerCase()) !== -1;
       });
@@ -43,7 +57,7 @@ export default function Gallery() {
     } else {
       setSearch([]);
     }
-  };
+  }
 
   const filterDirection = (ev) => {
     setSortOrder(ev.target.value);
