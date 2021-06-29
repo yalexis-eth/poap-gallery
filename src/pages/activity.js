@@ -85,17 +85,16 @@ export default function Activity() {
       </Helmet>
       <Foliage />
       <div className="activityContainer container" style={{
-        padding: '0 4rem',
         maxWidth: 'none'
       }}>
 
-        <div className="gallery-grid activity-grid" style={{ display: 'flex', justifyContent: 'center' }}>
+        <div className="gallery-grid activity-grid" style={{ padding: '0 4rem', display: 'flex', justifyContent: 'center' }}>
           <EventCard event={mostRecent} size='m' type='most-recent' />
           <EventCard event={upcoming} size='m' type='upcoming' />
           <EventCard event={mostClaimed} size='m' type='most-claimed' />
         </div>
 
-        <div style={{ marginTop: 50, display: 'flex', alignItems: 'center', overflowX: 'auto', minWidth: '100%' }}>
+        <div className='table-container' style={{ marginTop: 50, display: 'flex', alignItems: 'center', overflowX: 'auto' }}>
           <CreateTable loading={loading} transfers={transfers} ></CreateTable>
         </div>
 
@@ -111,7 +110,7 @@ function TokenRow({transfer}) {
   return (
     <tr>
       {/* <td><a href={"https://app.poap.xyz/token/" + transfer.id}>{transfer.id}</a></td> */}
-      <td className='recent-activity' style={{width:'100%', padding: 14}}>
+      <td className='recent-activity' style={{width:'100%'}}>
         {
           (type === 'Migration') ? <img src={Migration} alt="Migration" /> :
           (type === 'Claim') ?<img src={Claim} alt="Claim" /> :
@@ -130,10 +129,10 @@ function TokenRow({transfer}) {
         <div className='recent-activity-content'>
           <div className='activity-type-pill'><Pill className={`${type}`} text={type} tooltip={false} /></div>
           <div className='time ellipsis'>{dayjs(transfer.timestamp * 1000).fromNow()}</div>
-          <div className='description ellipsis'>{
+          <div className='description'>{
             (type === 'Migration') ? 'POAP migrated to mainnet' :
-            (type === 'Claim') ? <span> New claim on event 
-              <a href={`https://poap.gallery/event/${transfer.token.event.id}`}>#{transfer.token.event.id}</a></span> :
+            (type === 'Claim') ? <span> <span className='max-m'>New claim{' '}</span>
+              on event{' '}<a href={`https://poap.gallery/event/${transfer.token.event.id}`}>#{transfer.token.event.id}</a></span> :
             <span>POAP transferred from 
               <a href={`https://app.poap.xyz/scan/${transfer.from.id}`}> {transfer.from.id.substring(0, 8) + '…'} </a> to
               <a href={`https://app.poap.xyz/scan/${transfer.to.id}`}> {transfer.to.id.substring(0, 8) + '…'}</a>
@@ -141,10 +140,10 @@ function TokenRow({transfer}) {
           }</div>
         </div>
       </td>
-      <td style={{padding: 14}}><a href={"https://app.poap.xyz/token/" + transfer.token.id}>{'#'}{transfer.token.id}</a></td>
-      <td style={{padding: 14}}><a href={"https://app.poap.xyz/scan/" + transfer.to.id}> {transfer.to.id.substring(0,16)+ '…'} </a></td>
-      <td style={{padding: 14}}> {transfer.token.transferCount && transfer.token.transferCount > 0 ? transfer.token.transferCount : 'Claimed'} </td>
-      <td style={{padding: 14}}> { new Date(transfer.timestamp * 1000).toLocaleDateString('en-UK') } </td>
+      <td className='ellipsis'><a href={"https://app.poap.xyz/token/" + transfer.token.id}>{'#'}{transfer.token.id}</a></td>
+      <td style={{minWidth: '50px'}}><a href={"https://app.poap.xyz/scan/" + transfer.to.id}> {transfer.to.id.substring(0,8)+ '…'} </a></td>
+      <td> {transfer.token.transferCount && transfer.token.transferCount > 0 ? transfer.token.transferCount : 'Claimed'} </td>
+      <td style={{wordBreak: 'break-all'}} > { new Date(transfer.timestamp * 1000).toLocaleDateString('en-UK') } </td>
     </tr>
   )
 }
@@ -159,20 +158,20 @@ function CreateTable({transfers, loading}) {
     tfers.push(<tr><td/><td/><td/><td/><td/></tr>)
   }
   return (
-    <div style={{width: '100%'}} className='table-container'>
-      <table className="table" style={{ width: '100%', fontSize: '.93rem', whiteSpace: 'nowrap' }}>
-              <thead>
-                <tr>
-                  <th style={{paddingLeft: '20px', textAlign: 'start'}}>Recent Activity</th>
-                  <th>POAP ID</th>
-                  <th>Owner</th>
-                  <th>TX count <FontAwesomeIcon icon={faQuestionCircle} data-tip="The amount of transactions this POAP has done since it the day it been claimed." /> <ReactTooltip /> </th>
-                  <th>Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? <tr style={{height: '600px', width: 'inherit'}}><td className="loading" colSpan="6"></td></tr> : tfers && tfers.length? tfers : (<tr><td style={{textAlign: 'center'}} colSpan="7">No Tokens Transferred</td></tr>)}
-              </tbody>
+    <div style={{width: '100%'}} className='activity-table-container'>
+      <table className="table" style={{ width: '100%', fontSize: '.93rem' }}>
+        <thead>
+          <tr>
+            <th style={{paddingLeft: '20px', textAlign: 'start'}}>Recent Activity</th>
+            <th>POAP ID</th>
+            <th>Owner</th>
+            <th>TX count <FontAwesomeIcon icon={faQuestionCircle} data-tip="The amount of transactions this POAP has done since it the day it been claimed." /> <ReactTooltip /> </th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {loading ? <tr style={{height: '600px', width: 'inherit'}}><td className="loading" colSpan="6"></td></tr> : tfers && tfers.length? tfers : (<tr><td style={{textAlign: 'center'}} colSpan="7">No Tokens Transferred</td></tr>)}
+        </tbody>
       </table>
     </div>
   )

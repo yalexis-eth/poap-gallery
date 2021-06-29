@@ -29,7 +29,6 @@ export default function Gallery() {
 
   useEffect(() => {
     setItems(events)
-    console.log('setting items', items.length);
   }, [events, items])
 
   const debounceFunction = (func, delay) => {
@@ -156,17 +155,20 @@ export default function Gallery() {
         <div className="gallery-grid">
           <div className="gallery-search">
             <input onChange={handleSearch} type="text" placeholder="Search.." />{' '}
-            <span
-              style={{
-                position: 'absolute',
-                top: '108%',
-                right: '0',
-                color: '#66666688',
-                fontSize: '.8rem',
-              }}
-            >
-              {search.length} result(s)
-            </span>
+            {
+              search && search.length ?
+              <span
+                style={{
+                  position: 'absolute',
+                  top: '108%',
+                  right: '0',
+                  color: '#66666688',
+                  fontSize: '.8rem',
+                }}
+              >
+                {search.length} result(s)
+              </span> : null
+            }
           </div>
           <div className="gallery-filter">
             <div
@@ -262,17 +264,19 @@ export default function Gallery() {
             <Loader></Loader>
           )}
         </div>
-        <button style={{marginTop: '40px'}} className='btn' onClick={() => {
-            if (items && items.length) {
-              if (length + 20 < items.length) {
-                setLength(length + 20);
-              } else {
-                setLength(items.length);
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <button style={{marginTop: '40px'}} className='btn' onClick={() => {
+              if (items && items.length) {
+                if (length + 20 < items.length) {
+                  setLength(length + 20);
+                } else {
+                  setLength(items.length);
+                }
               }
-            }
-          }}>
-          Load more
-        </button>
+            }}>
+            Load more
+          </button>
+        </div>
       </div>
     </main>
   );

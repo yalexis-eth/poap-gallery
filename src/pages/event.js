@@ -66,7 +66,7 @@ export function Event() {
     let _csv_data = []
     _csv_data.push(['ID', 'Owner', 'ENS', 'Claim Date', 'Tx Count', 'Power']);
     for (let i = 0; i < tokens.length; i++) {
-      const displayName = `${tokens[i].owner.id.substr(0,10)}…${tokens[i].ens ? tokens[i].ens : tokens[i].owner.id.substr(32)}`
+      const displayName = `${tokens[i].owner.id.substr(0,10)}…${tokens[i].owner.id.substr(tokens[i].owner.id.length-10)}`
       _data.push({
         col1:  (<a href={"https://app.poap.xyz/token/" + tokens[i].id} target="_blank" rel="noopener noreferrer">{'#'}{tokens[i].id}</a>) ,
         col2: (<a href={"https://app.poap.xyz/scan/" + tokens[i].owner.id} target="_blank" rel="noopener noreferrer"> {displayName}</a>),

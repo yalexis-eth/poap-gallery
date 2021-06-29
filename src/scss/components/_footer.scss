@@ -38,22 +38,10 @@
   grid-template-areas:
     'home-link    ecosystem    join-links'
     'eth-branding eth-branding eth-branding';
-  @media (max-width: $bp-m) {
-    grid-template-rows: 2fr 2fr 1fr;
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      'ecosystem'
-      'join-links'
-      'eth-branding';
-  }
   .ecosystem, .join-links {
-    padding: 3%;
-    @media (min-width: $bp-m) {
-      padding: 10%;
-      padding-top: 5%;
-    }
+    padding: 10%;
+    padding-top: 5%;
   }
-
   .home-link {
     grid-area: home-link;
     width: fit-content;
@@ -64,9 +52,6 @@
     }
     &:hover img {
       transform: scale(0.9);
-    }
-    @media (max-width: $bp-m) {
-      display: none;
     }
   }
   .ecosystem {
@@ -162,6 +147,36 @@
   .eth-branding {
     grid-area: eth-branding;
     background-color: #f7f7f7;
+  }
+  @media (max-width: $bp-m) {
+    grid-template-rows: 2.3fr 1fr 2fr 40px;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'ecosystem'
+      'join-links'
+      'home-link'
+      'eth-branding';
+    .ecosystem, .join-links {
+      padding: 3%;
+      justify-content: center;
+      gap: 10%;
+      h4 {
+        text-align: center;
+      }
+      .social-icons {
+        justify-content: center;
+        a > img {
+          width: 32px;
+          height: 32px;
+        }
+      }
+    }
+    .home-link {
+      display: flex;
+      justify-content: center;
+      justify-self: center;
+      margin: 10%;
+    }
   }
 }
 
