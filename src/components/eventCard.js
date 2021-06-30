@@ -1,15 +1,22 @@
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faCoins, faGlobe, faHashtag, faLaptop, faPaperPlane, faClock, faFire } from "@fortawesome/free-solid-svg-icons";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 export function EventCard({ event, size = 's', type = '', power = 0}) {
+  const [tokenCount, setTokenCount] = useState(0);
+
   const validateType = (type) => {
     if (size !== 'm') return '';
     if (type !== 'most-recent' && type !== 'upcoming' && type !== 'most-claimed') return '';
     return type;
   }
   type = validateType(type);
+  useEffect(() => {
+    if (tokenCount === 0) {
+      setTokenCount(event.tokenCount)
+    }
+  }, [event, tokenCount])
 
   const nl2br = (text) => (text.split('\n').map((item, key) => {
     return <>{item}<br/></>
@@ -60,7 +67,7 @@ export function EventCard({ event, size = 's', type = '', power = 0}) {
         size === 'l' ?
         <div className='content-description'>
           <div className='content-description-main'>{nl2br(event.description)}</div>
-          <a href={event.event_url} className='content-description-url'>{event.event_url}</a>
+          <a href={event.event_url} className='content-description-url ellipsis'>{event.event_url}</a>
         </div>
         :
         /* id */
@@ -102,7 +109,7 @@ export function EventCard({ event, size = 's', type = '', power = 0}) {
           <div className="title">
             <FontAwesomeIcon style={{ width: '1rem', marginRight: '.4rem' }} icon={faCoins} />{'SUPPLY'}
           </div>
-          {event.tokenCount ? event.tokenCount : ' None Claimed'}
+          {tokenCount ? tokenCount : ' None Claimed'}
         </div>
         {
         size === 'l' &&
