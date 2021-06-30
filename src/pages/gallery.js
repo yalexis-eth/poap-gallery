@@ -29,7 +29,7 @@ export default function Gallery() {
 
   useEffect(() => {
     setItems(events)
-  }, [events, items])
+  }, [events])
 
   const debounceFunction = (func, delay) => {
     let timer;

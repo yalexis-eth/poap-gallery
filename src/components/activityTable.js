@@ -101,7 +101,7 @@ function Transfer({transfer}) {
               {
                 (type === 'Claim')?
                 <span> New claim on event
-                  {' '}<a href={`https://poap.gallery/event/${transfer.token.event.id}`}>#{transfer.token.event.id}</a>
+                  {' '}<Link to={`/event/${transfer.token.event.id}`}>#{transfer.token.event.id}</Link>
                 </span> :
                 (type === 'Transfer')?
                 <span>POAP transferred from
