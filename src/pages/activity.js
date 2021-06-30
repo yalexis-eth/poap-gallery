@@ -88,7 +88,7 @@ export default function Activity() {
         maxWidth: 'none'
       }}>
 
-        <div className="gallery-grid activity-grid" style={{ padding: '0 4rem', display: 'flex', justifyContent: 'center' }}>
+        <div className="gallery-grid activity-grid" style={{ padding: '0 4rem', display: 'grid', justifyContent: 'center' }}>
           <EventCard event={mostRecent} size='m' type='most-recent' />
           <EventCard event={upcoming} size='m' type='upcoming' />
           <EventCard event={mostClaimed} size='m' type='most-claimed' />

@@ -95,31 +95,33 @@ function Transfer({transfer}) {
               borderRadius: '50%'
             }} src={`${POAP_API_URL}/token/${transfer.token.id}/image`} alt=""/>
           </a>
-          <div className='round-box-content'>
-            <Pill text={type} className={type} />
-            {
-              (type === 'Claim')?
-              <span> New claim on event
-                {' '}<a href={`https://poap.gallery/event/${transfer.token.event.id}`}>#{transfer.token.event.id}</a>
-              </span> :
-              (type === 'Transfer')?
-              <span>POAP transferred from
-                <a href={"https://app.poap.xyz/scan/" + transfer.from.id}> {transfer.from.id.substring(0, 16) + '…'} </a> to 
-                <a href={"https://app.poap.xyz/scan/" + transfer.to.id}> {transfer.to.id.substring(0, 16) + '…'} </a>
-                {/* on {transfer.network} */}
-              </span> :
-              (type === 'Migration')?
-              <span> POAP migrated to 
-                <a href={"https://app.poap.xyz/scan/" + transfer.to.id}> {transfer.to.id.substring(0, 16) + '…'} </a>
-                on mainnet
-              </span> :
-              null
-            }
+          {/* <div style={{overflow: 'hidden', display: 'flex', flexDirection: 'row'}}> */}
+            <div className='round-box-content'>
+              <Pill text={type} className={type} />
+              {
+                (type === 'Claim')?
+                <span> New claim on event
+                  {' '}<a href={`https://poap.gallery/event/${transfer.token.event.id}`}>#{transfer.token.event.id}</a>
+                </span> :
+                (type === 'Transfer')?
+                <span>POAP transferred from
+                  <a href={"https://app.poap.xyz/scan/" + transfer.from.id}> {transfer.from.id.substring(0, 8) + '…'} </a> to 
+                  <a href={"https://app.poap.xyz/scan/" + transfer.to.id}> {transfer.to.id.substring(0, 8) + '…'} </a>
+                  {/* on {transfer.network} */}
+                </span> :
+                (type === 'Migration')?
+                <span> POAP migrated to 
+                  <a href={"https://app.poap.xyz/scan/" + transfer.to.id}> {transfer.to.id.substring(0, 16) + '…'} </a>
+                  on mainnet
+                </span> :
+                null
+              }
 
-          </div>
-          <div className='round-box-time max-m'>
-            {dayjs(transfer.timestamp * 1000).fromNow()}
-          </div>
+            </div>
+            <div className='round-box-time max-m'>
+              {dayjs(transfer.timestamp * 1000).fromNow()}
+            </div>
+          {/* </div> */}
         </div>
       </div>
     </div>
