@@ -131,6 +131,7 @@
         }
         .round-box {
           &:hover {
+            text-decoration: none;
             box-shadow: 0 5px 16px rgba(100,100,100, 0.3), 0 5px 22px rgba(100,100,100, 0.2);
           }
           &.first {
@@ -147,6 +148,7 @@
             }
           }
           &-content {
+            color: $grayscale5;
             .pill {
               margin-bottom: 4px;
               &.Claim, &.Transfer, &.Migration {
@@ -809,14 +811,20 @@ table {
   transition: box-shadow .2s ease;
 }
 
-.max-m {
+.min-m {
   @media (max-width: $bp-m) {
     display: none!important;
   }
 }
 
+.max-m {
+  @media (min-width: $bp-m) {
+    display: none!important;
+  }
+}
+
 .max-sw {
-  @media (max-width: $bp-sw) {
+  @media (min-width: $bp-sw) {
     display: none!important;
   }
 }

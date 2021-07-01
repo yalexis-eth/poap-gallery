@@ -1,10 +1,10 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import {usePagination, useTable} from 'react-table'
+import {usePagination, useSortBy, useTable} from 'react-table'
 import {InView} from 'react-intersection-observer';
 import ReactTooltip from 'react-tooltip';
 import {Route, Switch, useParams, useRouteMatch} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faAngleLeft, faAngleRight, faQuestionCircle} from '@fortawesome/free-solid-svg-icons'
+import {faAngleLeft, faAngleRight, faArrowDown, faArrowUp, faDotCircle, faQuestionCircle} from '@fortawesome/free-solid-svg-icons'
 import {Helmet} from 'react-helmet'
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchEventPageData} from '../store';
@@ -14,6 +14,8 @@ import Loader from '../components/loader'
 import _ from 'lodash'
 import { EventCard } from '../components/eventCard';
 import { Foliage } from '../components/foliage';
+import dayjs from 'dayjs';
+import { shrinkAddress } from '../utilities/utilities';
 
 const GRAPH_LIMIT = 1000;
 
@@ -26,7 +28,7 @@ export default function Events() {
         <Event />
       </Route>
       <Route path={match.path}>
-        <h3>No event Selected</h3>
+        <h3 style={{ display: 'flex', justifyContent: 'center' }}>No event Selected</h3>
       </Route>
     </Switch>
   );
@@ -64,12 +66,14 @@ export function Event() {
 
     let _data = []
     let _csv_data = []
-    _csv_data.push(['ID', 'Owner', 'ENS', 'Claim Date', 'Tx Count', 'Power']);
+    _csv_data.push(['ID', 'Collection', 'ENS', 'Minting Date', 'Tx Count', 'Power']);
     for (let i = 0; i < tokens.length; i++) {
-      const displayName = `${tokens[i].owner.id.substr(0,10)}…${tokens[i].owner.id.substr(tokens[i].owner.id.length-10)}`
       _data.push({
         col1:  (<a href={"https://app.poap.xyz/token/" + tokens[i].id} target="_blank" rel="noopener noreferrer">{'#'}{tokens[i].id}</a>) ,
-        col2: (<a href={"https://app.poap.xyz/scan/" + tokens[i].owner.id} target="_blank" rel="noopener noreferrer"> {displayName}</a>),
+        col2: (<a href={"https://app.poap.xyz/scan/" + tokens[i].owner.id} target="_blank" rel="noopener noreferrer">
+          <span className='min-m'>a{shrinkAddress(tokens[i].owner.id, 20)}</span>
+          <span className='max-m'>b{shrinkAddress(tokens[i].owner.id, 10)}</span>
+        </a>),
         col3: new Date(tokens[i].created * 1000).toLocaleDateString(),
         col4: tokens[i].transferCount,
         col5: tokens[i].owner.tokensOwned,
@@ -111,11 +115,11 @@ export function Event() {
         accessor: 'col1', // accessor is the "key" in the data
       },
       {
-        Header: 'Owner',
+        Header: 'Collection',
         accessor: 'col2',
       },
       {
-        Header: 'Claim Date',
+        Header: 'Minting Date',
         accessor: 'col3',
       },
       {
@@ -129,7 +133,6 @@ export function Event() {
     ],
     []
   )
-
 
   if (loadingEvent === 'loading' || loadingEvent === 'idle') {
     return (
@@ -193,12 +196,12 @@ export function Event() {
               <a href={parseInt(eventId)+1} >{'Next  '}<FontAwesomeIcon icon={faAngleRight}/></a>
             </div>
             <div style={{minHeight: '200px', margin: '0 auto'}}>
-              <EventCard key={0} event={event} size='l' power={power} />
+              <EventCard event={event} size='l' power={power} />
             </div>
           </div>
         </div>
         <div className='table-header'>
-          <div className='table-title'>Owners <span>({tokens.length})</span></div>
+          <div className='table-title'>Collections <span>({tokens.length})</span></div>
           <CSVLink
             filename={`${event.name}.csv`}
             target="_blank"
@@ -231,7 +234,18 @@ function CreateTable({loading, pageCount: pc, columns, data, event}) {
     prepareRow,
     page,
     setPageSize,
-  } = useTable({ columns, data, pageCount: pc, initialState: { pageSize: length } }, usePagination)
+  } = useTable({ columns, data, pageCount: pc, initialState: { pageSize: length } }, useSortBy, usePagination)
+
+  const [dateFormat, setDateFormat] = useState('timeago')
+  const toggleDateFormat = () => {
+    dateFormat === 'timeago' ? setDateFormat('date') : setDateFormat('timeago')
+  }
+  const dateCell = (cell) => {
+    if (dateFormat === 'date') {
+      return dayjs(cell.value).format('D-MMM-YYYY').toUpperCase();
+    }
+    return dayjs(cell.value).fromNow()
+  }
 
   return (
     <div style={{width: '100%'}} className='event-table'>
@@ -242,12 +256,29 @@ function CreateTable({loading, pageCount: pc, columns, data, event}) {
           // Apply the header row props
           <tr {...headerGroup.getHeaderGroupProps()}>
             {// Loop over the headers in each row
-            headerGroup.headers.map(column => (
+            headerGroup.headers.map((column, idx) => (
               // Apply the header cell props
-              <th {...column.getHeaderProps()}>
-                {// Render the header
-                column.render('Header')}
-              </th>
+              idx === 0
+                ? <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                  {// Render the header
+                  column.render('Header')}{' '}
+                  {column.isSorted
+                    ? column.isSortedDesc
+                      ? <FontAwesomeIcon style={{ width: '1rem', marginRight: '.2rem' }} icon={faArrowDown} />
+                      : <FontAwesomeIcon style={{ width: '1rem', marginRight: '.2rem' }} icon={faArrowUp} />
+                    : ''}
+                  </th>
+                :
+              idx === 2
+                ? <th {...column.getHeaderProps()}>
+                  {// Render the header
+                  column.render('Header')}{' '}
+                  <FontAwesomeIcon onClick={toggleDateFormat} style={{ width: '1rem', marginRight: '.2rem', cursor: 'pointer' }} icon={faDotCircle} data-tip='Toggle date format'/> <ReactTooltip />
+                </th>
+                : <th {...column.getHeaderProps()}>
+                  {// Render the header
+                  column.render('Header')}
+                </th>
             ))}
           </tr>
         ))}
@@ -258,9 +289,12 @@ function CreateTable({loading, pageCount: pc, columns, data, event}) {
             prepareRow(row)
             return (
               <tr {...row.getRowProps()}>
-                {row.cells.map(cell => {
-                  return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                })}
+                {row.cells.map((cell, idx) => {
+                  return (
+                    idx === 2
+                    ? <td {...cell.getCellProps()}>{dateCell(cell)}</td>
+                    : <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                )})}
               </tr>
             )
           })}

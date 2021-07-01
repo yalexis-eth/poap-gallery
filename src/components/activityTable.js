@@ -88,13 +88,13 @@ function Transfer({transfer}) {
       <div className='dashed-line max-sw' style={{height: `${transfer.opacity === 0.3 ? '0' : 'inherit'}`}}></div>
       <img style={{width: `37px`, zIndex: 2}} className='max-sw' src={type==='Transfer'? TransferIcon: type==='Claim'? ClaimIcon:MigrateIcon} alt={type} />
       <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
-        <div style={{margin: '.8rem 0', opacity: transfer.opacity}} className={`round-box ${transfer.opacity===1? 'first':''}`}>
-          <a className='round-box-image' href={"https://app.poap.xyz/token/" + transfer.token.id}>
+        <a href={"https://app.poap.xyz/token/" + transfer.token.id} style={{margin: '.8rem 0', opacity: transfer.opacity}} className={`round-box ${transfer.opacity===1? 'first':''}`}>
+          <div className='round-box-image'>
             <img style={{
               objectFit: 'cover',
               borderRadius: '50%'
             }} src={`${POAP_API_URL}/token/${transfer.token.id}/image`} alt=""/>
-          </a>
+          </div>
           {/* <div style={{overflow: 'hidden', display: 'flex', flexDirection: 'row'}}> */}
             <div className='round-box-content'>
               <Pill text={type} className={type} />
@@ -118,11 +118,11 @@ function Transfer({transfer}) {
               }
 
             </div>
-            <div className='round-box-time max-m'>
+            <div className='round-box-time min-m'>
               {dayjs(transfer.timestamp * 1000).fromNow()}
             </div>
           {/* </div> */}
-        </div>
+        </a>
       </div>
     </div>
   )

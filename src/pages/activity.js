@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import ReactTooltip from 'react-tooltip';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons';
+import {faDotCircle, faQuestionCircle} from '@fortawesome/free-solid-svg-icons';
 import {Helmet} from 'react-helmet'
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchIndexData, selectMostClaimed, selectMostRecent, selectUpcoming} from '../store';
@@ -14,6 +14,7 @@ import Transfer from '../assets/images/transfer.svg'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { Foliage } from '../components/foliage';
+import { shrinkAddress } from '../utilities/utilities';
 
 dayjs.extend(relativeTime)
 
@@ -103,10 +104,16 @@ export default function Activity() {
   )
 }
 
-function TokenRow({transfer}) {
+function TokenRow({transfer, dateFormat}) {
   const type = (transfer.from?.id === '0x0000000000000000000000000000000000000000') ? 
                   (transfer.network === 'mainnet') ? 'Migration':'Claim'
                   : 'Transfer'
+  const dateCell = (cell) => {
+    if (dateFormat === 'date') {
+      return dayjs(cell.value).format('D-MMM-YYYY').toUpperCase();
+    }
+    return dayjs(cell.value).fromNow()
+  }
   return (
     <tr>
       {/* <td><a href={"https://app.poap.xyz/token/" + transfer.id}>{transfer.id}</a></td> */}
@@ -131,28 +138,35 @@ function TokenRow({transfer}) {
           <div className='time ellipsis'>{dayjs(transfer.timestamp * 1000).fromNow()}</div>
           <div className='description'>{
             (type === 'Migration') ? 'POAP migrated to mainnet' :
-            (type === 'Claim') ? <span> <span className='max-m'>New claim{' '}</span>
+            (type === 'Claim') ? <span> <span className='min-m'>New claim{' '}</span>
               on event{' '}<a href={`https://poap.gallery/event/${transfer.token.event.id}`}>#{transfer.token.event.id}</a></span> :
             <span>POAP transferred from 
-              <a href={`https://app.poap.xyz/scan/${transfer.from.id}`}> {transfer.from.id.substring(0, 8) + '…'} </a> to
-              <a href={`https://app.poap.xyz/scan/${transfer.to.id}`}> {transfer.to.id.substring(0, 8) + '…'}</a>
+              <a href={`https://app.poap.xyz/scan/${transfer.from.id}`}> {shrinkAddress(transfer.from.id, 10)} </a> to
+              <a href={`https://app.poap.xyz/scan/${transfer.to.id}`}> {shrinkAddress(transfer.to.id, 10)}</a>
             </span>
           }</div>
         </div>
       </td>
       <td className='ellipsis'><a href={"https://app.poap.xyz/token/" + transfer.token.id}>{'#'}{transfer.token.id}</a></td>
-      <td style={{minWidth: '50px'}}><a href={"https://app.poap.xyz/scan/" + transfer.to.id}> {transfer.to.id.substring(0,8)+ '…'} </a></td>
+      <td style={{minWidth: '50px'}}><a href={"https://app.poap.xyz/scan/" + transfer.to.id}>
+        <span className='min-m'>a{shrinkAddress(transfer.to.id, 15)}</span>
+        <span className='max-sw'>b{shrinkAddress(transfer.to.id, 10)}</span>
+        </a></td>
       <td> {transfer.token.transferCount && transfer.token.transferCount > 0 ? transfer.token.transferCount : 'Claimed'} </td>
-      <td style={{wordBreak: 'break-all'}} > { new Date(transfer.timestamp * 1000).toLocaleDateString('en-UK') } </td>
+      <td style={{wordBreak: 'break-all'}} > { dateCell(transfer.timestamp * 1000) } </td>
     </tr>
   )
 }
 
 function CreateTable({transfers, loading}) {
+  const [dateFormat, setDateFormat] = useState('timeago')
+  const toggleDateFormat = () => {
+    dateFormat === 'timeago' ? setDateFormat('date') : setDateFormat('timeago')
+  }
   const tfers = []
   for (let i = 0; i < transfers.length; i++) {
     const t = transfers[i];
-    tfers.push(<TokenRow key={t.id} transfer={t}></TokenRow>)
+    tfers.push(<TokenRow key={t.id} transfer={t} dateFormat={dateFormat}></TokenRow>)
   }
   if (tfers && tfers.length) {
     tfers.push(<tr><td/><td/><td/><td/><td/></tr>)
@@ -164,9 +178,9 @@ function CreateTable({transfers, loading}) {
           <tr>
             <th style={{paddingLeft: '20px', textAlign: 'start'}}>Recent Activity</th>
             <th>POAP ID</th>
-            <th>Owner</th>
-            <th>TX count <FontAwesomeIcon icon={faQuestionCircle} data-tip="The amount of transactions this POAP has done since it the day it been claimed." /> <ReactTooltip /> </th>
-            <th>Date</th>
+            <th>Collection</th>
+            <th>TX count <FontAwesomeIcon icon={faQuestionCircle} data-tip="The amount of transactions this POAP has done since it the day it been claimed." /><ReactTooltip/> </th>
+            <th>Minting Date <FontAwesomeIcon icon={faDotCircle} onClick={toggleDateFormat} data-tip="Toggle date format" style={{ width: '1rem', marginRight: '.2rem', cursor: 'pointer' }} /><ReactTooltip/></th>
           </tr>
         </thead>
         <tbody>
