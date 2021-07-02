@@ -70,7 +70,7 @@ export function Event() {
     for (let i = 0; i < tokens.length; i++) {
       _data.push({
         col1:  (<a href={"https://app.poap.xyz/token/" + tokens[i].id} target="_blank" rel="noopener noreferrer">{'#'}{tokens[i].id}</a>) ,
-        col2: (<a href={"https://app.poap.xyz/scan/" + tokens[i].owner.id} target="_blank" rel="noopener noreferrer">
+        col2: (<a href={"https://app.poap.xyz/scan/" + tokens[i].owner.id} target="_blank" rel="noopener noreferrer" data-tip='View Collection in POAP.scan'> <ReactTooltip />
           <span className='min-m'>a{shrinkAddress(tokens[i].owner.id, 20)}</span>
           <span className='max-m'>b{shrinkAddress(tokens[i].owner.id, 10)}</span>
         </a>),

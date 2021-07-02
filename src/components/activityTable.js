@@ -85,8 +85,8 @@ function Transfer({transfer}) {
   const type = transferType(transfer)
   return (
     <div className='transfer'>
-      <div className='dashed-line max-sw' style={{height: `${transfer.opacity === 0.3 ? '0' : 'inherit'}`}}></div>
-      <img style={{width: `37px`, zIndex: 2}} className='max-sw' src={type==='Transfer'? TransferIcon: type==='Claim'? ClaimIcon:MigrateIcon} alt={type} />
+      <div className='dashed-line min-sw' style={{height: `${transfer.opacity === 0.3 ? '0' : 'inherit'}`}}></div>
+      <img style={{width: `37px`, zIndex: 2}} className='min-sw' src={type==='Transfer'? TransferIcon: type==='Claim'? ClaimIcon:MigrateIcon} alt={type} />
       <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
         <a href={"https://app.poap.xyz/token/" + transfer.token.id} style={{margin: '.8rem 0', opacity: transfer.opacity}} className={`round-box ${transfer.opacity===1? 'first':''}`}>
           <div className='round-box-image'>

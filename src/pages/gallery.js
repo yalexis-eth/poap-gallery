@@ -149,123 +149,125 @@ export default function Gallery() {
       <div className="container">
         <div className="gradient-background"></div>
         <div className='background'></div>
-        <ActivityTable />
-        <div className="gallery-title">Explore</div>
-        <hr />
-        <div className="gallery-grid">
-          <div className="gallery-search">
-            <input onChange={handleSearch} type="text" placeholder="Search.." />{' '}
-            {
-              search && search.length ?
-              <span
-                style={{
-                  position: 'absolute',
-                  top: '108%',
-                  right: '0',
-                  color: '#66666688',
-                  fontSize: '.8rem',
-                }}
-              >
-                {search.length} result(s)
-              </span> : null
-            }
-          </div>
-          <div className="gallery-filter">
-            <div
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                alignItems: 'center',
-                marginRight: '-.3rem',
-              }}
-              className="gallery-sort"
-            >
-              <span
-                style={{
-                  padding: '.2rem',
-                  flex: '1 1 60px',
-                  textAlign: 'right',
-                  marginRight: '1rem',
-                  color: '#8492CE'
-                }}
-              >
-                Order by{' '}
-              </span>
-              <div style={{ flex: '2 1 160px' }} className="sort-options">
-                <div
+        <div className='content'>
+          <ActivityTable />
+          <div className="gallery-title">Explore</div>
+          <hr />
+          <div className="gallery-grid">
+            <div className="gallery-search">
+              <input onChange={handleSearch} type="text" placeholder="Search.." />{' '}
+              {
+                search && search.length ?
+                <span
                   style={{
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    justifyContent: 'space-between',
+                    position: 'absolute',
+                    top: '108%',
+                    right: '0',
+                    color: '#66666688',
+                    fontSize: '.8rem',
                   }}
-                  className="selection-group"
                 >
+                  {search.length} result(s)
+                </span> : null
+              }
+            </div>
+            <div className="gallery-filter">
+              <div
+                style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  alignItems: 'center',
+                  marginRight: '-.3rem',
+                }}
+                className="gallery-sort"
+              >
+                <span
+                  style={{
+                    padding: '.2rem',
+                    flex: '1 1 60px',
+                    textAlign: 'right',
+                    marginRight: '1rem',
+                    color: '#8492CE'
+                  }}
+                >
+                  Order by{' '}
+                </span>
+                <div style={{ flex: '2 1 160px' }} className="sort-options">
                   <div
                     style={{
-                      margin: '.5rem .3rem',
-                      flex: '5 5 calc(50% - 1rem)',
-                      minWidth: '9rem',
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                      justifyContent: 'space-between',
                     }}
-                    className="selection-item"
+                    className="selection-group"
                   >
                     <div
                       style={{
-                        width: 'inherit',
+                        margin: '.5rem .3rem',
+                        flex: '5 5 calc(50% - 1rem)',
+                        minWidth: '9rem',
                       }}
-                      className="gallery-select-container"
-                      role="menu"
+                      className="selection-item"
                     >
-                      <select onChange={filterType} value={sortVariable} name="sort-by" id="" className="select">
-                        <option value="date">Date</option>
-                        <option value="id">ID</option>
-                        <option value="holders">Holders</option>
-                        <option value="transfers">Transactions</option>
-                        <option value="city">City (A-Z)</option>
-                      </select>
+                      <div
+                        style={{
+                          width: 'inherit',
+                        }}
+                        className="gallery-select-container"
+                        role="menu"
+                      >
+                        <select onChange={filterType} value={sortVariable} name="sort-by" id="" className="select">
+                          <option value="date">Date</option>
+                          <option value="id">ID</option>
+                          <option value="holders">Holders</option>
+                          <option value="transfers">Transactions</option>
+                          <option value="city">City (A-Z)</option>
+                        </select>
+                      </div>
                     </div>
-                  </div>
-                  <div
-                    style={{
-                      margin: '.5rem .3rem',
-                      flex: '5 5 calc(50% - 1rem)',
-                      minWidth: '9rem',
-                    }}
-                    className="selection-item"
-                  >
                     <div
                       style={{
-                        width: 'inherit',
+                        margin: '.5rem .3rem',
+                        flex: '5 5 calc(50% - 1rem)',
+                        minWidth: '9rem',
                       }}
-                      className="gallery-select-container"
-                      role="menu"
+                      className="selection-item"
                     >
-                      <select style={{ padding: '0 1rem' }} onChange={filterDirection} value={sortOrder} name="sort-by" id="" className="select">
-                        <option value="desc">High to Low</option>
-                        <option value="asc">Low to High</option>
-                      </select>
+                      <div
+                        style={{
+                          width: 'inherit',
+                        }}
+                        className="gallery-select-container"
+                        role="menu"
+                      >
+                        <select style={{ padding: '0 1rem' }} onChange={filterDirection} value={sortOrder} name="sort-by" id="" className="select">
+                          <option value="desc">High to Low</option>
+                          <option value="asc">Low to High</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          {eventError ? (
-            <div
-              style={{
-                gridColumn: '1 / 3',
-              }}
-            >
-              <span>Could not load gallery, check your connection and try again</span>
-            </div>
+            {eventError ? (
+              <div
+                style={{
+                  gridColumn: '1 / 3',
+                }}
+              >
+                <span>Could not load gallery, check your connection and try again</span>
+              </div>
 
-          ) : eventStatus === 'succeeded' ? (
-            <Cards events={search && search.length ? search : items} length={search.length || length} />
-          ) : (
-            <Loader></Loader>
-          )}
+            ) : eventStatus === 'succeeded' ? (
+              <Cards events={search && search.length ? search : items} length={search.length || length} />
+            ) : (
+              <Loader></Loader>
+            )}
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <button style={{marginTop: '40px'}} className='btn' onClick={() => {
+          <button style={{maxWidth: 1120, margin: '0 auto', marginTop: '40px'}} className='btn' onClick={() => {
               if (items && items.length) {
                 if (length + 20 < items.length) {
                   setLength(length + 20);
