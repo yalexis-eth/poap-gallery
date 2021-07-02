@@ -5,6 +5,7 @@ import {fetchIndexData, selectEventError, selectEventStatus, selectRecentEvents}
 import {useDispatch, useSelector} from 'react-redux';
 import {EventCard} from "../components/eventCard";
 import Loader from '../components/loader'
+import { debounce } from '../utilities/utilities';
 
 
 export default function Gallery() {
@@ -21,7 +22,7 @@ export default function Gallery() {
 
 
   const [items, setItems] = useState(events)
-  const [search, setSearch] = useState([]);
+  const [search, setSearch] = useState(undefined);
   const [length, setLength] = useState(50);
   const [sortOrder, setSortOrder] = useState('desc');
   const [sortVariable, setSortVariable] = useState('date');
@@ -31,18 +32,7 @@ export default function Gallery() {
     setItems(events)
   }, [events])
 
-  const debounceFunction = (func, delay) => {
-    let timer;
-    return function() {
-      let self = this;
-      let args= arguments;
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        func.apply(self, args)
-      }, delay)
-    }
-  }
-  const debounceHandleSearch = useCallback(debounceFunction((nextValue, items) => handleNewSearchValue(nextValue, items), 800), [])
+  const debounceHandleSearch = useCallback(debounce((nextValue, items) => handleNewSearchValue(nextValue, items), 800), [])
   const handleSearch = (event) => {
     const value = event.target.value
     debounceHandleSearch(value, items)
@@ -54,7 +44,7 @@ export default function Gallery() {
       });
       setSearch(filteredItems);
     } else {
-      setSearch([]);
+      setSearch(undefined);
     }
   }
 
@@ -260,24 +250,27 @@ export default function Gallery() {
               </div>
 
             ) : eventStatus === 'succeeded' ? (
-              <Cards events={search && search.length ? search : items} length={search.length || length} />
+              (search?.length === 0) ? <h3 className='failed-search'>No results for that search :(</h3> :
+              <Cards events={(search?.length) ? search : items} length={search?.length || length} />
             ) : (
               <Loader></Loader>
             )}
           </div>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
         </div>
-          <button style={{maxWidth: 1120, margin: '0 auto', marginTop: '40px'}} className='btn' onClick={() => {
-              if (items && items.length) {
-                if (length + 20 < items.length) {
-                  setLength(length + 20);
-                } else {
-                  setLength(items.length);
+          {!search ?
+            <button style={{maxWidth: 1120, margin: '0 auto', marginTop: '40px'}} className='btn' onClick={() => {
+                if (items && items.length) {
+                  if (length + 20 < items.length) {
+                    setLength(length + 20);
+                  } else {
+                    setLength(items.length);
+                  }
                 }
-              }
-            }}>
-            Load more
-          </button>
+              }}>
+              Load more
+            </button> : null
+          }
         </div>
       </div>
     </main>

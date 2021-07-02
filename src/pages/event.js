@@ -16,6 +16,7 @@ import { EventCard } from '../components/eventCard';
 import { Foliage } from '../components/foliage';
 import dayjs from 'dayjs';
 import { shrinkAddress } from '../utilities/utilities';
+import { useWindowWidth } from '@react-hook/window-size/throttled';
 
 const GRAPH_LIMIT = 1000;
 
@@ -47,6 +48,7 @@ export function Event() {
   const [data, setData] = useState([]);
   const [csv_data, setCsv_data] = useState([]);
   const [ensNames, setEnsNames] = useState([]);
+  const width = useWindowWidth();
   const pageCount = useMemo( () => event.tokenCount % 50 !== 0 ? Math.floor(event.tokenCount / 50) + 1 : event.tokenCount, [event])
   const power = calculatePower(csv_data);
   useEffect(() => {
@@ -71,8 +73,10 @@ export function Event() {
       _data.push({
         col1:  (<a href={"https://app.poap.xyz/token/" + tokens[i].id} target="_blank" rel="noopener noreferrer">{'#'}{tokens[i].id}</a>) ,
         col2: (<a href={"https://app.poap.xyz/scan/" + tokens[i].owner.id} target="_blank" rel="noopener noreferrer" data-tip='View Collection in POAP.scan'> <ReactTooltip />
-          <span className='min-m'>{shrinkAddress(tokens[i].owner.id, 20)}</span>
-          <span className='max-m'>{shrinkAddress(tokens[i].owner.id, 10)}</span>
+          {width > 768
+            ? <span>{shrinkAddress(tokens[i].owner.id, 20)}</span>
+            : <span>{shrinkAddress(tokens[i].owner.id, 10)}</span>
+          }
         </a>),
         col3: new Date(tokens[i].created * 1000).toLocaleDateString(),
         col4: tokens[i].transferCount,
@@ -87,7 +91,7 @@ export function Event() {
         setEnsNames(allnames)
       }
     })
-  }, [event, tokens, pageIndex, setPageIndex]);
+  }, [event, tokens, pageIndex, setPageIndex, width]);
 
   useEffect(() => {
     if(ensNames.length > 0){

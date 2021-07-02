@@ -15,6 +15,8 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { Foliage } from '../components/foliage';
 import { shrinkAddress } from '../utilities/utilities';
+import { useWindowWidth } from '@react-hook/window-size/throttled';
+import { Link } from 'react-router-dom'
 
 dayjs.extend(relativeTime)
 
@@ -108,6 +110,7 @@ function TokenRow({transfer, dateFormat}) {
   const type = (transfer.from?.id === '0x0000000000000000000000000000000000000000') ? 
                   (transfer.network === 'mainnet') ? 'Migration':'Claim'
                   : 'Transfer'
+  const width = useWindowWidth();
   const dateCell = (cell) => {
     if (dateFormat === 'date') {
       return dayjs(cell.value).format('D-MMM-YYYY').toUpperCase();
@@ -138,8 +141,8 @@ function TokenRow({transfer, dateFormat}) {
           <div className='time ellipsis'>{dayjs(transfer.timestamp * 1000).fromNow()}</div>
           <div className='description'>{
             (type === 'Migration') ? 'POAP migrated to mainnet' :
-            (type === 'Claim') ? <span> <span className='min-m'>New claim{' '}</span>
-              on event{' '}<a href={`https://poap.gallery/event/${transfer.token.event.id}`}>#{transfer.token.event.id}</a></span> :
+            (type === 'Claim') ? <span> {width > 768 && <span>New claim{' '}</span>}
+              on event{' '}<Link to={`/event/${transfer.token.event.id}`}>#{transfer.token.event.id}</Link></span> :
             <span>POAP transferred from 
               <a href={`https://app.poap.xyz/scan/${transfer.from.id}`} target="_blank"  rel="noopener noreferrer"> {shrinkAddress(transfer.from.id, 10)} </a> to
               <a href={`https://app.poap.xyz/scan/${transfer.to.id}`} target="_blank"  rel="noopener noreferrer"> {shrinkAddress(transfer.to.id, 10)}</a>
@@ -149,8 +152,10 @@ function TokenRow({transfer, dateFormat}) {
       </td>
       <td className='ellipsis'><a href={"https://app.poap.xyz/token/" + transfer.token.id} target="_blank"  rel="noopener noreferrer">{'#'}{transfer.token.id}</a></td>
       <td style={{minWidth: '50px'}}><a href={"https://app.poap.xyz/scan/" + transfer.to.id} target="_blank"  rel="noopener noreferrer">
-        <span className='min-m'>a{shrinkAddress(transfer.to.id, 15)}</span>
-        <span className='max-sw'>b{shrinkAddress(transfer.to.id, 10)}</span>
+        {width > 768
+          ? <span>{shrinkAddress(transfer.to.id, 15)}</span>
+          : <span>{shrinkAddress(transfer.to.id, 10)}</span>
+        }
         </a></td>
       <td> {transfer.token.transferCount && transfer.token.transferCount > 0 ? transfer.token.transferCount : 'Claimed'} </td>
       <td style={{wordBreak: 'break-all'}} > { dateCell(transfer.timestamp * 1000) } </td>

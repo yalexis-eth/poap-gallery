@@ -244,7 +244,7 @@ $height-content-first-large: calc(#{$height-content-large} - #{$height-content-s
           color: $grayscale4;
           &-main {
             height: 4.8rem;
-            margin-top: 1rem;
+            margin-bottom: 1rem;
             overflow-y: scroll;
           }
           &-url {
@@ -273,13 +273,6 @@ $height-content-first-large: calc(#{$height-content-large} - #{$height-content-s
       }
       @media (min-width: $bp-m) {
         width: $width-content-large;
-        &-first {
-          // width: calc(100% - #{$margin-content-large} - #{$margin-content-large} - 90px - 200px)!important;
-          .content-description {
-            &-main {
-            }
-          }
-        }
         &-second {
           width: calc(100% - #{$margin-content-large} - #{$margin-content-large} - 90px)!important;
           gap: 0;
@@ -287,12 +280,6 @@ $height-content-first-large: calc(#{$height-content-large} - #{$height-content-s
         }
       }
       @media (min-width: $bp-mw) {
-        &-first {
-          .content-description {
-            &-main {
-            }
-          }
-        }
         &-second {
           margin-left: 10px;
         }

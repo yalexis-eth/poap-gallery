@@ -9,6 +9,7 @@ import { faClock } from '@fortawesome/free-regular-svg-icons';
 import TransferIcon from '../assets/images/transfer-icon.svg'
 import ClaimIcon from '../assets/images/claim-icon.svg'
 import MigrateIcon from '../assets/images/migrate-icon.svg'
+import { useWindowWidth } from '@react-hook/window-size/throttled';
 
 
 dayjs.extend(relativeTime)
@@ -82,11 +83,16 @@ export default function ActivityTable() {
 }
 
 function Transfer({transfer}) {
+  const width = useWindowWidth();
   const type = transferType(transfer)
   return (
     <div className='transfer'>
-      <div className='dashed-line min-sw' style={{height: `${transfer.opacity === 0.3 ? '0' : 'inherit'}`}}></div>
-      <img style={{width: `37px`, zIndex: 2}} className='min-sw' src={type==='Transfer'? TransferIcon: type==='Claim'? ClaimIcon:MigrateIcon} alt={type} />
+      {width > 480 &&
+        <>
+        <div className='dashed-line' style={{height: `${transfer.opacity === 0.3 ? '0' : 'inherit'}`}}></div>
+        <img style={{width: `37px`, zIndex: 2}} src={type==='Transfer'? TransferIcon: type==='Claim'? ClaimIcon:MigrateIcon} alt={type} />
+        </>
+      }
       <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
         <a href={"https://app.poap.xyz/token/" + transfer.token.id} target="_blank" style={{margin: '.8rem 0', opacity: transfer.opacity}} className={`round-box ${transfer.opacity===1? 'first':''}`} rel="noopener noreferrer">
           <div className='round-box-image'>
@@ -118,9 +124,10 @@ function Transfer({transfer}) {
               }
 
             </div>
-            <div className='round-box-time min-m'>
-              {dayjs(transfer.timestamp * 1000).fromNow()}
-            </div>
+            {width > 768 && 
+              <div className='round-box-time'>
+                {dayjs(transfer.timestamp * 1000).fromNow()}
+              </div>}
           {/* </div> */}
         </a>
       </div>
