@@ -16,23 +16,23 @@ export default function () {
       <a href="/" className="home-link"><img src={POAPLogo} alt="" /></a>
       <div className="ecosystem">
         <h4>POAP Ecosystem</h4>
-        <a href="https://www.poap.xyz/" className="a">poap.xyz</a>
-        <a href="https://poap.fun/" className="b">poap.fun</a>
-        <a href="https://poap.chat/" className="c">poap.chat</a>
-        <a href="https://www.poap.gallery/" className="d">poap.gallery</a>
-        <a href="https://www.poap.delivery/" className="e">poap.delivery</a>
-        <a href="https://app.poap.xyz/" className="f">poap.app</a>
-        <a href="https://poap.vote/" className="g">poap.vote</a>
-        <a href="https://app.poap.art/" className="h">poap.art</a>
+        <a href="https://www.poap.xyz/" className="a" target="_blank"  rel="noopener noreferrer">poap.xyz</a>
+        <a href="https://poap.fun/" className="b" target="_blank"  rel="noopener noreferrer">poap.fun</a>
+        <a href="https://poap.chat/" className="c" target="_blank"  rel="noopener noreferrer">poap.chat</a>
+        <a href="https://www.poap.gallery/" className="d" target="_blank"  rel="noopener noreferrer">poap.gallery</a>
+        <a href="https://www.poap.delivery/" className="e" target="_blank"  rel="noopener noreferrer">poap.delivery</a>
+        <a href="https://app.poap.xyz/" className="f" target="_blank"  rel="noopener noreferrer">poap.app</a>
+        <a href="https://poap.vote/" className="g" target="_blank"  rel="noopener noreferrer">poap.vote</a>
+        <a href="https://app.poap.art/" className="h" target="_blank"  rel="noopener noreferrer">poap.art</a>
       </div>
       <div className="join-links">
         <h4>Join our community!</h4>
         <div className="social-icons">
-          <a href="https://twitter.com/poapxyz/"><img src={TwitterLogo} alt="Twitter" /></a>
-          <a href="https://github.com/poapxyz/poap"><img src={GithubLogo} alt="Github" /></a>
-          <a href="https://t.me/poapxyz"><img src={TelegramLogo} alt="Telegram" /></a>
-          <a href="https://discord.gg/fcxW4yR"><img src={DiscordLogo} alt="Discord" /></a>
-          <a href="https://reddit.com/r/poap"><img src={RedditLogo} alt="Reddit" /></a>
+          <a href="https://twitter.com/poapxyz/" target="_blank"  rel="noopener noreferrer"><img src={TwitterLogo} alt="Twitter" /></a>
+          <a href="https://github.com/poapxyz/poap" target="_blank"  rel="noopener noreferrer"><img src={GithubLogo} alt="Github" /></a>
+          <a href="https://t.me/poapxyz" target="_blank"  rel="noopener noreferrer"><img src={TelegramLogo} alt="Telegram" /></a>
+          <a href="https://discord.gg/fcxW4yR" target="_blank"  rel="noopener noreferrer"><img src={DiscordLogo} alt="Discord" /></a>
+          <a href="https://reddit.com/r/poap" target="_blank"  rel="noopener noreferrer"><img src={RedditLogo} alt="Reddit" /></a>
         </div>
       </div>
       <div className="eth-branding">

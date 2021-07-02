@@ -116,7 +116,7 @@ function TokenRow({transfer, dateFormat}) {
   }
   return (
     <tr>
-      {/* <td><a href={"https://app.poap.xyz/token/" + transfer.id}>{transfer.id}</a></td> */}
+      {/* <td><a href={"https://app.poap.xyz/token/" + transfer.id} target="_blank"  rel="noopener noreferrer">{transfer.id}</a></td> */}
       <td className='recent-activity' style={{width:'100%'}}>
         {
           (type === 'Migration') ? <img src={Migration} alt="Migration" /> :
@@ -124,7 +124,7 @@ function TokenRow({transfer, dateFormat}) {
           <img src={Transfer} alt="Transfer" />
         }
         <a
-          href={"https://app.poap.xyz/token/"+transfer.token.id}>
+          href={"https://app.poap.xyz/token/"+transfer.token.id} target="_blank"  rel="noopener noreferrer">
           <img style={{
             width: 80,
             height: 80,
@@ -141,14 +141,14 @@ function TokenRow({transfer, dateFormat}) {
             (type === 'Claim') ? <span> <span className='min-m'>New claim{' '}</span>
               on event{' '}<a href={`https://poap.gallery/event/${transfer.token.event.id}`}>#{transfer.token.event.id}</a></span> :
             <span>POAP transferred from 
-              <a href={`https://app.poap.xyz/scan/${transfer.from.id}`}> {shrinkAddress(transfer.from.id, 10)} </a> to
-              <a href={`https://app.poap.xyz/scan/${transfer.to.id}`}> {shrinkAddress(transfer.to.id, 10)}</a>
+              <a href={`https://app.poap.xyz/scan/${transfer.from.id}`} target="_blank"  rel="noopener noreferrer"> {shrinkAddress(transfer.from.id, 10)} </a> to
+              <a href={`https://app.poap.xyz/scan/${transfer.to.id}`} target="_blank"  rel="noopener noreferrer"> {shrinkAddress(transfer.to.id, 10)}</a>
             </span>
           }</div>
         </div>
       </td>
-      <td className='ellipsis'><a href={"https://app.poap.xyz/token/" + transfer.token.id}>{'#'}{transfer.token.id}</a></td>
-      <td style={{minWidth: '50px'}}><a href={"https://app.poap.xyz/scan/" + transfer.to.id}>
+      <td className='ellipsis'><a href={"https://app.poap.xyz/token/" + transfer.token.id} target="_blank"  rel="noopener noreferrer">{'#'}{transfer.token.id}</a></td>
+      <td style={{minWidth: '50px'}}><a href={"https://app.poap.xyz/scan/" + transfer.to.id} target="_blank"  rel="noopener noreferrer">
         <span className='min-m'>a{shrinkAddress(transfer.to.id, 15)}</span>
         <span className='max-sw'>b{shrinkAddress(transfer.to.id, 10)}</span>
         </a></td>

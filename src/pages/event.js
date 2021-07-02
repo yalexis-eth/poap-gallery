@@ -71,8 +71,8 @@ export function Event() {
       _data.push({
         col1:  (<a href={"https://app.poap.xyz/token/" + tokens[i].id} target="_blank" rel="noopener noreferrer">{'#'}{tokens[i].id}</a>) ,
         col2: (<a href={"https://app.poap.xyz/scan/" + tokens[i].owner.id} target="_blank" rel="noopener noreferrer" data-tip='View Collection in POAP.scan'> <ReactTooltip />
-          <span className='min-m'>a{shrinkAddress(tokens[i].owner.id, 20)}</span>
-          <span className='max-m'>b{shrinkAddress(tokens[i].owner.id, 10)}</span>
+          <span className='min-m'>{shrinkAddress(tokens[i].owner.id, 20)}</span>
+          <span className='max-m'>{shrinkAddress(tokens[i].owner.id, 10)}</span>
         </a>),
         col3: new Date(tokens[i].created * 1000).toLocaleDateString(),
         col4: tokens[i].transferCount,
@@ -98,7 +98,7 @@ export function Event() {
         let validName = ensNames[i]
         if(validName){
           if(data[i]){
-            _data[i].col2 = (<a href={"https://app.poap.xyz/scan/" + tokens[i].owner.id}> {validName}</a>)
+            _data[i].col2 = (<a href={"https://app.poap.xyz/scan/" + tokens[i].owner.id} target="_blank"  rel="noopener noreferrer"> {validName}</a>)
             _csv_data[i][2] = validName
           }
         }

@@ -88,7 +88,7 @@ function Transfer({transfer}) {
       <div className='dashed-line min-sw' style={{height: `${transfer.opacity === 0.3 ? '0' : 'inherit'}`}}></div>
       <img style={{width: `37px`, zIndex: 2}} className='min-sw' src={type==='Transfer'? TransferIcon: type==='Claim'? ClaimIcon:MigrateIcon} alt={type} />
       <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
-        <a href={"https://app.poap.xyz/token/" + transfer.token.id} style={{margin: '.8rem 0', opacity: transfer.opacity}} className={`round-box ${transfer.opacity===1? 'first':''}`}>
+        <a href={"https://app.poap.xyz/token/" + transfer.token.id} target="_blank" style={{margin: '.8rem 0', opacity: transfer.opacity}} className={`round-box ${transfer.opacity===1? 'first':''}`} rel="noopener noreferrer">
           <div className='round-box-image'>
             <img style={{
               objectFit: 'cover',
@@ -105,13 +105,13 @@ function Transfer({transfer}) {
                 </span> :
                 (type === 'Transfer')?
                 <span>POAP transferred from
-                  <a href={"https://app.poap.xyz/scan/" + transfer.from.id}> {transfer.from.id.substring(0, 8) + '…'} </a> to 
-                  <a href={"https://app.poap.xyz/scan/" + transfer.to.id}> {transfer.to.id.substring(0, 8) + '…'} </a>
+                  <a href={"https://app.poap.xyz/scan/" + transfer.from.id} target="_blank"  rel="noopener noreferrer"> {transfer.from.id.substring(0, 8) + '…'} </a> to 
+                  <a href={"https://app.poap.xyz/scan/" + transfer.to.id} target="_blank"  rel="noopener noreferrer"> {transfer.to.id.substring(0, 8) + '…'} </a>
                   {/* on {transfer.network} */}
                 </span> :
                 (type === 'Migration')?
                 <span> POAP migrated to 
-                  <a href={"https://app.poap.xyz/scan/" + transfer.to.id}> {transfer.to.id.substring(0, 16) + '…'} </a>
+                  <a href={"https://app.poap.xyz/scan/" + transfer.to.id} target="_blank"  rel="noopener noreferrer"> {transfer.to.id.substring(0, 16) + '…'} </a>
                   on mainnet
                 </span> :
                 null

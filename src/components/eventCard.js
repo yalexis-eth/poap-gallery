@@ -67,7 +67,7 @@ export function EventCard({ event, size = 's', type = '', power = 0}) {
         size === 'l' ?
         <div className='content-description'>
           <div className='content-description-main'>{nl2br(event.description)}</div>
-          <a href={event.event_url} className='content-description-url ellipsis'>{event.event_url}</a>
+          <a href={event.event_url} className='content-description-url ellipsis' target="_blank"  rel="noopener noreferrer">{event.event_url}</a>
         </div>
         :
         /* id */
