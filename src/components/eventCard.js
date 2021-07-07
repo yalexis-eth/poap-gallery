@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faCoins, faGlobe, faHashtag, faLaptop, faPaperPlane, faClock, faFire } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useState } from "react";
+import ReactTooltip from 'react-tooltip';
 
 export function EventCard({ event, size = 's', type = '', power = 0}) {
   const [tokenCount, setTokenCount] = useState(0);
@@ -82,15 +83,17 @@ export function EventCard({ event, size = 's', type = '', power = 0}) {
           <div className="pill" style={{ minWidth: '110px'}}>
             <FontAwesomeIcon style={{ width: '1rem', marginRight: '.2rem' }} icon={faCalendar} /> {event.start_date}
           </div>
-          <div className="pill">
-            {event.city ? <FontAwesomeIcon style={{ width: '1rem', marginRight: '.2rem' }} icon={faGlobe} /> : null}
+          <div className="pill ellipsis" style={{ minWidth: '110px'}}>
             {event.city ?
-              ' ' + event.city : (
+              <div className='ellipsis' style={{width: '100px'}}>
+                <FontAwesomeIcon style={{ width: '1rem', marginRight: '.2rem' }} icon={faGlobe} />
+                {' '}<span data-tip={event.city}>{event.city}</span><ReactTooltip /> 
+              </div> :
               <div>
                 {' '}
                 <FontAwesomeIcon style={{ width: '1rem', marginRight: '.2rem' }} icon={faLaptop} /> Virtual event{' '}
               </div>
-            )}{' '}
+            }{' '}
           </div>
         </div>
       </div>
