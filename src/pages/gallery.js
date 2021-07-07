@@ -6,7 +6,9 @@ import {useDispatch, useSelector} from 'react-redux';
 import {EventCard} from "../components/eventCard";
 import Loader from '../components/loader'
 import { debounce } from '../utilities/utilities';
-
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import { faTimesCircle } from '@fortawesome/free-regular-svg-icons';
+import FailedSearch from '../assets/images/failed-search.svg'
 
 export default function Gallery() {
   const dispatch = useDispatch()
@@ -27,6 +29,7 @@ export default function Gallery() {
   const [sortOrder, setSortOrder] = useState('desc');
   const [sortVariable, setSortVariable] = useState('date');
 
+  const [searchValue, setSearchValue] = useState('');
 
   useEffect(() => {
     setItems(events)
@@ -35,6 +38,7 @@ export default function Gallery() {
   const debounceHandleSearch = useCallback(debounce((nextValue, items) => handleNewSearchValue(nextValue, items), 800), [])
   const handleSearch = (event) => {
     const value = event.target.value
+    setSearchValue(value);
     debounceHandleSearch(value, items)
   };
   const handleNewSearchValue = (value, items) => {
@@ -128,6 +132,11 @@ export default function Gallery() {
     setItems(sortedItems)
   };
 
+  const eraseSearch = () => {
+    setSearchValue('');
+    debounceHandleSearch('', items)
+  }
+
   return (
     <main id="site-main" role="main" className="app-content home-main">
       <Helmet>
@@ -145,7 +154,10 @@ export default function Gallery() {
           <hr />
           <div className="gallery-grid">
             <div className="gallery-search">
-              <input onChange={handleSearch} type="text" placeholder="Search.." />{' '}
+              <div style={{ display: 'flex', flexDirection: 'row'}}>
+                <input onChange={handleSearch} type="text" value={searchValue} placeholder="Search.." maxLength={20} />{' '}
+                <FontAwesomeIcon icon={faTimesCircle} onClick={eraseSearch} style={{ position: 'relative', fontSize: '1.5rem', right: 37, top: 13, cursor: 'pointer', color: '#C4CAE8' }} />
+              </div>
               {
                 search && search.length ?
                 <span
@@ -250,7 +262,10 @@ export default function Gallery() {
               </div>
 
             ) : eventStatus === 'succeeded' ? (
-              (search?.length === 0) ? <h3 className='failed-search'>No results for that search :(</h3> :
+              (search?.length === 0) ? <div className='failed-search'>
+                <img src={FailedSearch} alt='Failed search'/>
+                <h3>No results for that search :(</h3>
+              </div> :
               <Cards events={(search?.length) ? search : items} length={search?.length || length} />
             ) : (
               <Loader></Loader>

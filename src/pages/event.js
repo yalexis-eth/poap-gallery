@@ -115,7 +115,7 @@ export function Event() {
   const columns = useMemo(
     () => [
       {
-        Header: 'POAP ID',
+        Header: () => (<><span data-tip="Click to sort by ID">POAP ID </span><ReactTooltip /></>),
         accessor: 'col1', // accessor is the "key" in the data
       },
       {
