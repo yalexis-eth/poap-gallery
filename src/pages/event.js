@@ -51,6 +51,23 @@ export function Event() {
   const width = useWindowWidth();
   const pageCount = useMemo( () => event.tokenCount % 50 !== 0 ? Math.floor(event.tokenCount / 50) + 1 : event.tokenCount, [event])
   const power = calculatePower(csv_data);
+
+  const MobileRow = ({token}) => {
+    const [expanded, setExpanded] = useState(false)
+    const toggleRowExpand = () => {
+      setExpanded(!expanded)
+    }
+
+    return (
+      <div className={`mobile-row ${expanded ? 'open' : ''}`}>
+        <span className='id-title'>POAP ID</span><span className='id-content'>#{token.id}</span><span className='expand-button'><FontAwesomeIcon onClick={toggleRowExpand} icon={expanded? faArrowUp:faArrowDown} /></span>
+        <span className='address-title'>Address</span><span className='address-content ellipsis'>{shrinkAddress(token.owner.id, 17)}</span>
+        <span className='claim-title'>Claim Date</span><span className='claim-content'>{new Date(token.created * 1000).toLocaleDateString()}</span>
+        <span className='tr-count-title'>Transaction Count</span><span className='tr-count-content'>{token.transferCount}</span>
+        <span className='power-title'>Power</span><span className='power-content'>{token.owner.tokensOwned}</span>
+      </div>
+    )
+  }
   useEffect(() => {
     if (eventId) {
       dispatch(fetchEventPageData({ eventId, first: GRAPH_LIMIT, skip: GRAPH_LIMIT*pageIndex  }))
@@ -70,7 +87,7 @@ export function Event() {
     let _csv_data = []
     _csv_data.push(['ID', 'Collection', 'ENS', 'Minting Date', 'Tx Count', 'Power']);
     for (let i = 0; i < tokens.length; i++) {
-      _data.push({
+      _data.push(width > 480 ? {
         col1:  (<a href={"https://app.poap.xyz/token/" + tokens[i].id} target="_blank" rel="noopener noreferrer">{'#'}{tokens[i].id}</a>) ,
         col2: (<a href={"https://app.poap.xyz/scan/" + tokens[i].owner.id} target="_blank" rel="noopener noreferrer" data-tip='View Collection in POAP.scan'> <ReactTooltip />
           {width > 768
@@ -81,6 +98,9 @@ export function Event() {
         col3: new Date(tokens[i].created * 1000).toLocaleDateString(),
         col4: tokens[i].transferCount,
         col5: tokens[i].owner.tokensOwned,
+      } : {
+        col1:
+          <MobileRow token={tokens[i]} />
       })
       _csv_data.push([tokens[i].id, tokens[i].owner.id, null, new Date(tokens[i].created * 1000).toLocaleDateString(), tokens[i].transferCount, tokens[i].owner.tokensOwned])
     }
@@ -134,6 +154,16 @@ export function Event() {
         Header: () => (<span>Power <FontAwesomeIcon icon={faQuestionCircle} data-tip="Total amount of POAPs held by this address" /> <ReactTooltip /></span>),
         accessor: 'col5',
       },
+    ],
+    []
+  )
+
+  const mobileColumns = useMemo(
+    () => [
+      {
+        Header: '',
+        accessor: 'col1', // accessor is the "key" in the data
+      }
     ],
     []
   )
@@ -222,7 +252,11 @@ export function Event() {
           </CSVLink>
         </div>
         <div className='table-container'>
-          <CreateTable event={event} loading={loadingEvent !== 'succeeded'} columns={columns} data={data} pageCount={pageCount} ></CreateTable>
+          {
+            width > 480
+            ? <CreateTable event={event} loading={loadingEvent !== 'succeeded'} columns={columns} data={data} pageCount={pageCount} ></CreateTable>
+            : <CreateMobileTable event={event} loading={loadingEvent !== 'succeeded'} columns={mobileColumns} data={data} pageCount={pageCount} ></CreateMobileTable>
+          }
         </div>
       </div>
     </main>
@@ -298,6 +332,80 @@ function CreateTable({loading, pageCount: pc, columns, data, event}) {
                     idx === 2
                     ? <td {...cell.getCellProps()}>{dateCell(cell)}</td>
                     : <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                )})}
+              </tr>
+            )
+          })}
+          <tr>
+            {loading ? (
+              // Use our custom loading state to show a loading indicator
+              <td colSpan="10000">Loading...</td>
+            ) : (
+              <td colSpan="10000">
+                
+                {/* Showing {page.length} of {page.length}{' '}
+                results */}
+              </td>
+            )}
+          </tr>
+        </tbody>
+    </table>
+    <div className="pagination">
+      <InView
+        threshold={1}
+        onChange={(inView, entry) => {
+          if (inView) {
+            setLength(length + 20)
+            setPageSize(length + 20)
+          }
+        }}
+      >
+        {({ inView, ref, entry }) => <div ref={ref}></div>}
+      </InView>
+    </div>
+   </div>
+  )
+}
+
+function CreateMobileTable({loading, pageCount: pc, columns, data, event}) {
+  const [length, setLength] = useState(20);
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    prepareRow,
+    page,
+    setPageSize
+  } = useTable({ columns, data, pageCount: pc, initialState: { pageSize: length } }, useSortBy, usePagination )
+
+  return (
+    <div style={{width: '100%'}} className='event-table'>
+      <table style={{ width: '100%' }} {...getTableProps()}>
+      <thead>
+        {// Loop over the header rows
+        headerGroups.map(headerGroup => (
+          // Apply the header row props
+          <tr {...headerGroup.getHeaderGroupProps()}>
+            {// Loop over the headers in each row
+            headerGroup.headers.map((column, idx) => (
+              // Apply the header cell props
+              <th {...column.getHeaderProps()}>
+                {// Render the header
+                column.render('Header')}
+              </th>
+            ))}
+          </tr>
+        ))}
+      </thead>
+      {/* Apply the table body props */}
+      <tbody {...getTableBodyProps()}>
+          {page.map((row, i) => {
+            prepareRow(row)
+            return (
+              <tr {...row.getRowProps()}>
+                {row.cells.map(cell => {
+                  return (
+                    <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
                 )})}
               </tr>
             )
