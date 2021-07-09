@@ -638,9 +638,14 @@
     }
   }
   .mobile-row {
-    height: 82px;
+    transition: max-height 0.4s linear;
+    max-height: 78px;
+    overflow: hidden;
+    &.open {
+      max-height: 200px;
+    }
     display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr;
+    grid-template-columns: 1.5fr 1.1fr 0.9fr;
     gap: 1rem;
     padding: 12px 15px;
     text-align: left;
@@ -667,11 +672,6 @@
     .power-title {grid-area: power-title;}
     .power-content {grid-area: power-content;}
     .expand-button {grid-area: expand-button; text-align: end;}
-    overflow: hidden;
-    transition: all 0.2s ease-out;
-    &.open {
-      height: 180px;
-    }
   }
 }
 
@@ -740,10 +740,6 @@
       height: 50px;
       display: flex;
       justify-content: flex-end;
-      font-size: 1.5rem;
-      * {
-        color: $violet2;
-      }
     }
     & > a > img {
       display: inherit;
@@ -798,6 +794,13 @@
 
   img {
     max-width: 38px;
+  }
+}
+
+.expand-button {
+  font-size: 1.1rem;
+  * {
+    color: $violet2;
   }
 }
 

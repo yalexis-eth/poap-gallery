@@ -61,7 +61,7 @@ export function Event() {
     return (
       <div className={`mobile-row ${expanded ? 'open' : ''}`}>
         <span className='id-title'>POAP ID</span><span className='id-content'>#{token.id}</span><span className='expand-button'><FontAwesomeIcon onClick={toggleRowExpand} icon={expanded? faAngleUp:faAngleDown} /></span>
-        <span className='address-title'>Address</span><span className='address-content ellipsis'>{shrinkAddress(token.owner.id, 17)}</span>
+        <span className='address-title'>Address</span><span className='address-content ellipsis'>{shrinkAddress(token.owner.id, 15)}</span>
         <span className='claim-title'>Claim Date</span><span className='claim-content'>{new Date(token.created * 1000).toLocaleDateString()}</span>
         <span className='tr-count-title'>Transaction Count</span><span className='tr-count-content'>{token.transferCount}</span>
         <span className='power-title'>Power</span><span className='power-content'>{token.owner.tokensOwned}</span>
