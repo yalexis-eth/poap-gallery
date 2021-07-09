@@ -98,7 +98,7 @@ export default function Activity() {
           <EventCard event={mostClaimed} size='m' type='most-claimed' />
         </div>
 
-        <div className='table-container' style={{ marginTop: 50, display: 'flex', alignItems: 'center', overflowX: 'auto', maxWidth: 1000, marginLeft: `${width > 1000?'auto':'0'}`, marginRight: `${width > 1000?'auto':'0'}`}}>
+        <div className='table-container' style={{ marginTop: 50, display: 'flex', alignItems: 'center', overflowX: 'auto', maxWidth: 1224, marginLeft: `${width > 1224?'auto':'0'}`, marginRight: `${width > 1224?'auto':'0'}`}}>
           <CreateTable loading={loading} transfers={transfers} ></CreateTable>
         </div>
 
