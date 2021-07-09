@@ -91,10 +91,13 @@
       
       margin-top: 100px;
       display: flex;
-      &-title, &-subtitle {
-        margin: 0 80px;
-        @media (min-width: $bp-m) {
-          margin: 0 161px;
+      &-title-container {
+        align-self: flex-start;
+        width: 100%;
+        max-width: 1016px;
+        margin: 0 auto;
+        .activity-table-title, .activity-table-subtitle {
+          margin-left: 4rem;
         }
       }
       &-title {
@@ -663,7 +666,7 @@
     .tr-count-content {grid-area: tr-count-content;}
     .power-title {grid-area: power-title;}
     .power-content {grid-area: power-content;}
-    .expand-button {grid-area: expand-button; text-align: end}
+    .expand-button {grid-area: expand-button; text-align: end;}
     overflow: hidden;
     transition: all 0.2s ease-out;
     &.open {
@@ -737,6 +740,10 @@
       height: 50px;
       display: flex;
       justify-content: flex-end;
+      font-size: 1.5rem;
+      * {
+        color: $violet2;
+      }
     }
     & > a > img {
       display: inherit;
@@ -780,7 +787,7 @@
     .tr-count-content {grid-area: tr-count-content;}
     .power-title {grid-area: power-title;}
     .power-content {grid-area: power-content;}
-    .expand-button {grid-area: expand-button; text-align: end}
+    .expand-button {grid-area: expand-button; text-align: end;}
   }
 }
 
@@ -812,19 +819,23 @@
   }
 }
 
-.table-container {
+.table-header, .table-container {
   display: flex;
   align-items: center;
   overflow: hidden;
   
   margin: 0 20px;
-  @media (min-width: $bp-m) {
-
-  }
+  max-width: 1224px;
   @media (min-width: $bp-mw) {
     margin: 0 70px;
   }
-  
+  @media (min-width: 1224px) {
+    margin-left: auto!important;
+    margin-right: auto!important;
+  }
+}
+
+.table-container {
   .event-table {
     margin-top: 1em;
   
@@ -846,7 +857,7 @@ table {
     tr {
       height: 42px;
       th {
-        background: rgba($grayscale1, 0.6);
+        background: rgb(240,244,254);
         color: $grayscale6;
         font-size: 0.875rem;
         font-weight: $fontWeight-normal;

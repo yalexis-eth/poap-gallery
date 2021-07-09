@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import ReactTooltip from 'react-tooltip';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faArrowDown, faArrowUp, faDotCircle, faQuestionCircle} from '@fortawesome/free-solid-svg-icons';
+import {faAngleDown, faAngleUp, faDotCircle, faQuestionCircle} from '@fortawesome/free-solid-svg-icons';
 import {Helmet} from 'react-helmet'
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchIndexData, selectMostClaimed, selectMostRecent, selectUpcoming} from '../store';
@@ -32,7 +32,6 @@ export default function Activity() {
   const [transfers, setTransfers] = useState([])
   const [daitransfers, setDaiTransfers] = useState([])
   const [mainnetTransfers, setMainnetTransfers] = useState([])
-  const width = useWindowWidth();
 
   const mostClaimed = useSelector(selectMostClaimed)
   const mostRecent = useSelector(selectMostRecent)
@@ -98,7 +97,7 @@ export default function Activity() {
           <EventCard event={mostClaimed} size='m' type='most-claimed' />
         </div>
 
-        <div className='table-container' style={{ marginTop: 50, display: 'flex', alignItems: 'center', overflowX: 'auto', maxWidth: 1224, marginLeft: `${width > 1224?'auto':'0'}`, marginRight: `${width > 1224?'auto':'0'}`}}>
+        <div className='table-container' style={{ marginTop: 50}}>
           <CreateTable loading={loading} transfers={transfers} ></CreateTable>
         </div>
 
@@ -196,7 +195,7 @@ function TokenRow({transfer, dateFormat}) {
               </span>
             }</div>
           </div>
-          <span className='expand-button' style={{width: `calc(100% - 180px${width>430?' - 118px':''})`}}><FontAwesomeIcon onClick={toggleRowExpand} icon={expanded? faArrowUp:faArrowDown} /></span>
+          <span className='expand-button' style={{width: `calc(100% - 180px${width>430?' - 118px':''})`}}><FontAwesomeIcon onClick={toggleRowExpand} icon={expanded? faAngleUp:faAngleDown} /></span>
         </div>
         <div className={`mobile-row-content ${expanded ? 'open' : ''}`}>
           <span className='id-title'>POAP ID</span><span className='id-content'><a href={"https://app.poap.xyz/token/" + transfer.token.id} target="_blank"  rel="noopener noreferrer">{'#'}{transfer.token.id}</a></span>

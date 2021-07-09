@@ -69,9 +69,11 @@ export default function ActivityTable() {
   return (
     <div className="activity-table"
          style={{display: "flex", flexDirection: "column", justifyContent: "center", fontSize: '.89rem'}}>
-      <div className="activity-table-title">POAP Gallery</div>
-      <div className="activity-table-subtitle">Explore all the beautiful badges that have been created and claimed throughout the history of POAP</div>
       <div style={{display:'flex', flexDirection: 'column', alignItems: 'center'}}>
+        <div className='activity-table-title-container'>
+          <div className="activity-table-title">POAP Gallery</div>
+          <div className="activity-table-subtitle">Explore all the beautiful badges that have been created and claimed throughout the history of POAP</div>
+        </div>
         <Transfers loading={loading} transfers={transfers}></Transfers>
       </div>
       <div style={{display: "flex", justifyContent: "center", margin: '.5rem 0'}}><Link to="/activity">
