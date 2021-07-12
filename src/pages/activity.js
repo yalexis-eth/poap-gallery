@@ -44,8 +44,8 @@ export default function Activity() {
       getMainnetTransfers(transferLimit)
         .then(
           (result) => {
-            let tfrs = result.data.transfers
-            setMainnetTransfers(tfrs)
+            let transfers = result.data.transfers
+            setMainnetTransfers(transfers)
             setLoading(false)
           },
           (error) => {
@@ -60,8 +60,8 @@ export default function Activity() {
       getxDaiTransfers(transferLimit)
         .then(
           (result) => {
-            let tfrs = result.data.transfers
-            setDaiTransfers(tfrs)
+            let transfers = result.data.transfers
+            setDaiTransfers(transfers)
             setLoading(false)
           },
           (error) => {
@@ -72,11 +72,11 @@ export default function Activity() {
   }, []);
 
   useEffect(() => {
-    let tfrs = daitransfers.concat(mainnetTransfers)
-    tfrs.sort((a, b) => {
+    let transfers = daitransfers.concat(mainnetTransfers)
+    transfers.sort((a, b) => {
       return b.timestamp - a.timestamp
     })
-    setTransfers(tfrs.slice(0, transferLimit))
+    setTransfers(transfers.slice(0, transferLimit))
   }, [daitransfers, mainnetTransfers])
 
   return (
