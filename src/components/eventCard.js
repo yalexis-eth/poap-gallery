@@ -20,7 +20,7 @@ export function EventCard({ event, size = 's', type = '', power = 0}) {
 
   type = validateType(type);
   useEffect(() => {
-    if (tokenCount === 0 && event.tokenCount) {
+    if (event.tokenCount && event.tokenCount > tokenCount) {
       setTokenCount(event.tokenCount)
     }
   }, [event, tokenCount])

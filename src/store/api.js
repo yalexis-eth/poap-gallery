@@ -65,6 +65,7 @@ export async function getLayerTokens(eventId, first, skip, url) {
           },
           event(id: "${eventId}"){
             tokenCount
+            transferCount
           }
         }
         `
