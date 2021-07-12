@@ -1,6 +1,7 @@
 .footer {
   margin: 0;
   position: relative;
+  background-color: $color-invert;
   @media (min-width: $bp-m) {
     margin: 0;
     z-index: 6;

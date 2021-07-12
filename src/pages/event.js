@@ -230,7 +230,7 @@ export function Event() {
               <a href={parseInt(eventId)+1} >{'Next  '}<FontAwesomeIcon icon={faAngleRight}/></a>
             </div>
             <div style={{minHeight: '200px', margin: '0 auto'}}>
-              <EventCard event={event} size='l' power={power} />
+              <EventCard key={0} event={event} size='l' power={power} />
             </div>
           </div>
         </div>
@@ -290,14 +290,14 @@ function CreateTable({loading, pageCount: pc, columns, data, event}) {
       <table style={{ width: '100%' }} {...getTableProps()}>
       <thead>
         {// Loop over the header rows
-        headerGroups.map(headerGroup => (
+        headerGroups.map((headerGroup, i) => (
           // Apply the header row props
-          <tr {...headerGroup.getHeaderGroupProps()}>
+          <tr key={i} {...headerGroup.getHeaderGroupProps()}>
             {// Loop over the headers in each row
             headerGroup.headers.map((column, idx) => (
               // Apply the header cell props
               idx === 0
-                ? <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                ? <th key={idx} {...column.getHeaderProps(column.getSortByToggleProps())}>
                   {// Render the header
                   column.render('Header')}{' '}
                   {column.isSorted
@@ -308,12 +308,12 @@ function CreateTable({loading, pageCount: pc, columns, data, event}) {
                   </th>
                 :
               idx === 2
-                ? <th {...column.getHeaderProps()}>
+                ? <th key={idx} {...column.getHeaderProps()}>
                   {// Render the header
                   column.render('Header')}{' '}
                   <FontAwesomeIcon onClick={toggleDateFormat} style={{ width: '1rem', marginRight: '.2rem', cursor: 'pointer' }} icon={faDotCircle} data-tip='Toggle date format'/> <ReactTooltip />
                 </th>
-                : <th {...column.getHeaderProps()}>
+                : <th key={idx} {...column.getHeaderProps()}>
                   {// Render the header
                   column.render('Header')}
                 </th>
@@ -326,12 +326,12 @@ function CreateTable({loading, pageCount: pc, columns, data, event}) {
           {page.map((row, i) => {
             prepareRow(row)
             return (
-              <tr {...row.getRowProps()}>
+              <tr key={i} {...row.getRowProps()}>
                 {row.cells.map((cell, idx) => {
                   return (
                     idx === 2
-                    ? <td {...cell.getCellProps()}>{dateCell(cell)}</td>
-                    : <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                    ? <td key={idx} {...cell.getCellProps()}>{dateCell(cell)}</td>
+                    : <td key={idx} {...cell.getCellProps()}>{cell.render('Cell')}</td>
                 )})}
               </tr>
             )
@@ -383,13 +383,13 @@ function CreateMobileTable({loading, pageCount: pc, columns, data, event}) {
       <table style={{ width: '100%' }} {...getTableProps()}>
       <thead>
         {// Loop over the header rows
-        headerGroups.map(headerGroup => (
+        headerGroups.map((headerGroup, i) => (
           // Apply the header row props
-          <tr {...headerGroup.getHeaderGroupProps()}>
+          <tr key={i} {...headerGroup.getHeaderGroupProps()}>
             {// Loop over the headers in each row
             headerGroup.headers.map((column, idx) => (
               // Apply the header cell props
-              <th {...column.getHeaderProps()}>
+              <th key={idx} {...column.getHeaderProps()}>
                 {// Render the header
                 column.render('Header')}
               </th>
@@ -402,10 +402,10 @@ function CreateMobileTable({loading, pageCount: pc, columns, data, event}) {
           {page.map((row, i) => {
             prepareRow(row)
             return (
-              <tr {...row.getRowProps()}>
-                {row.cells.map(cell => {
+              <tr key={i} {...row.getRowProps()}>
+                {row.cells.map((cell, idx) => {
                   return (
-                    <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                    <td key={idx} {...cell.getCellProps()}>{cell.render('Cell')}</td>
                 )})}
               </tr>
             )

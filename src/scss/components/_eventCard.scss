@@ -248,6 +248,7 @@ $height-content-first-large: calc(#{$height-content-large} - #{$height-content-s
             overflow-y: scroll;
           }
           &-url {
+            cursor: pointer;
             height: 1.1rem;
             color: $violet2;
             display: inline-block;

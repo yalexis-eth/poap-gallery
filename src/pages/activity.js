@@ -228,8 +228,8 @@ function CreateTable({transfers, loading}) {
   if (tfers && tfers.length) {
     tfers.push(
       width>780
-      ?<tr><td/><td/><td/><td/><td/></tr>
-      :<tr><td/></tr>)
+      ?<tr key={tfers.length} ><td/><td/><td/><td/><td/></tr>
+      :<tr key={tfers.length}><td/></tr>)
   }
   return (
     <div style={{width: '100%'}} className='activity-table-container'>

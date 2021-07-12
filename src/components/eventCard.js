@@ -12,6 +12,12 @@ export function EventCard({ event, size = 's', type = '', power = 0}) {
     if (type !== 'most-recent' && type !== 'upcoming' && type !== 'most-claimed') return '';
     return type;
   }
+  const openLink = (url) => {
+    // event.preventDefault();
+    window.open(url, '_blank');
+    return false;
+  }
+
   type = validateType(type);
   useEffect(() => {
     if (tokenCount === 0) {
@@ -68,7 +74,7 @@ export function EventCard({ event, size = 's', type = '', power = 0}) {
         size === 'l' ?
         <div className='content-description'>
           <div className='content-description-main'>{nl2br(event.description)}</div>
-          <a href={event.event_url} className='content-description-url ellipsis' target="_blank"  rel="noopener noreferrer">{event.event_url}</a>
+          <span onClick={() => openLink(event.event_url)} className='content-description-url ellipsis' target="_blank"  rel="noopener noreferrer">{event.event_url}</span>
         </div>
         :
         /* id */
@@ -78,7 +84,7 @@ export function EventCard({ event, size = 's', type = '', power = 0}) {
         </div>
         }
 
-        {/* fecha y lugar */}
+        {/* time and place */}
         <div className="content-time-place">
           <div className="pill" style={{ minWidth: '110px'}}>
             <FontAwesomeIcon style={{ width: '1rem', marginRight: '.2rem' }} icon={faCalendar} /> {event.start_date}
