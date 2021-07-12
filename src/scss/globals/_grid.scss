@@ -4,18 +4,16 @@
 
 .container {
   width: 100%;
-  max-width: 64em;
+  max-width: none;
   min-width: 20em;
   margin-right: auto;
   margin-left: auto;
-
+  
   padding-left: $grid-gutter-em;
   padding-right: $grid-gutter-em;
-
+  
   @media (min-width: $bp-mw) {
-    padding: 0;
-    padding-left: $grid-gutter-em;
-    padding-right: $grid-gutter-em;
+    padding: 0 4rem;
   }
 }
 

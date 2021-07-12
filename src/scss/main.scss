@@ -10,6 +10,7 @@
    ================================================================ */
 
 @import 'variables';
+@import 'globals/fonts';
 @import 'globals/utilities';
 @import 'globals/normalize';
 @import 'globals/boilerplate';
@@ -23,10 +24,13 @@
 
 // Component Globals
 
-@import 'components/eventsapp';
-@import 'components/poapapp';
-@import 'components/burgermenu';
 @import 'components/backoffice';
+@import 'components/burgermenu';
+@import 'components/dropdown';
+@import 'components/eventCard';
+@import 'components/eventsapp';
+@import 'components/footer';
+@import 'components/poapapp';
 
 /* ================================================================
    Vendor Imports

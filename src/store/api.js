@@ -65,6 +65,7 @@ export async function getLayerTokens(eventId, first, skip, url) {
           },
           event(id: "${eventId}"){
             tokenCount
+            transferCount
           }
         }
         `
@@ -126,6 +127,9 @@ export async function getLayerTransfers(amount, url) {
               token {
                 id
                 transferCount
+                event {
+                  id
+                }
               }
               from {
                 id
@@ -148,4 +152,68 @@ export async function getxDaiTransfers(amount) {
 
 export async function getMainnetTransfers(amount) {
   return getLayerTransfers(amount, MAINNET_SUBGRAPH_URL);
+}
+
+export async function getMigrations(amount) {
+  // Step 1: get most recently minted tokens in mainnet (since POAP only mints on layer 2, it's safe to assume they were migrated)
+  const res = await fetch(MAINNET_SUBGRAPH_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+
+    body: JSON.stringify({
+      query: `
+          {
+            tokens(first: ${amount}, orderBy: created, orderDirection: desc) {
+              id
+              owner {
+                id
+              }
+              event {
+                id
+              }
+              transfers {
+                id
+              }
+              created
+            }
+          }
+          `
+    })
+  })
+  return res.json()
+}
+
+export async function validateMigrations(migrations) {
+  // Step 2: Verify the minted tokens have a burned counterpart in layer 2
+  // TODO: add polygon check when we implement POAPs in the polygon chain
+  const ids = migrations.map(t => "\"" + t.id + "\"").join(',')
+  const res2 = await fetch(XDAI_SUBGRAPH_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+
+    body: JSON.stringify({
+      query: `
+          {
+            tokens(where: {id_in: [${ids}]}) {
+              id
+              owner {
+                id
+              }
+              event {
+                id
+              }
+              transfers {
+                id
+              }
+              created
+            }
+          }
+          `
+    })
+  })
+  return res2.json()
 }

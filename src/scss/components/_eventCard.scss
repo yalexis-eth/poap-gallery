@@ -1,0 +1,307 @@
+$width-card-small: 262px;
+$height-card-small: 319px;
+$height-header-small: 130px;
+$height-content-small: calc(#{$height-card-small} - #{$height-header-small});  // 189px
+$height-content-second-small: 59px;
+$height-content-first-small: calc(#{$height-content-small} - #{$height-content-second-small});
+
+$width-card-medium: 295px;
+$height-card-medium: 380px;
+$height-header-medium: 150px;
+$height-content-medium: calc(#{$height-card-medium} - #{$height-header-medium});  // 230px
+$height-content-second-medium: 67px;
+$height-content-first-medium: calc(#{$height-content-medium} - #{$height-content-second-medium});
+
+$width-card-large: 760px;
+$height-card-large: 323px;
+$width-header-large: 292px;
+$height-header-large: $height-card-large; 
+$width-content-large: calc(#{$width-card-large} - #{$width-header-large});
+$margin-content-large: 32px;
+$height-content-large: $height-card-large;
+$height-content-second-large: 32px;
+$height-content-first-large: calc(#{$height-content-large} - #{$height-content-second-large} - #{$margin-content-large} - #{$margin-content-large});
+
+.gallery-card {
+  cursor: pointer;
+  position: relative;
+  background-color: $white;
+  box-shadow: 0px 4px 16px rgba(187, 196, 239, 0.35);
+  transition: box-shadow .2s ease;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  overflow: hidden;
+  font-family: 'Noway Round';
+  
+  .header {
+    width: 100%;
+    height: $height-header-small;
+    background-image: url('../../assets/images/card-bg-top.svg');
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    img {
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid white;
+      background: $white;
+    }
+  }
+  .content {
+    width: 100%;
+    height: $height-content-small;
+
+    &-first {
+      height: $height-content-first-small;
+
+      h3 {
+        font-family: 'Comfortaa';
+        font-weight: 500;
+        font-size: 1rem;
+        height: 2.1rem;
+        overflow: hidden;
+      }
+      .content-id {
+        margin: 10px 0 20px 0;
+        color: $grayscale4;
+        text-align: center;
+      }
+      .content-time-place {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        gap: 6px;
+      }
+    }
+    &-second {
+      height: $height-content-second-small;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      color: $grayscale4;
+      div {
+        flex: 50%;
+        text-align: center;
+        .title {
+          font-size: .75rem;
+        }
+      }
+    }
+  }
+
+
+
+  &.small {
+    width: $width-card-small;
+    .header {
+      img {
+        width: 110px;
+        height: 110px;
+        margin-top: 16px;
+      }
+    }
+    .content {
+      &-first {
+        padding: 0 1rem!important;
+      }
+      &-second {
+        padding: 0 1rem!important;
+      }
+    }
+  }
+  &.medium {
+    width: $width-card-medium;
+    .header {
+      &.most-recent {
+        background-image: url('../../assets/images/card-bg-top-most-recent.svg');
+      }
+      &.upcoming {
+        background-image: url('../../assets/images/card-bg-top-upcoming.svg');
+      }
+      &.most-claimed {
+        background-image: url('../../assets/images/card-bg-top-most-claimed.svg');
+      }
+      height: $height-header-medium;
+      img {
+        width: 130px;
+        height: 130px;
+        margin-top: 16px;
+      }
+    }
+    .content {
+      height: $height-content-medium;
+      &-first {
+        padding: 0 1rem!important;
+        height: $height-content-first-medium;
+        .event-type {
+          margin: auto;
+          margin-top: 7px;
+          display: flex;
+          align-items: center;
+          color: $white;
+          &.most-recent {
+            background: #92D3FF;
+          }
+          &.upcoming {
+            background: $violet4;
+          }
+          &.most-claimed {
+            background: #FFBAC6;
+          }
+        }
+        h3 {
+          margin: 14px 0 0 0!important;
+        }
+        .content-id {
+          margin: 11px 0 15px 0;
+        }
+      }
+      &-second {
+        padding: 0 1rem!important;
+        height: $height-content-second-medium;
+      }
+    }
+  }
+  &.large {
+    cursor: default;
+    display: flex;
+    flex-direction: column;
+    height: calc(#{$height-card-large} + #{$height-header-large} / 2);
+    background: $white;
+    
+    box-shadow: 0 5px 16px rgba(100,100,100, 0.3), 0 5px 22px rgba(100,100,100, 0.2);
+    @media (min-width: $bp-m) {
+      box-shadow: 0px 4px 16px rgba(187, 196, 239, 0.35);
+      height: $height-card-large;
+      flex-direction: row;
+    }
+    
+    .header {
+      pointer-events: none;
+      height: calc(#{$height-header-large} / 2);
+      width: calc(#{$width-content-large} - 200px);
+      display: flex;
+      align-items: center;
+      justify-items: center;
+      background-image: url('../../assets/images/card-bg-top-large.svg');
+      background-size: 200%;
+      background-position-x: -100px;
+      @media (min-width: $bp-sw) {
+        width: calc(#{$width-content-large} - 100px);
+      }
+      @media (min-width: $bp-m) {
+        width: calc(#{$width-header-large} - 50px);
+        height: $height-header-large;
+        background-size: auto;
+        background-position-x: 0;
+        img {
+          width: 200px!important;
+          height: 200px!important;
+        }
+      }
+      @media (min-width: $bp-mw) {
+        width: $width-header-large;
+      }
+      img {
+        width: 120px;
+        height: 120px;
+      }
+    }
+    .content {
+      margin: 0;
+      width: calc(#{$width-content-large} - 200px);
+      overflow: hidden;
+      height: $height-content-large;
+      &-first {
+        width: calc(100% - #{$margin-content-large} - #{$margin-content-large})!important;
+        height: $height-content-first-large;
+        margin: $margin-content-large $margin-content-large 0 $margin-content-large;
+        padding: 0!important;
+        display: grid;
+        grid-template-rows: 29px 2.1rem 4.1rem;
+        grid-template-columns: 100%;
+        gap: 16px;
+        grid-template-areas:
+          "time-place"
+          "title"
+          "description"
+          ;
+        .content-time-place {
+          grid-area: time-place;
+          justify-content: flex-start;
+        }
+        h3 {
+          grid-area: title;
+          text-align: start!important;
+          font-size: 1.375rem!important;
+          font-weight: 500;
+        }
+        .content-description {
+          grid-area: description;
+          color: $grayscale4;
+          &-main {
+            height: 4.8rem;
+            margin-bottom: 1rem;
+            overflow-y: scroll;
+          }
+          &-url {
+            cursor: pointer;
+            height: 1.1rem;
+            color: $violet2;
+            display: inline-block;
+            width: 100%;
+          }
+        }
+      }
+      &-second {
+        padding: 0!important;
+        width: calc(100% - #{$margin-content-large} - #{$margin-content-large})!important;
+        gap: 8px;
+        margin-left: 26px;
+        font-size: 1.25rem;
+        .title {
+          font-size: 0.75rem;
+        }
+      }
+      @media (min-width: $bp-sw) {
+        width: calc(#{$width-content-large} - 100px);
+        &-second {
+          width: calc(100% - #{$margin-content-large} - #{$margin-content-large} - 90px)!important;
+        }
+      }
+      @media (min-width: $bp-m) {
+        width: $width-content-large;
+        &-second {
+          width: calc(100% - #{$margin-content-large} - #{$margin-content-large} - 90px)!important;
+          gap: 0;
+          margin-left: 26px;
+        }
+      }
+      @media (min-width: $bp-mw) {
+        &-second {
+          margin-left: 10px;
+        }
+      }
+    }
+  }
+}
+
+a.gallery-card:hover {
+  text-decoration: none;
+}
+
+.gallery-card:hover {
+  // box-shadow: 0 5px 16px rgba(100,100,100, 0.3), 0 5px 22px rgba(100,100,100, 0.2);
+  box-shadow: 0px 6px 20px 3px #BBC4EF73;
+}
+
+// @media (max-width: $bp-m){ // 479 px
+//   .gallery-card{
+//    // background-color: #6534ff;
+//     width: 100%;
+//     margin: 0rem;
+//   }
+// }

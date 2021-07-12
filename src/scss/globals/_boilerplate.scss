@@ -16,6 +16,26 @@ body {
   font-size: 16px;
 }
 
+* {
+  scrollbar-width: thin;
+  scrollbar-color: $grayscale3 transparent;
+  
+  &::-webkit-scrollbar {
+    width: 6px;               /* width of the entire scrollbar */
+    margin: 6px;
+
+    &-track {
+      background: transparent;        /* color of the tracking area */
+    }
+
+    &-thumb {
+      background-color: $grayscale3;    /* color of the scroll thumb */
+      border-radius: 20px;       /* roundness of the scroll thumb */
+      border: 1px solid white;
+    }
+  }
+}
+
 header,
 main {
   float: left;
@@ -25,6 +45,8 @@ main {
 
 #root .landing {
   min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: hidden;
   display: flex;
   justify-content: space-between;
   flex-direction: column;
@@ -69,21 +91,6 @@ textarea {
   resize: vertical;
 }
 
-table {
-  margin: 1em 0;
-  border: 1px solid #ccc;
-}
-
-td {
-  padding: 0.2em 0.4em;
-  border: 1px solid #ccc;
-  background: hsl(0, 0%, 90%);
-}
-
-tr:nth-child(2n) td {
-  background: #fff;
-}
-
 /* ================================================================
    Typography Styles
    ================================================================ */
@@ -96,7 +103,7 @@ h5 {
   color: $color-primary;
   font-weight: $fontWeight-bold;
   margin: 0 0 $typography-margin-bottom;
-  font-family: $font-family-narrow;
+  font-family: $font-family;
 }
 
 h1 {
@@ -164,17 +171,17 @@ ol {
   margin-top: 20px; 
   padding: 12px 24px;
 
-  border-radius: 40px; //40
+  border-radius: 100px;
 
-  font-weight: $fontWeight-bold;
-  font-family: $font-family-narrow;
-  @include x-rem(font-size, 24px);
+  font-weight: $fontWeight-normal;
+  font-family: $font-family;
+  font-size: 1rem;
   border: 0;
   text-align: center;
   color: $color-invert;
   text-decoration: none;
 
-  background: $color-primary;
+  background: $violet1;
   transition: all 0.2s ease-out;
 
   -webkit-box-shadow: 0px 10px 30px -5px rgba($color-primary, 0.5);

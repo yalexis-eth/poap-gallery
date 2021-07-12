@@ -1,0 +1,188 @@
+.footer {
+  margin: 0;
+  position: relative;
+  background-color: $color-invert;
+  @media (min-width: $bp-m) {
+    margin: 0;
+    z-index: 6;
+    position: relative;
+  }
+  @media (min-width: $bp-mw) {
+    margin: 0;
+  }
+
+  .eth-branding {
+    text-align: center;
+    padding: 0;
+    img {
+      width: 150px;
+    }
+  }
+
+  h5 {
+    margin-bottom: 24px;
+  }
+
+  p {
+    margin-bottom: 36px;
+
+    @media (min-width: $bp-mw) {
+      margin-bottom: 72px;
+    }
+  }
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-rows: 200px 40px;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-areas:
+    'home-link    ecosystem    join-links'
+    'eth-branding eth-branding eth-branding';
+  .ecosystem, .join-links {
+    padding: 10%;
+    padding-top: 5%;
+  }
+  .home-link {
+    grid-area: home-link;
+    width: fit-content;
+    height: fit-content;
+    margin: 5%;
+    img {
+      max-width: 70%;
+    }
+    &:hover img {
+      transform: scale(0.9);
+    }
+  }
+  .ecosystem {
+    grid-area: ecosystem;
+
+    display: grid;
+    overflow-x: hidden;
+    grid-template-areas:
+      'title title'
+      'a  b'
+      'c  d'
+      'e  f'
+      'g  h';
+    @media (min-width: $bp-m) {
+      grid-template-areas:
+        'title title title'
+        'a     b'
+        'c     d'
+        'e     f'
+        'g     h';
+    }
+    h4 {
+      grid-area: title;
+      color: $color-primary;
+    }
+    a {
+      color: $grayscale4;
+      &:hover {
+        color: $color-primary;
+      }
+    }
+    .a {
+      grid-area: a;
+    }
+    .b {
+      grid-area: b;
+    }
+    .c {
+      grid-area: c;
+    }
+    .d {
+      grid-area: d;
+    }
+    .e {
+      grid-area: e;
+    }
+    .f {
+      grid-area: f;
+    }
+    .g {
+      grid-area: g;
+    }
+    .h {
+      grid-area: h;
+    }
+  }
+
+  .join-links {
+    grid-area: join-links;
+    display: flex;
+    flex-direction: column;
+
+    @media (min-width: $bp-m) {
+      align-items: flex-end;
+    }
+    h4 {
+      color: $color-primary;
+    }
+
+    .social-icons {
+      padding: 0;
+      margin-bottom: 0;
+      list-style-type: none;
+
+      display: flex;
+
+  
+      a {
+        margin-left: 8px;
+        fill: red;
+        img {
+          height: 20px;
+          width: 20px;
+
+          @media (min-width: $bp-mw) {
+            height: 30px;
+            width: 30px;
+          }
+        }
+      }
+    }
+  }
+  .eth-branding {
+    grid-area: eth-branding;
+    background-color: #f7f7f7;
+  }
+  @media (max-width: $bp-m) {
+    grid-template-rows: 2.3fr 1fr 2fr 40px;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'ecosystem'
+      'join-links'
+      'home-link'
+      'eth-branding';
+    .ecosystem, .join-links {
+      padding: 3%;
+      justify-content: center;
+      gap: 10%;
+      h4 {
+        text-align: center;
+      }
+      .social-icons {
+        justify-content: center;
+        a > img {
+          width: 32px;
+          height: 32px;
+        }
+      }
+    }
+    .home-link {
+      display: flex;
+      justify-content: center;
+      justify-self: center;
+      margin: 10%;
+    }
+  }
+}
+
+.footer-divider {
+  width: 100%;
+  max-width: none;
+  border: 1px solid $color-light-grey;
+}

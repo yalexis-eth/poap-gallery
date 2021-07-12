@@ -122,7 +122,7 @@ input[type='file'] {
   height: 50px;
   padding: 12px;
   box-shadow: none;
-  border: 2px solid $color-invert;
+  border: 2px solid $grayscale3;
   background: $color-invert;
   transition: right 0.2s ease-out;
   border-radius: 4px;
@@ -257,52 +257,6 @@ input[type='submit'] {
   &.loading {
     background: url('../../assets/images/loading.svg') no-repeat center center #ccc4f7;
     background-size: 30px;
-  }
-}
-
-select {
-  width: 100%;
-  padding: 12px;
-  box-shadow: none;
-  border: 2px solid $color-invert;
-  background: $color-invert;
-  color: $color-primary;
-  transition: right 0.2s ease-out;
-  border-radius: 4px;
-  margin: 0 0 24px;
-  @include x-rem(font-size, 16px);
-  height: 50px;
-
-  appearance: none;
-
-  background-image: $violet-select-arrow;
-  background-position: calc(100% - 20px) calc(1em + 2px), calc(100% - 15px) calc(1em + 2px),
-    calc(100% - 2.5em) 0.5em;
-  background-size: 5px 5px, 5px 5px, 1px 1.5em;
-  background-repeat: no-repeat;
-
-  outline-color: $color-primary;
-
-  &:last-child {
-    margin: 0;
-  }
-
-  &:hover,
-  &:focus {
-    border: 2px solid $color-primary;
-  }
-
-  &:disabled {
-    background-color: $color-light-violet;
-    color: $color-primary;
-
-    &:hover {
-      border: none;
-    }
-  }
-
-  &.placeholder-option {
-    color: $color-medium-violet;
   }
 }
 
@@ -458,21 +412,21 @@ textarea {
 }
 
 .modal-select-error {
-  border: 2px solid $color-error !important;
-  outline-color: $color-error;
-  color: $color-error;
+  border: 2px solid $error-red !important;
+  outline-color: $error-red;
+  color: $error-red;
   background-image: $red-select-arrow;
 }
 
 .modal-input-error {
-  border: 2px solid $color-error !important;
-  outline-color: $color-error !important;
+  border: 2px solid $error-red !important;
+  outline-color: $error-red !important;
   &::placeholder {
-    color: $color-error !important;
+    color: $error-red !important;
   }
 
   &.authentication-modal {
-    color: $color-error;
+    color: $error-red;
   }
 }
 
@@ -558,6 +512,33 @@ textarea {
     li {
       color: $color-primary;
       margin: 5px 0;
+    }
+  }
+}
+
+.home-main {
+  .container {
+    position: relative;
+    .background {
+      position: absolute;
+      background-repeat: no-repeat;
+      z-index: -2;
+      width: 100%;
+      height: 100%;
+      left: 0;
+      background-image: url('../../assets/images/city-02-Pittsburg_1.svg');
+      background-position: inherit;
+      @media (min-width: $bp-l) {
+        background-position: top 0 right 0;
+      }
+    }
+    .gradient-background {
+      position: absolute;
+      pointer-events: none;
+      z-index: -1;
+      right:0; top: 240px; left:0;
+      height: 425px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #FFFFFF 48.44%, #FFFFFF 100%);
     }
   }
 }

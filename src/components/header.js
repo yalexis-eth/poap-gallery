@@ -5,16 +5,18 @@ import { Link } from 'react-router-dom'
 export default function () {
   return (
     <header id="site-header" role="banner">
-    <div className="container">
-      <div className="col-xs-6 col-sm-6 col-md-6">
-        <Link to="/" className="logo">
-          <img src={PoapLogo} alt="POAP" />
-        </Link>
+      <div className="container">
+        <div className="pull-left">
+          <Link to="/" className="logo">
+            <img src={PoapLogo} alt="POAP" />
+          </Link>
+          <span>Gallery</span>
+        </div>
+        <div style={{marginLeft: 'auto'}}>
+          {/* Ready for future links if needed */}
+          {/* <Link to="#" className="link">FAQ</Link> */}
+        </div>
       </div>
-      <div className="col-xs-6 col-sm-6 col-md-6">
-        <p className="page-title">Gallery</p>
-      </div>
-    </div>
-  </header>
+    </header>
   )
 }

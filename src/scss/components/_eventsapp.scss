@@ -54,152 +54,6 @@
 }
 
 /* ******************************************************
-   Footer
-   ****************************************************** */
-
-.footer-events {
-  width: 100%;
-  padding: 80px 0 0;
-
-  &.normal-background {
-    background-color: $bg-color;
-  }
-
-  &.secondary-background {
-    background-color: $color-secondary;
-  }
-
-  &.white-background {
-    background-color: white;
-  }
-
-  &.violet-bg {
-    z-index: 1;
-    position: relative;
-    padding: 50px 0 0 0;
-    &:after {
-      content: '';
-      position: absolute;
-      top: -1px;
-      right: 0;
-      left: 0;
-      bottom: 0;
-      background-color: $color-secondary;
-      z-index: -1;
-    }
-  }
-
-  .image-footer {
-    float: left;
-    width: 100%;
-    overflow: hidden;
-
-    img {
-      width: 102%;
-      max-width: none;
-      margin: 0 0 0 -1%;
-    }
-  }
-
-  .footer-content {
-    background-color: $color-primary;
-    padding: 0 0 30px 0;
-    float: left;
-    width: 100%;
-    margin: -2px 0 0 0;
-
-    .decoration {
-      width: 100%;
-      max-width: 100px;
-      margin: -80px auto 10px;
-      display: block;
-
-      @media (min-width: $bp-m) {
-        margin: -60px auto 10px;
-      }
-      @media (min-width: $bp-l) {
-        margin: -60px auto 10px;
-      }
-
-      &.big-picture {
-        max-width: 330px;
-        margin: -120px auto 10px;
-
-        @media (min-width: $bp-m) {
-          margin: -100px auto 10px;
-        }
-        @media (min-width: $bp-l) {
-          margin: -105px auto 10px;
-        }
-      }
-    }
-
-    p {
-      color: $color-invert;
-      text-align: center;
-      margin: 0 auto 5px;
-      font-weight: $fontWeight-normal;
-
-      &:last-child {
-        margin: 0 auto;
-      }
-    }
-
-    .eth-branding {
-      text-align: center;
-      padding: 20px 0;
-      img {
-        width: 150px;
-      }
-    }
-
-    .made-by {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-
-      svg {
-        margin: 0 2px 2px 2px;
-        transform: scale(0.85);
-        transition: all 400ms ease-in-out;
-
-        rect {
-          fill: transparent;
-        }
-
-        path {
-          fill: white;
-        }
-      }
-
-      &:hover svg {
-        transform: scale(0.9);
-      }
-    }
-
-    .made-by-link {
-      color: white;
-      font-weight: 500;
-      margin-left: 3px;
-      text-decoration: none;
-      pointer-events: auto;
-    }
-
-    .social-icons {
-      text-align: center;
-      padding: 30px 0;
-      a {
-        margin: 0 10px;
-        img {
-          width: 30px;
-        }
-      }
-    }
-  }
-}
-
-/* ******************************************************
    Main
    ****************************************************** */
 
@@ -281,26 +135,11 @@
       }
 
       .error {
-        color: $color-error;
+        color: $error-red;
         max-width: 400px;
         margin: 0 auto;
         @include x-rem(font-size, 20px);
         text-align: center;
-      }
-    }
-
-    .social-icons {
-      list-style-type: none;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-evenly;
-      margin: 20px auto 0;
-      padding: 0;
-      max-width: 350px;
-
-      li {
-        margin: 0;
-        padding: 0;
       }
     }
   }

@@ -3,6 +3,15 @@ import {Link} from 'react-router-dom'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import {getMainnetTransfers, getxDaiTransfers, POAP_API_URL} from "../store/api";
+import { Pill } from './pill';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import { faClock } from '@fortawesome/free-regular-svg-icons';
+import TransferIcon from '../assets/images/transfer-icon.svg'
+import ClaimIcon from '../assets/images/claim-icon.svg'
+import MigrateIcon from '../assets/images/migrate-icon.svg'
+import BurnIcon from '../assets/images/burn-icon.svg'
+import { useWindowWidth } from '@react-hook/window-size/throttled';
+import { transferType } from '../utilities/utilities'
 
 
 dayjs.extend(relativeTime)
@@ -14,15 +23,16 @@ export default function ActivityTable() {
   const [transfers, setTransfers] = useState([])
   const [daitransfers, setDaiTransfers] = useState([])
   const [mainnetTransfers, setMainnetTransfers] = useState([])
-
+  const transferLimit = 3
+  
   useEffect(() => {
     setLoading(true)
-    getMainnetTransfers(2)
+    getMainnetTransfers(transferLimit)
       .then(
         (result) => {
-          let tfrs = result.data.transfers
-          tfrs.map(t => t.network = "mainnet")
-          setMainnetTransfers(tfrs)
+          let transfers = result.data.transfers
+          transfers.map(t => t.network = "mainnet")
+          setMainnetTransfers(transfers)
           setLoading(false)
         },
         (error) => {
@@ -34,12 +44,12 @@ export default function ActivityTable() {
 
   useEffect(() => {
     setLoading(true)
-    getxDaiTransfers(2)
+    getxDaiTransfers(transferLimit)
       .then(
         (result) => {
-          let tfrs = result.data.transfers
-          tfrs.map(t => t.network = "xDai")
-          setDaiTransfers(tfrs)
+          let transfers = result.data.transfers
+          transfers.map(t => t.network = "xDai")
+          setDaiTransfers(transfers)
           setLoading(false)
         },
         (error) => {
@@ -50,59 +60,81 @@ export default function ActivityTable() {
   }, []);
 
   useEffect(() => {
-    let tfrs = daitransfers.concat(mainnetTransfers)
-    tfrs.sort((a, b) => {
+    let transfers = daitransfers.concat(mainnetTransfers)
+    transfers.sort((a, b) => {
       return b.timestamp - a.timestamp
     })
 
-    setTransfers(tfrs.slice(0, 2))
+    setTransfers(transfers.slice(0, transferLimit))
   }, [daitransfers, mainnetTransfers])
 
   return (
-    <div className="feed"
+    <div className="activity-table"
          style={{display: "flex", flexDirection: "column", justifyContent: "center", fontSize: '.89rem'}}>
-      <div style={{margin: '0 auto'}}>
+      <div style={{display:'flex', flexDirection: 'column', alignItems: 'center'}}>
+        <div className='activity-table-title-container'>
+          <div className="activity-table-title">POAP Gallery</div>
+          <div className="activity-table-subtitle">Explore all the beautiful badges that have been created and claimed throughout the history of POAP</div>
+        </div>
         <Transfers loading={loading} transfers={transfers}></Transfers>
       </div>
-      <div style={{display: "flex", justifyContent: "center", margin: '.5rem 0'}}><Link to="/activity">Recent
-        Activity</Link></div>
-    </div>
-  )
-}
-
-function Claim({transfer}) {
-  return (
-    <div style={{margin: '.8rem 0'}}>
-      <span>Token </span>
-      <a style={{width: '1.3rem'}} href={"https://app.poap.xyz/token/" + transfer.token.id}>
-        <img style={{
-          width: "1.3rem",
-          height: '1.3rem',
-          objectFit: 'cover',
-          borderRadius: '50%'
-        }} src={`${POAP_API_URL}/token/${transfer.token.id}/image`} alt=""/>
-      </a>
-      <span> was claimed by <a
-        href={"https://app.poap.xyz/scan/" + transfer.to.id}> {transfer.to.id.substring(0, 16) + '…'} </a> {dayjs(transfer.timestamp * 1000).fromNow()} on {transfer.network} </span>
+      <div style={{display: "flex", justifyContent: "center", margin: '.5rem 0'}}><Link to="/activity">
+        <FontAwesomeIcon icon={faClock} />
+        {' '}View more activity
+      </Link></div>
     </div>
   )
 }
 
 function Transfer({transfer}) {
+  const width = useWindowWidth();
+  const type = transferType(transfer)
   return (
-    <div style={{margin: '.8rem 0'}}>
-      <span>Token </span>
-      <a style={{width: '1.3rem'}} href={"https://app.poap.xyz/token/" + transfer.token.id}>
-        <img style={{
-          width: "1.3rem",
-          height: '1.3rem',
-          objectFit: 'cover',
-          borderRadius: '50%'
-        }} src={`${POAP_API_URL}/token/${transfer.token.id}/image`} alt=""/>
-      </a>
-      <span> was transferred from <a
-        href={"https://app.poap.xyz/scan/" + transfer.from.id}> {transfer.from.id.substring(0, 16) + '…'} </a> to <a
-        href={"https://app.poap.xyz/scan/" + transfer.to.id}> {transfer.to.id.substring(0, 16) + '…'} </a> {dayjs(transfer.timestamp * 1000).fromNow()} {transfer.network} </span>
+    <div className='transfer'>
+      {width > 480 &&
+        <>
+        <div className='dashed-line' style={{height: `${transfer.opacity === 0.3 ? '0' : 'inherit'}`}}></div>
+        <img style={{width: `37px`, zIndex: 2}} src={type==='Migration'? MigrateIcon: type==='Claim'? ClaimIcon: type==='Burn'? BurnIcon:TransferIcon} alt={type} />
+        </>
+      }
+      <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
+        <a href={"https://app.poap.xyz/token/" + transfer.token.id} target="_blank" style={{margin: '.8rem 0', opacity: transfer.opacity}} className={`round-box ${transfer.opacity===1? 'first':''}`} rel="noopener noreferrer">
+          <div className='round-box-image'>
+            <img style={{
+              objectFit: 'cover',
+              borderRadius: '50%'
+            }} src={`${POAP_API_URL}/token/${transfer.token.id}/image`} alt=""/>
+          </div>
+          <div className='round-box-content'>
+            <Pill text={type} className={type} />
+            {
+              (type === 'Claim')?
+              <span> New claim on event
+                {' '}<Link to={`/event/${transfer.token.event.id}`}>#{transfer.token.event.id}</Link>
+              </span> :
+              (type === 'Transfer')?
+              <span>POAP transferred from
+                <a href={"https://app.poap.xyz/scan/" + transfer.from.id} target="_blank"  rel="noopener noreferrer"> {transfer.from.id.substring(0, 8) + '…'} </a> to 
+                <a href={"https://app.poap.xyz/scan/" + transfer.to.id} target="_blank"  rel="noopener noreferrer"> {transfer.to.id.substring(0, 8) + '…'} </a>
+                {/* on {transfer.network} */}
+              </span> :
+              (type === 'Migration')?
+              <span> POAP migrated to 
+                <a href={"https://app.poap.xyz/scan/" + transfer.to.id} target="_blank"  rel="noopener noreferrer"> {transfer.to.id.substring(0, 16) + '…'} </a>
+                on mainnet
+              </span> :
+              (type === 'Burn')?
+              <span>POAP burned on event{' '}<Link to={`/event/${transfer.token.event.id}`}>#{transfer.token.event.id}</Link></span> :
+              null
+            }
+
+          </div>
+          {width > 768 && 
+            <div className='round-box-time'>
+              {dayjs(transfer.timestamp * 1000).fromNow()}
+            </div>}
+        </a>
+      </div>
     </div>
   )
 }
@@ -111,11 +143,8 @@ function Transfers({transfers, loading}) {
   const tfers = []
   for (let i = 0; i < transfers.length; i++) {
     const t = transfers[i];
-    if (t.from.id === '0x0000000000000000000000000000000000000000') {
-      tfers.push(<Claim key={t.id} transfer={t}></Claim>)
-    } else {
-      tfers.push(<Transfer key={t.id} transfer={t}></Transfer>)
-    }
+    t.opacity = i===0? 1.0: i===1? 0.7: 0.3;
+    tfers.push(<Transfer key={t.id} transfer={t}></Transfer>)
   }
   return tfers
 }

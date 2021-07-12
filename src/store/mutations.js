@@ -112,8 +112,12 @@ function processSubgraphEventData(subgraphEvent, apiEvent, owners, tokens) {
     if(subgraphEvent.data.tokens && subgraphEvent.data.tokens.length)
       tokens = tokens.concat(subgraphEvent.data.tokens)
 
-    if(subgraphEvent.data.event && subgraphEvent.data.event.tokenCount)
-      apiEvent.tokenCount += parseInt(subgraphEvent.data.event.tokenCount);
+    if(subgraphEvent.data.event) {
+      if (subgraphEvent.data.event.tokenCount)
+        apiEvent.tokenCount += parseInt(subgraphEvent.data.event.tokenCount);
+      if (subgraphEvent.data.event.transferCount)
+        apiEvent.transferCount += parseInt(subgraphEvent.data.event.transferCount);
+    }
 
     for (let i = 0; i < subgraphEvent.data.tokens.length; i++) {
       const owner = subgraphEvent.data.tokens[i].owner;
@@ -141,6 +145,7 @@ export async function getEventPageData(eventId, first, skip) {
   const xDaiOwners = {};
   const mainnetOwners = {}
   event.tokenCount = 0;
+  event.transferCount = 0;
 
   // Process the data tokens and the owners
   tokens = processSubgraphEventData(mainnet, event, mainnetOwners, tokens);
