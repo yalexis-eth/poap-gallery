@@ -9,7 +9,9 @@ import { faClock } from '@fortawesome/free-regular-svg-icons';
 import TransferIcon from '../assets/images/transfer-icon.svg'
 import ClaimIcon from '../assets/images/claim-icon.svg'
 import MigrateIcon from '../assets/images/migrate-icon.svg'
+import BurnIcon from '../assets/images/burn-icon.svg'
 import { useWindowWidth } from '@react-hook/window-size/throttled';
+import { transferType } from '../utilities/utilities'
 
 
 dayjs.extend(relativeTime)
@@ -92,7 +94,7 @@ function Transfer({transfer}) {
       {width > 480 &&
         <>
         <div className='dashed-line' style={{height: `${transfer.opacity === 0.3 ? '0' : 'inherit'}`}}></div>
-        <img style={{width: `37px`, zIndex: 2}} src={type==='Transfer'? TransferIcon: type==='Claim'? ClaimIcon:MigrateIcon} alt={type} />
+        <img style={{width: `37px`, zIndex: 2}} src={type==='Migration'? MigrateIcon: type==='Claim'? ClaimIcon: type==='Burn'? BurnIcon:TransferIcon} alt={type} />
         </>
       }
       <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
@@ -103,34 +105,34 @@ function Transfer({transfer}) {
               borderRadius: '50%'
             }} src={`${POAP_API_URL}/token/${transfer.token.id}/image`} alt=""/>
           </div>
-          {/* <div style={{overflow: 'hidden', display: 'flex', flexDirection: 'row'}}> */}
-            <div className='round-box-content'>
-              <Pill text={type} className={type} />
-              {
-                (type === 'Claim')?
-                <span> New claim on event
-                  {' '}<Link to={`/event/${transfer.token.event.id}`}>#{transfer.token.event.id}</Link>
-                </span> :
-                (type === 'Transfer')?
-                <span>POAP transferred from
-                  <a href={"https://app.poap.xyz/scan/" + transfer.from.id} target="_blank"  rel="noopener noreferrer"> {transfer.from.id.substring(0, 8) + '…'} </a> to 
-                  <a href={"https://app.poap.xyz/scan/" + transfer.to.id} target="_blank"  rel="noopener noreferrer"> {transfer.to.id.substring(0, 8) + '…'} </a>
-                  {/* on {transfer.network} */}
-                </span> :
-                (type === 'Migration')?
-                <span> POAP migrated to 
-                  <a href={"https://app.poap.xyz/scan/" + transfer.to.id} target="_blank"  rel="noopener noreferrer"> {transfer.to.id.substring(0, 16) + '…'} </a>
-                  on mainnet
-                </span> :
-                null
-              }
+          <div className='round-box-content'>
+            <Pill text={type} className={type} />
+            {
+              (type === 'Claim')?
+              <span> New claim on event
+                {' '}<Link to={`/event/${transfer.token.event.id}`}>#{transfer.token.event.id}</Link>
+              </span> :
+              (type === 'Transfer')?
+              <span>POAP transferred from
+                <a href={"https://app.poap.xyz/scan/" + transfer.from.id} target="_blank"  rel="noopener noreferrer"> {transfer.from.id.substring(0, 8) + '…'} </a> to 
+                <a href={"https://app.poap.xyz/scan/" + transfer.to.id} target="_blank"  rel="noopener noreferrer"> {transfer.to.id.substring(0, 8) + '…'} </a>
+                {/* on {transfer.network} */}
+              </span> :
+              (type === 'Migration')?
+              <span> POAP migrated to 
+                <a href={"https://app.poap.xyz/scan/" + transfer.to.id} target="_blank"  rel="noopener noreferrer"> {transfer.to.id.substring(0, 16) + '…'} </a>
+                on mainnet
+              </span> :
+              (type === 'Burn')?
+              <span>POAP burned on event{' '}<Link to={`/event/${transfer.token.event.id}`}>#{transfer.token.event.id}</Link></span> :
+              null
+            }
 
-            </div>
-            {width > 768 && 
-              <div className='round-box-time'>
-                {dayjs(transfer.timestamp * 1000).fromNow()}
-              </div>}
-          {/* </div> */}
+          </div>
+          {width > 768 && 
+            <div className='round-box-time'>
+              {dayjs(transfer.timestamp * 1000).fromNow()}
+            </div>}
         </a>
       </div>
     </div>
@@ -146,9 +148,3 @@ function Transfers({transfers, loading}) {
   }
   return tfers
 }
-
-const transferType = (transfer) => {
-  return (transfer.from?.id === '0x0000000000000000000000000000000000000000') ? 
-          (transfer.network === 'mainnet') ? 'Migration':'Claim'
-          : 'Transfer'
-};

@@ -20,7 +20,7 @@ export function EventCard({ event, size = 's', type = '', power = 0}) {
 
   type = validateType(type);
   useEffect(() => {
-    if (tokenCount === 0) {
+    if (tokenCount === 0 && event.tokenCount) {
       setTokenCount(event.tokenCount)
     }
   }, [event, tokenCount])
@@ -118,7 +118,7 @@ export function EventCard({ event, size = 's', type = '', power = 0}) {
           <div className="title">
             <FontAwesomeIcon style={{ width: '1rem', marginRight: '.4rem' }} icon={faCoins} />{'SUPPLY'}
           </div>
-          {tokenCount ? tokenCount : ' None Claimed'}
+          {tokenCount === undefined ? ' -' : tokenCount === 0 ? ' None Claimed' : tokenCount}
         </div>
         {
         size === 'l' &&

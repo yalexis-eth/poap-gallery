@@ -9,12 +9,13 @@ import {getMainnetTransfers, getxDaiTransfers, POAP_API_URL} from "../store/api"
 import {EventCard} from "../components/eventCard";
 import { Pill } from '../components/pill';
 import Migration from '../assets/images/migrate.svg'
+import Burn from '../assets/images/burn.svg'
 import Claim from '../assets/images/claim.svg'
 import Transfer from '../assets/images/transfer.svg'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { Foliage } from '../components/foliage';
-import { shrinkAddress } from '../utilities/utilities';
+import { shrinkAddress, transferType } from '../utilities/utilities';
 import { useWindowWidth } from '@react-hook/window-size/throttled';
 import { Link } from 'react-router-dom'
 
@@ -107,10 +108,8 @@ export default function Activity() {
 }
 
 function TokenRow({transfer, dateFormat}) {
-  const type = (transfer.from?.id === '0x0000000000000000000000000000000000000000') ? 
-                  (transfer.network === 'mainnet') ? 'Migration':'Claim'
-                  : 'Transfer'
-  const width = useWindowWidth();
+  const type = transferType(transfer)
+  const width = useWindowWidth()
   const [expanded, setExpanded] = useState(false)
   const toggleRowExpand = () => {
     setExpanded(!expanded)
@@ -128,7 +127,8 @@ function TokenRow({transfer, dateFormat}) {
       <td className='recent-activity' style={{width:'100%'}}>
         {
           (type === 'Migration') ? <img src={Migration} alt="Migration" /> :
-          (type === 'Claim') ?<img src={Claim} alt="Claim" /> :
+          (type === 'Claim') ? <img src={Claim} alt="Claim" /> :
+          (type === 'Burn') ? <img src={Burn} alt="Burn" /> :
           <img src={Transfer} alt="Transfer" />
         }
         <a
@@ -142,11 +142,12 @@ function TokenRow({transfer, dateFormat}) {
           }} src={`${POAP_API_URL}/token/${transfer.token.id}/image`} alt=""/>
         </a>
         <div className='recent-activity-content'>
-          <div className='activity-type-pill'><Pill className={`${type}`} text={type} tooltip={false} /></div>
+          <div className='activity-type-pill'><Pill className={type} text={type} tooltip={false} /></div>
           <div className='time ellipsis'>{dayjs(transfer.timestamp * 1000).fromNow()}</div>
           <div className='description'>{
             (type === 'Migration') ? 'POAP migrated to mainnet' :
             (type === 'Claim') ? <span>New claim on event{' '}<Link to={`/event/${transfer.token.event.id}`}>#{transfer.token.event.id}</Link></span> :
+            (type === 'Burn') ? <span>POAP burned on event{' '}<Link to={`/event/${transfer.token.event.id}`}>#{transfer.token.event.id}</Link></span> :
             <span>POAP transferred from 
               <a href={`https://app.poap.xyz/scan/${transfer.from.id}`} target="_blank"  rel="noopener noreferrer"> {shrinkAddress(transfer.from.id, 10)} </a> to
               <a href={`https://app.poap.xyz/scan/${transfer.to.id}`} target="_blank"  rel="noopener noreferrer"> {shrinkAddress(transfer.to.id, 10)}</a>
@@ -166,7 +167,8 @@ function TokenRow({transfer, dateFormat}) {
         <div className='recent-activity' style={{width:'100%'}}>
           {
             (type === 'Migration') ? <img src={Migration} alt="Migration" /> :
-            (type === 'Claim') ?<img src={Claim} alt="Claim" /> :
+            (type === 'Claim') ? <img src={Claim} alt="Claim" /> :
+            (type === 'Burn') ? <img src={Burn} alt="Burn" /> :
             <img src={Transfer} alt="Transfer" />
           }
           {
@@ -183,12 +185,12 @@ function TokenRow({transfer, dateFormat}) {
             </a>
           }
           <div className='recent-activity-content'>
-            <div className='activity-type-pill'><Pill className={`${type}`} text={type} tooltip={false} /></div>
+            <div className='activity-type-pill'><Pill className={type} text={type} tooltip={false} /></div>
             <div className='time ellipsis'>{dayjs(transfer.timestamp * 1000).fromNow()}</div>
             <div className='description'>{
               (type === 'Migration') ? 'POAP migrated to mainnet' :
-              (type === 'Claim') ? <span> <span>New claim{' '}</span>
-                on event{' '}<Link to={`/event/${transfer.token.event.id}`}>#{transfer.token.event.id}</Link></span> :
+              (type === 'Burn') ? <span>POAP burned on event{' '}<Link to={`/event/${transfer.token.event.id}`}>#{transfer.token.event.id}</Link></span> :
+              (type === 'Claim') ? <span> New claim on event{' '}<Link to={`/event/${transfer.token.event.id}`}>#{transfer.token.event.id}</Link></span> :
               <span>POAP transferred from 
                 <a href={`https://app.poap.xyz/scan/${transfer.from.id}`} target="_blank"  rel="noopener noreferrer"> {shrinkAddress(transfer.from.id, 10)} </a> to
                 <a href={`https://app.poap.xyz/scan/${transfer.to.id}`} target="_blank"  rel="noopener noreferrer"> {shrinkAddress(transfer.to.id, 10)}</a>

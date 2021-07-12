@@ -1,3 +1,4 @@
+import { ZERO_ADDRESS } from '../store/api';
 
 
 export const shrinkAddress = (address, length) => {
@@ -16,3 +17,11 @@ export const debounce = (func, delay) => {
     }, delay)
   }
 }
+
+export const transferType = (transfer) => {
+  return (transfer.from?.id === ZERO_ADDRESS)
+          ? (transfer.network === 'mainnet')
+            ? 'Migration':'Claim'
+          : (transfer.to?.id === ZERO_ADDRESS)
+            ? 'Burn':'Transfer'
+};
