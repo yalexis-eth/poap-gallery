@@ -878,10 +878,11 @@ table {
     tr {
       text-align: center;
       * {
-        color: $grayscale4;
+        color: $grayscale6;
       }
-      a:hover {
+      a:hover, span:hover {
         color: $violet2;
+        text-decoration: none;
       }
       td {
         border: none;
@@ -909,6 +910,11 @@ table {
 }
 
 .activity-table-container {
+  .recent-activity {
+    &-image {
+      flex: 0 0 118px;
+    }
+  }
   tbody td {
     padding: 14px;
   }

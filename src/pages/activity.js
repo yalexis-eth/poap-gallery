@@ -132,6 +132,7 @@ function TokenRow({transfer, dateFormat}) {
           <img src={Transfer} alt="Transfer" />
         }
         <a
+          className='recent-activity-image'
           href={"https://app.poap.xyz/token/"+transfer.token.id} target="_blank"  rel="noopener noreferrer">
           <img style={{
             width: 80,
@@ -146,12 +147,12 @@ function TokenRow({transfer, dateFormat}) {
           <div className='time ellipsis'>{dayjs(transfer.timestamp * 1000).fromNow()}</div>
           <div className='description'>{
             (type === 'Migration') ? 'POAP migrated to mainnet' :
-            (type === 'Claim') ? <span>New claim on event{' '}<Link to={`/event/${transfer.token.event.id}`}>#{transfer.token.event.id}</Link></span> :
-            (type === 'Burn') ? <span>POAP burned on event{' '}<Link to={`/event/${transfer.token.event.id}`}>#{transfer.token.event.id}</Link></span> :
-            <span>POAP transferred from 
+            (type === 'Claim') ? <div>New claim on event{' '}<Link to={`/event/${transfer.token.event.id}`}>#{transfer.token.event.id}</Link></div> :
+            (type === 'Burn') ? <div>POAP burned on event{' '}<Link to={`/event/${transfer.token.event.id}`}>#{transfer.token.event.id}</Link></div> :
+            <div>POAP transferred from 
               <a href={`https://app.poap.xyz/scan/${transfer.from.id}`} target="_blank"  rel="noopener noreferrer"> {shrinkAddress(transfer.from.id, 10)} </a> to
               <a href={`https://app.poap.xyz/scan/${transfer.to.id}`} target="_blank"  rel="noopener noreferrer"> {shrinkAddress(transfer.to.id, 10)}</a>
-            </span>
+            </div>
           }</div>
         </div>
       </td>
@@ -174,6 +175,7 @@ function TokenRow({transfer, dateFormat}) {
           {
             width > 430 &&
             <a
+              className='recent-activity-image'
               href={"https://app.poap.xyz/token/"+transfer.token.id} target="_blank"  rel="noopener noreferrer">
               <img style={{
                 width: 80,
