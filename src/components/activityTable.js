@@ -74,7 +74,7 @@ export default function ActivityTable() {
       <div style={{display:'flex', flexDirection: 'column', alignItems: 'center'}}>
         <div className='activity-table-title-container'>
           <div className="activity-table-title">POAP Gallery</div>
-          <div className="activity-table-subtitle">Explore all the beautiful badges that have been created and claimed throughout the history of POAP</div>
+          <div className="activity-table-subtitle">Explore POAP.gallery and enjoy the adventure through the digital collectibles universe.</div>
         </div>
         <Transfers loading={loading} transfers={transfers}></Transfers>
       </div>
