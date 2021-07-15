@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faCoins, faGlobe, faHashtag, faLaptop, faPaperPlane, faClock, faFire } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useState } from "react";
 import ReactTooltip from 'react-tooltip';
+import { MultiLineEllipsis } from './multiLineEllipsis';
 
 export function EventCard({ event, size = 's', type = '', power = 0}) {
   const [tokenCount, setTokenCount] = useState(0);
@@ -58,16 +59,16 @@ export function EventCard({ event, size = 's', type = '', power = 0}) {
 
         {/* title */}
         <h3
-          title={event.name}
-          className="h4 content-title ellipsis"
+          data-tip={event.name}
+          className="h4 content-title"
           style={{
             fontSize: '1rem',
             textAlign: 'center',
             margin: '8px 0 0 0',
             overflowWrap: 'anywhere',
           }}>
-          {event.name}
-        </h3>
+          <MultiLineEllipsis text={event.name} lines={2} maxLength={(size === 'l' ? 404 : size === 'm' ? 333 : 230)}/>
+        </h3>{size === 'l' && <ReactTooltip effect='solid' />}
 
         {/* description */}
         {

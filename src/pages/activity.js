@@ -123,7 +123,6 @@ function TokenRow({transfer, dateFormat}) {
   return (
     width > 780
     ? <tr>
-      {/* <td><a href={"https://app.poap.xyz/token/" + transfer.id} target="_blank"  rel="noopener noreferrer">{transfer.id}</a></td> */}
       <td className='recent-activity' style={{width:'100%'}}>
         {
           (type === 'Migration') ? <img src={Migration} alt="Migration" /> :
