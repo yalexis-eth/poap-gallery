@@ -67,7 +67,7 @@ export function EventCard({ event, size = 's', type = '', power = 0}) {
             margin: '8px 0 0 0',
             overflowWrap: 'anywhere',
           }}>
-          <MultiLineEllipsis text={event.name} lines={2} maxLength={(size === 'l' ? 404 : size === 'm' ? 263 : 230)}/>
+          <MultiLineEllipsis text={event.name} lines={2} maxLength={(size === 'l' ? 403 : size === 'm' ? 262 : 229)}/>
         </h3>{size === 'l' && <ReactTooltip effect='solid' />}
 
         {/* description */}
