@@ -244,7 +244,7 @@ function CreateTable({transfers, loading}) {
               <th style={{paddingLeft: '20px', textAlign: 'start'}}>Recent Activity</th>
               <th>POAP ID</th>
               <th>Collection</th>
-              <th>TX count <FontAwesomeIcon icon={faQuestionCircle} data-tip="The amount of transactions this POAP has done since it the day it been claimed." /><ReactTooltip/> </th>
+              <th>TX count <FontAwesomeIcon icon={faQuestionCircle} data-tip="The amount of transactions this POAP has done since it the day it been claimed." /><ReactTooltip effect='solid'/> </th>
               <th>Minting Date <FontAwesomeIcon icon={faDotCircle} onClick={toggleDateFormat} data-tip="Toggle date format" style={{ width: '1rem', marginRight: '.2rem', cursor: 'pointer' }} /><ReactTooltip/></th>
             </tr>
             : <tr>

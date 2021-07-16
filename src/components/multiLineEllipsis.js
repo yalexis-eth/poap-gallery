@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { debounce } from '../utilities/utilities';
 
 /* 
  * Implementation is pretty shady but it works.
@@ -14,15 +15,18 @@ export const MultiLineEllipsis = ({text='', lines=2, maxLength=0}) => {
   const title4 = useRef(null);
   const title5 = useRef(null);
   const [titleLength, setTitleLength] = useState(0)
-  useEffect(() => {
+  const reCalculateLengthDebounced = useCallback(debounce(() => reCalculateLength(maxLength, text), 500), [maxLength, text])
+  const reCalculateLength = (maxLength, text) => {
     let tests = [title1, title2, title3, title4, title5];
     tests.forEach(test => {
       if (test?.current?.offsetWidth <= maxLength) {
-        console.log(test.current.textContent.length, text.length)
         setTitleLength(test.current.textContent.length)
       }
     })
-  }, [title1, title2, title3, title4, title5, maxLength, text]);
+  }
+  useEffect(() => {
+    reCalculateLengthDebounced(maxLength, text)
+  }, [maxLength, text, reCalculateLengthDebounced]);
   
   return (
     <div style={{display: 'flex', flexDirection: 'column'}}>

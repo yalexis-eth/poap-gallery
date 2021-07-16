@@ -106,7 +106,7 @@ function Transfer({transfer}) {
             }} src={`${POAP_API_URL}/token/${transfer.token.id}/image`} alt=""/>
           </div>
           <div className='round-box-content'>
-            <Pill text={type} className={type} />
+            <Pill text={type} className={type} tooltip={false} />
             {
               (type === 'Claim')?
               <span> New claim on event

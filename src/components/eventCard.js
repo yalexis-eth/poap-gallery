@@ -4,10 +4,13 @@ import { faCalendar, faCoins, faGlobe, faHashtag, faLaptop, faPaperPlane, faCloc
 import React, { useEffect, useState } from "react";
 import ReactTooltip from 'react-tooltip';
 import { MultiLineEllipsis } from './multiLineEllipsis';
+import { Pill } from './pill';
+import { useWindowWidth } from '@react-hook/window-size/throttled';
 
 export function EventCard({ event, size = 's', type = '', power = 0}) {
   const [tokenCount, setTokenCount] = useState(0);
 
+  const width = useWindowWidth();
   const validateType = (type) => {
     if (size !== 'm') return '';
     if (type !== 'most-recent' && type !== 'upcoming' && type !== 'most-claimed') return '';
@@ -37,6 +40,7 @@ export function EventCard({ event, size = 's', type = '', power = 0}) {
         alt="POAP" />
     </div>
   );
+
   const Content = () => (
     <div className="content">
       <div
@@ -67,7 +71,7 @@ export function EventCard({ event, size = 's', type = '', power = 0}) {
             margin: '8px 0 0 0',
             overflowWrap: 'anywhere',
           }}>
-          <MultiLineEllipsis text={event.name} lines={2} maxLength={(size === 'l' ? 403 : size === 'm' ? 262 : 229)}/>
+          <MultiLineEllipsis text={event.name} lines={2} maxLength={(size === 'l' ? (width > 768 ? 404 : width > 480 ? 304 : 204) : size === 'm' ? 262 : 229)}/>
         </h3>{size === 'l' && <ReactTooltip effect='solid' />}
 
         {/* description */}
@@ -87,21 +91,10 @@ export function EventCard({ event, size = 's', type = '', power = 0}) {
 
         {/* time and place */}
         <div className="content-time-place">
-          <div className="pill" style={{ minWidth: '110px'}}>
-            <FontAwesomeIcon style={{ width: '1rem', marginRight: '.2rem' }} icon={faCalendar} /> {event.start_date}
-          </div>
-          <div className="pill ellipsis" style={{ minWidth: '110px'}}>
-            {event.city ?
-              <div className='ellipsis' style={{width: '100px'}}>
-                <FontAwesomeIcon style={{ width: '1rem', marginRight: '.2rem' }} icon={faGlobe} />
-                {' '}<span data-tip={event.city}>{event.city}</span><ReactTooltip /> 
-              </div> :
-              <div>
-                {' '}
-                <FontAwesomeIcon style={{ width: '1rem', marginRight: '.2rem' }} icon={faLaptop} /> Virtual event{' '}
-              </div>
-            }{' '}
-          </div>
+          <Pill style={{ minWidth: '110px'}} text={event.start_date} icon={faCalendar} />
+          <Pill className="ellipsis" style={{ minWidth: '110px'}} tooltip={true} 
+            icon={event.city ? faGlobe : faLaptop}
+            text={event.city ? event.city : 'Virtual event '}/>
         </div>
       </div>
       
