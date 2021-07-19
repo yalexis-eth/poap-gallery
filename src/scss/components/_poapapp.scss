@@ -940,6 +940,9 @@ table {
 }
 
 .round-box {
+  &:focus, &:active {
+    text-decoration: none;
+  }
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -950,4 +953,19 @@ table {
   padding: 1rem;
   box-shadow: 0px 4px 16px rgba(187, 196, 239, 0.35);
   transition: box-shadow .2s ease;
+}
+
+.ReactModal__Overlay--after-open {
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.ReactModal__Content--after-open {
+  top: 0!important;
+  display: flex;
+  justify-content: center;
+  img {
+    max-width: 80%;
+  }
 }

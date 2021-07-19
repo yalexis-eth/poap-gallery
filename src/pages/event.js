@@ -52,6 +52,10 @@ export function Event() {
   const pageCount = useMemo( () => event.tokenCount % 50 !== 0 ? Math.floor(event.tokenCount / 50) + 1 : event.tokenCount, [event])
   const power = calculatePower(csv_data);
 
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+  
   const MobileRow = ({token}) => {
     const [expanded, setExpanded] = useState(false)
     const toggleRowExpand = () => {
@@ -89,7 +93,7 @@ export function Event() {
     for (let i = 0; i < tokens.length; i++) {
       _data.push(width > 480 ? {
         col1:  (<a href={"https://app.poap.xyz/token/" + tokens[i].id} target="_blank" rel="noopener noreferrer">{'#'}{tokens[i].id}</a>) ,
-        col2: (<a href={"https://app.poap.xyz/scan/" + tokens[i].owner.id} target="_blank" rel="noopener noreferrer" data-tip='View Collection in POAP.scan'> <ReactTooltip />
+        col2: (<a href={"https://app.poap.xyz/scan/" + tokens[i].owner.id} target="_blank" rel="noopener noreferrer" data-tip='View Collection in POAP.scan'> <ReactTooltip effect='solid' />
           {width > 768
             ? <span>{shrinkAddress(tokens[i].owner.id, 20)}</span>
             : <span>{shrinkAddress(tokens[i].owner.id, 10)}</span>
@@ -122,7 +126,7 @@ export function Event() {
         let validName = ensNames[i]
         if(validName){
           if(data[i]){
-            _data[i].col2 = (<a href={"https://app.poap.xyz/scan/" + tokens[i].owner.id} target="_blank"  rel="noopener noreferrer"> {validName}</a>)
+            _data[i].col2 = (<a href={"https://app.poap.xyz/scan/" + tokens[i].owner.id} target="_blank"  rel="noopener noreferrer" data-tip='View Collection in POAP.scan'> <ReactTooltip effect='solid' /> {validName}</a>)
             _csv_data[i][2] = validName
           }
         }
@@ -135,7 +139,7 @@ export function Event() {
   const columns = useMemo(
     () => [
       {
-        Header: () => (<><span data-tip="Click to sort by ID">POAP ID </span><ReactTooltip /></>),
+        Header: () => (<><span data-tip="Click to sort by ID">POAP ID </span><ReactTooltip effect='solid' /></>),
         accessor: 'col1', // accessor is the "key" in the data
       },
       {
@@ -147,11 +151,11 @@ export function Event() {
         accessor: 'col3',
       },
       {
-        Header: 'TX Count',
+        Header: (<><span data-tip="Click to sort by TX Count">TX Count </span><ReactTooltip effect='solid' /></>),
         accessor: 'col4',
       },
       {
-        Header: () => (<span>Power <FontAwesomeIcon icon={faQuestionCircle} data-tip="Total amount of POAPs held by this address" /> <ReactTooltip /></span>),
+        Header: () => (<><span><span data-tip="Click to sort by Power" data-for='power-order'>Power</span> <FontAwesomeIcon icon={faQuestionCircle} data-tip="Total amount of POAPs held by this address" data-for='power-info' /><ReactTooltip id='power-info' effect='solid' /> </span><ReactTooltip id='power-order' effect='solid' /></>),
         accessor: 'col5',
       },
     ],
@@ -296,7 +300,7 @@ function CreateTable({loading, pageCount: pc, columns, data, event}) {
             {// Loop over the headers in each row
             headerGroup.headers.map((column, idx) => (
               // Apply the header cell props
-              idx === 0
+              (idx === 0 || idx === 3 || idx === 4)
                 ? <th key={idx} {...column.getHeaderProps(column.getSortByToggleProps())}>
                   {// Render the header
                   column.render('Header')}{' '}
@@ -311,7 +315,7 @@ function CreateTable({loading, pageCount: pc, columns, data, event}) {
                 ? <th key={idx} {...column.getHeaderProps()}>
                   {// Render the header
                   column.render('Header')}{' '}
-                  <FontAwesomeIcon onClick={toggleDateFormat} style={{ width: '1rem', marginRight: '.2rem', cursor: 'pointer' }} icon={faDotCircle} data-tip='Toggle date format'/> <ReactTooltip />
+                  <FontAwesomeIcon onClick={toggleDateFormat} style={{ width: '1rem', marginRight: '.2rem', cursor: 'pointer' }} icon={faDotCircle} data-tip='Toggle date format'/> <ReactTooltip effect='solid' />
                 </th>
                 : <th key={idx} {...column.getHeaderProps()}>
                   {// Render the header

@@ -158,8 +158,10 @@ export default function Gallery() {
           <div className="gallery-grid">
             <div className="gallery-search">
               <div style={{ display: 'flex', flexDirection: 'row'}}>
-                <input onChange={handleSearch} type="text" value={searchValue} placeholder="Search.." maxLength={20} />{' '}
-                <FontAwesomeIcon icon={faTimesCircle} onClick={eraseSearch} style={{ position: 'relative', fontSize: '1.5rem', right: 37, top: 13, cursor: 'pointer', color: '#C4CAE8' }} />
+                <input onChange={handleSearch} type="text" value={searchValue} placeholder="Search..." maxLength={20} />{' '}
+                {
+                  searchValue.length ? <FontAwesomeIcon icon={faTimesCircle} onClick={eraseSearch} style={{ position: 'relative', fontSize: '1.5rem', right: 37, top: 13, cursor: 'pointer', color: '#C4CAE8' }} /> : null
+                }
               </div>
               {
                 search && search.length ?
