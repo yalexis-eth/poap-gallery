@@ -7,10 +7,13 @@ import AOS from 'aos';
 import { Provider } from 'react-redux'
 
 import store from './store'
+import ReactModal from 'react-modal';
 
 AOS.init({
   once: true,
 });
+
+ReactModal.setAppElement(document.getElementById('root'));
 
 const render = () => {
   const App = require('./App').default

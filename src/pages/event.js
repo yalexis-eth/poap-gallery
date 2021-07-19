@@ -118,8 +118,6 @@ export function Event() {
   }, [event, tokens, pageIndex, setPageIndex, width]);
 
   useEffect(() => {
-    console.log('ensNames', ensNames.filter(name => name!==null))
-    
     if(ensNames.length > 0){
       // TODO: probably there is a better way to merge
       var _data = _.cloneDeep(data);

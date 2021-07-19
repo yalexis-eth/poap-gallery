@@ -6,6 +6,7 @@ import ReactTooltip from 'react-tooltip';
 import { MultiLineEllipsis } from './multiLineEllipsis';
 import { Pill } from './pill';
 import { useWindowWidth } from '@react-hook/window-size/throttled';
+import ReactModal from 'react-modal';
 
 export function EventCard({ event, size = 's', type = '', power = 0}) {
   const [tokenCount, setTokenCount] = useState(0);
@@ -33,13 +34,31 @@ export function EventCard({ event, size = 's', type = '', power = 0}) {
     return <>{item}<br/></>
   }));
   
-  const Header = () => (
-    <div className={`header ${type}`}>
-      <img
-        src={event.image_url}
-        alt="POAP" />
+  const [isOpen, setOpen] = useState(!true)
+  const toggleModal = () => {
+    setOpen(!isOpen)
+  }
+  const Header = () => {
+
+    return <div className={`header ${type}`} onClick={toggleModal}>
+      <span onClick={toggleModal}>
+        <img
+          src={event.image_url}
+          alt="POAP" />
+      </span>
+      <ReactModal
+        isOpen={isOpen}
+        contentLabel="Fullscreen event image"
+        onRequestClose={toggleModal}
+        // shouldCloseOnOverlayClick={false}
+        // shouldCloseOnEsc={true}
+        >
+        <img
+          src={event.image_url}
+          alt="POAP" />
+      </ ReactModal>
     </div>
-  );
+  };
 
   const Content = () => (
     <div className="content">
@@ -71,7 +90,7 @@ export function EventCard({ event, size = 's', type = '', power = 0}) {
             margin: '8px 0 0 0',
             overflowWrap: 'anywhere',
           }}>
-          <MultiLineEllipsis text={event.name} lines={2} maxLength={(size === 'l' ? (width > 768 ? 404 : width > 480 ? 304 : 204) : size === 'm' ? 262 : 229)}/>
+          <MultiLineEllipsis text={event.name} lines={2} maxLength={(size === 'l' ? (width > 768 ? 403 : width > 480 ? 303 : 203) : size === 'm' ? 262 : 229)}/>
         </h3>{size === 'l' && <ReactTooltip effect='solid' />}
 
         {/* description */}
