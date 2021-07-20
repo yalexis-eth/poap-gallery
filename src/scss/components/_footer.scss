@@ -132,9 +132,6 @@
         img {
           height: 20px;
           width: 20px;
-          &:hover {
-            filter: invert(50%) sepia(32%) saturate(5140%) hue-rotate(221deg) brightness(101%) contrast(96%); // $violet2 equivalent for svg
-          }
           @media (min-width: $bp-mw) {
             height: 30px;
             width: 30px;

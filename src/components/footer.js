@@ -1,13 +1,23 @@
-import React from 'react'
+import React, { useState } from 'react'
 import BuiltOnEth from '../assets/images/built-on-eth.png'
 import POAPLogo from '../assets/images/POAP.svg'
 import TwitterLogo from '../assets/images/logo-twitter-grey.svg'
+import TwitterLogoBlue from '../assets/images/logo-twitter-blue.svg'
 import GithubLogo from '../assets/images/logo-github-grey.svg'
+import GithubLogoBlue from '../assets/images/logo-github-blue.svg'
 import TelegramLogo from '../assets/images/logo-telegram-grey.svg'
+import TelegramLogoBlue from '../assets/images/logo-telegram-blue.svg'
 import DiscordLogo from '../assets/images/logo-discord-grey.svg'
+import DiscordLogoBlue from '../assets/images/logo-discord-blue.svg'
 import RedditLogo from '../assets/images/logo-reddit-grey.svg'
+import RedditLogoBlue from '../assets/images/logo-reddit-blue.svg'
 
 export default function () {
+  const [twitterHover, setTwitterHover] = useState(false)
+  const [githubHover, setGithubHover] = useState(false)
+  const [telegramHover, setTelegramHover] = useState(false)
+  const [discordHover, setDiscordHover] = useState(false)
+  const [redditHover, setRedditHover] = useState(false)
   return (
     <div style={{marginTop: 100}}>
     <hr className='footer-divider' />
@@ -28,11 +38,11 @@ export default function () {
       <div className="join-links">
         <h4>Join our community!</h4>
         <div className="social-icons">
-          <a href="https://twitter.com/poapxyz/" target="_blank"  rel="noopener noreferrer"><img src={TwitterLogo} alt="Twitter" /></a>
-          <a href="https://github.com/poapxyz/poap" target="_blank"  rel="noopener noreferrer"><img src={GithubLogo} alt="Github" /></a>
-          <a href="https://t.me/poapxyz" target="_blank"  rel="noopener noreferrer"><img src={TelegramLogo} alt="Telegram" /></a>
-          <a href="https://discord.gg/fcxW4yR" target="_blank"  rel="noopener noreferrer"><img src={DiscordLogo} alt="Discord" /></a>
-          <a href="https://reddit.com/r/poap" target="_blank"  rel="noopener noreferrer"><img src={RedditLogo} alt="Reddit" /></a>
+          <a href="https://twitter.com/poapxyz/" target="_blank"  rel="noopener noreferrer"><img onMouseEnter={() => setTwitterHover(true)} onMouseLeave={() => setTwitterHover(false)} src={twitterHover ? TwitterLogoBlue : TwitterLogo} alt="Twitter" /></a>
+          <a href="https://github.com/poapxyz/poap" target="_blank"  rel="noopener noreferrer"><img onMouseEnter={() => setGithubHover(true)} onMouseLeave={() => setGithubHover(false)} src={githubHover ? GithubLogoBlue : GithubLogo} alt="Github" /></a>
+          <a href="https://t.me/poapxyz" target="_blank"  rel="noopener noreferrer"><img onMouseEnter={() => setTelegramHover(true)} onMouseLeave={() => setTelegramHover(false)} src={telegramHover ? TelegramLogoBlue : TelegramLogo} alt="Telegram" /></a>
+          <a href="https://discord.gg/fcxW4yR" target="_blank"  rel="noopener noreferrer"><img onMouseEnter={() => setDiscordHover(true)} onMouseLeave={() => setDiscordHover(false)} src={discordHover ? DiscordLogoBlue : DiscordLogo} alt="Discord" /></a>
+          <a href="https://reddit.com/r/poap" target="_blank"  rel="noopener noreferrer"><img onMouseEnter={() => setRedditHover(true)} onMouseLeave={() => setRedditHover(false)} src={redditHover ? RedditLogoBlue : RedditLogo} alt="Reddit" /></a>
         </div>
       </div>
       <div className="eth-branding">
