@@ -52,58 +52,54 @@ export async function getIndexPageData() {
     graphEvents = graphEvents.concat(xdaiEvents)
   }
 
-    let mr = {}
-    let up = {}
-    let mC = {}
-    let hPP = {}
+  let mostRecent, upcoming, mostClaimed;
 
-    if(poapEvents && poapEvents.length) {
-      mr = poapEvents[0]
-      up = poapEvents[0]
-      mC = poapEvents[0]
-      hPP = poapEvents[0]
-    }
-    let isMostRecent = false
+  let isMostRecent = false
 
-    for (let i = 0; i < poapEvents.length; i++) {
-      const ev = poapEvents[i];
-      ev.tokenCount = 0
-      ev.transferCount = 0
-      for (let j = 0; j < graphEvents.length; j++) {
-        const gev = graphEvents[j];
-        if(ev.id === parseInt(gev.id)) {
-          ev.tokenCount += parseInt(gev.tokenCount)
-          ev.transferCount += parseInt(gev.transferCount)
-        }
-      }
-      let now = new Date().getTime()
-      let evDate = new Date(ev.start_date.replace(/-/g, ' ')).getTime()
-
-      if(evDate > now) {
-        up = ev
-      }
-
-      if(evDate < now && isMostRecent === false) {
-        isMostRecent = true
-        mr = ev
-      }
-
-      if(ev.tokenCount > mC.tokenCount) {
-        mC = ev
+  for (let i = 0; i < poapEvents.length; i++) {
+    const event = poapEvents[i];
+    event.tokenCount = 0
+    event.transferCount = 0
+    for (let j = 0; j < graphEvents.length; j++) {
+      const graphEvent = graphEvents[j];
+      if(event.id === parseInt(graphEvent.id)) {
+        event.tokenCount += parseInt(graphEvent.tokenCount)
+        event.transferCount += parseInt(graphEvent.transferCount)
       }
     }
+    let now = new Date().getTime()
+    let eventDate = new Date(event.start_date.replace(/-/g, ' ')).getTime()
+    let eventEndDate = new Date(event.end_date.replace(/-/g, ' ')).getTime()
 
-    mr.heading = "Most Recent"
-    up.heading = "Upcoming Event"
-    mC.heading = "Most Claimed Token"
-
-    return {
-      poapEvents: poapEvents,
-      mostRecent: mr,
-      mostClaimed: mC,
-      upcoming: up,
-      highestPoapPower: hPP,
+    if(event.private_event && eventEndDate > now) {
+      // No ongoing private event should be shown in the activity's top 3
+      continue;
     }
+
+    if(eventDate > now ) {
+      upcoming = event
+    }
+
+    if(eventDate < now && isMostRecent === false) {
+      isMostRecent = true
+      mostRecent = event
+    }
+
+    if(!mostClaimed || event.tokenCount > mostClaimed.tokenCount) {
+      mostClaimed = event
+    }
+  }
+
+  if (mostRecent) mostRecent.heading = "Most Recent"
+  if (upcoming) upcoming.heading = "Upcoming Event"
+  if (mostClaimed) mostClaimed.heading = "Most Claimed Token"
+
+  return {
+    poapEvents: poapEvents,
+    mostRecent: mostRecent,
+    mostClaimed: mostClaimed,
+    upcoming: upcoming,
+  }
 }
 
 
