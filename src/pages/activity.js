@@ -92,7 +92,7 @@ export default function Activity() {
       .filter(t => {
         // Check if transfer belongs to a private event
         const privateEvent = privateEvents.find(e => e.id === t.token.event.id)
-        if (privateEvent === undefined) return false;
+        if (privateEvent === undefined) return true;
 
         // If it does, check if it is an ongoing private event
         let evEndDate = new Date(privateEvent.end_date.replace(/-/g, ' ')).getTime()
