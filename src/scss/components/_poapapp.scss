@@ -715,9 +715,7 @@
     justify-content: flex-start;
     align-items: center;
 
-    svg {
-      margin-left: 10px;
-    }
+
     & > img {
       display: none;
     }
@@ -986,6 +984,11 @@ table {
 
 .hidden {
   display: none;
+}
+
+.circle-container {
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 .round-box {
