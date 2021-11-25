@@ -12,8 +12,6 @@ import {ensABI} from './abis';
 import _, {uniqBy} from 'lodash'
 import {ethers} from 'ethers';
 import namehash from 'eth-ens-namehash';
-import {toast} from "react-hot-toast";
-import {toastInfoOptions} from "../utilities/utilities";
 
 const {REACT_APP_RPC_PROVIDER_URL, REACT_APP_ENS_CONTRACT} = process.env;
 const provider = new ethers.providers.StaticJsonRpcProvider(REACT_APP_RPC_PROVIDER_URL);
@@ -31,19 +29,11 @@ export async function getEnsData(ownerIds){
       names = await ReverseRecords.getNames(chunk)
     }catch(e){
       // Fallback to null if problem fetching Reverse record
+      console.log(e)
       names = chunk.map(a => null)
     }
-    const validNames = names.map(name => {
-      try {
-        return (namehash.normalize(name) === name && name !== '') && name
-      } catch (e) {
-        if (name && name.length) {
-          toast.error(`Couldn't parse ENS name '${name}'.`, toastInfoOptions)
-        }
-        return false
-      }
-    } )
-    allnames = _.concat(allnames, validNames);
+    const validNames = names.map(name => (namehash.normalize(name) === name && name !== '') && name )
+    allnames = _.concat(allnames, validNames);
   }
   return allnames
 }

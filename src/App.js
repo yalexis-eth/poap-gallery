@@ -8,7 +8,6 @@ import Tokens from './pages/event'
 
 import Header from './components/header'
 import Footer from './components/footer'
-import {Toaster} from "react-hot-toast";
 
 
 function App() {
@@ -17,13 +16,6 @@ function App() {
 
   return (
     <BrowserRouter>
-    <Toaster position={'top-right'} toastOptions={{
-      error: {
-        style: {
-          backgroundColor: '#ffb6b6'
-        }
-      }
-    }} />
     <div className="landing">
       <Header />
       <Switch>

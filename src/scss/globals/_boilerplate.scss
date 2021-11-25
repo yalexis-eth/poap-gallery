@@ -244,30 +244,3 @@ ol {
 .tdColumnImage{
   height: 26px;
 }
-
-.button-disabled {
-  cursor: default;
-  background-color: lightgray;
-  &:hover, &:focus-visible, &:focus {
-    background-color: lightgray;
-  }
-  box-shadow: none!important;
-}
-
-.token-not-found {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.discreet-paragraph {
-  margin: 0;
-  color: $grayscale5;
-  word-break: break-word;
-}
-
-.no-margin {
-  margin: 0;
-}
