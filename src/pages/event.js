@@ -115,7 +115,7 @@ export function Event() {
     }
   }, [ensNames]) /* eslint-disable-line react-hooks/exhaustive-deps */
 
-  const validationCSVDownload = () => {
+  const validationCSVDownload = async () => {
     setCanDownloadCsv(CSV_STATUS.ReadyWithoutEns)
     let ownerIds = tokens.map(t => t.owner.id)
     getEnsData(ownerIds).then(allnames => {
@@ -125,14 +125,18 @@ export function Event() {
       setCanDownloadCsv(CSV_STATUS.Ready)
     }).catch(() => {
       toast.error(`Could not get ENS data (You can download CSV without ENS resolution or try again later)`, {
-        duration: 10000
+        duration: 8000
       })
     })
   }
 
   useEffect(() => {
     if (succeededLoadingEvent() && csvDownloadIsOnLastStep()) {
-      validationCSVDownload()
+      validationCSVDownload().then().catch(() => {
+        toast.error(`Could not get ENS data (You can download CSV without ENS resolution or try again later)`, {
+          duration: 8000
+        })
+      })
     }
     setTableIsLoading(!succeededLoadingEvent())
   }, [loadingEvent]) /* eslint-disable-line react-hooks/exhaustive-deps */
