@@ -64,8 +64,8 @@ export default function ActivityTable() {
   }, [daitransfers, mainnetTransfers])
 
   return (
-    <div className="activity-table"
-         style={{display: "flex", flexDirection: "column", justifyContent: "center", fontSize: '.89rem'}}>
+    <div className="activity-table center"
+         style={{flexDirection: "column", fontSize: '.89rem'}}>
       <div style={{display:'flex', flexDirection: 'column', alignItems: 'center'}}>
         <div className='activity-table-title-container'>
           <div className="activity-table-title">POAP Gallery</div>
@@ -73,7 +73,7 @@ export default function ActivityTable() {
         </div>
         <Transfers loading={loading} transfers={transfers}/>
       </div>
-      <div style={{display: "flex", justifyContent: "center", margin: '.5rem 0'}}><Link to="/activity">
+      <div className={'center'} style={{margin: '.5rem 0'}}><Link to="/activity">
         <FontAwesomeIcon icon={faClock} />
         {' '}View more activity
       </Link></div>

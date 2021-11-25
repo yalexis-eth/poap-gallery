@@ -1,6 +1,19 @@
 import { createSlice, combineReducers, configureStore, createAsyncThunk, current  } from '@reduxjs/toolkit';
 import { getIndexPageData, getEventPageData } from './mutations';
 
+export const FETCH_INFO_STATUS = {
+  IDLE: 'IDLE',
+  LOADING: 'LOADING',
+  SUCCEEDED: 'SUCCEEDED',
+  FAILED: 'FAILED'
+}
+export const FETCH_EVENT_PAGE_INFO_STATUS = {
+  ...FETCH_INFO_STATUS
+}
+export const FETCH_INDEX_PAGE_INFO_STATUS = {
+  ...FETCH_INFO_STATUS
+}
+
 const initialEventsState = {
   events: [],
   event: {},
@@ -8,9 +21,8 @@ const initialEventsState = {
   mostClaimed: undefined,
   upcoming: undefined,
   mostRecent: undefined,
-  status: 'idle',
-  error: null,
-  eventStatus: 'idle',
+  status: FETCH_INDEX_PAGE_INFO_STATUS.IDLE,
+  eventStatus: FETCH_EVENT_PAGE_INFO_STATUS.IDLE,
   eventError: null,
   tokens: [],
   tokenId: null
@@ -26,7 +38,7 @@ const eventsSlice = createSlice({
   reducers: {},
   extraReducers: {
     [fetchIndexData.pending]: (state, action) => {
-      state.status = 'loading'
+      state.status = FETCH_INDEX_PAGE_INFO_STATUS.LOADING
     },
     [fetchIndexData.fulfilled]: (state, action) => {
       const { poapEvents, mostRecent, mostClaimed, upcoming } = action.payload
@@ -34,15 +46,15 @@ const eventsSlice = createSlice({
       state.mostRecent = mostRecent
       state.mostClaimed = mostClaimed
       state.upcoming = upcoming
-      state.status = 'succeeded'
+      state.status = FETCH_INDEX_PAGE_INFO_STATUS.SUCCEEDED
     },
     [fetchIndexData.rejected]: (state, action) => {
       state.eventError = action.error.message
-      state.status = 'failed'
+      state.status = FETCH_INDEX_PAGE_INFO_STATUS.FAILED
       console.warn(action.error)
     },
     [fetchEventPageData.pending]: (state, action) => {
-      state.eventStatus = 'loading'
+      state.eventStatus = FETCH_EVENT_PAGE_INFO_STATUS.LOADING
     },
     [fetchEventPageData.fulfilled]: (state, action) => {
       if (state.tokenId === action.payload.id) {
@@ -52,19 +64,17 @@ const eventsSlice = createSlice({
       }
 
       state.tokenId = action.payload.id
-      state.eventStatus = 'succeeded'
       state.event = action.payload.event
+      state.eventStatus = FETCH_EVENT_PAGE_INFO_STATUS.SUCCEEDED
     },
     [fetchEventPageData.rejected]: (state, action) => {
       state.eventError = action.error.message
-      state.eventStatus = 'failed'
-      console.warn(action.error)
+      state.eventStatus = FETCH_EVENT_PAGE_INFO_STATUS.FAILED
     }
   }
 })
 
-export const selectEventStatus = state => state.events.status
-export const selectEventError = state => state.events.error
+export const selectIndexFetchStatus = state => state.events.status
 
 export const selectRecentEvents = state => state.events.events.filter(event => {
   // don't show future events
