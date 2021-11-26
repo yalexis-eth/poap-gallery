@@ -25,6 +25,7 @@ const CSV_STATUS = {
   DownloadingLastDataChunk: 'DownloadingLastDataChunk',
   ReadyWithoutEns: 'ReadyWithoutEns',
   Ready: 'Ready',
+  Failed: 'Failed',
 }
 
 export default function Events() {
@@ -60,8 +61,10 @@ export function Event() {
   const power = calculatePower(csv_data);
 
   const csvDownloadIsOnLastStep = () => canDownloadCsv === CSV_STATUS.DownloadingLastDataChunk
-  const csvReadyOrAlmostReady = () => canDownloadCsv === CSV_STATUS.Ready || canDownloadCsv === CSV_STATUS.ReadyWithoutEns
+  const csvReady = () => canDownloadCsv === CSV_STATUS.Ready
   const csvOnlyMissingEns = () => canDownloadCsv === CSV_STATUS.ReadyWithoutEns
+  const csvFailed = () => canDownloadCsv === CSV_STATUS.Failed
+
   const succeededLoadingEvent = () => loadingEvent === FETCH_EVENT_PAGE_INFO_STATUS.SUCCEEDED
   const isLoadingEvent = () => loadingEvent === FETCH_EVENT_PAGE_INFO_STATUS.LOADING
   const failedLoadingEvent = () => loadingEvent === FETCH_EVENT_PAGE_INFO_STATUS.FAILED
@@ -127,6 +130,7 @@ export function Event() {
       toast.error(`Could not get ENS data (You can download CSV without ENS resolution or try again later)`, {
         duration: 8000
       })
+      setCanDownloadCsv(CSV_STATUS.Failed)
     })
   }
 
@@ -184,15 +188,15 @@ export function Event() {
             </div>
             <div className='table-header'>
               <div className='table-title'>Collections <span>({tokens.length})</span></div>
-              {csvReadyOrAlmostReady() ?
+              {(csvReady() || csvOnlyMissingEns() || csvFailed()) ?
                 <CSVLink
                     filename={`${event.name}.csv`}
                     target="_blank"
-                    data-tip={`${csvOnlyMissingEns() ? 'Please wait if you want the ens names too' : ''}`}
+                    data-tip={`${csvOnlyMissingEns() ? 'Please wait if you want the ens names too' : csvFailed() ? `Ens names couldn't be fetched` : ''}`}
                     className={'btn csv-button'}
                     data={csv_data}
                 >
-                  <span className={'no-margin'}>{`Download CSV${csvOnlyMissingEns() ? ' (without ens)' : ''}`}</span>
+                  <span className={'no-margin'}>{`Download CSV${csvOnlyMissingEns() || csvFailed() ? ' (without ens)' : ''}`}</span>
                   <ReactTooltip effect={'solid'} />
                 </CSVLink> :
                 <button
