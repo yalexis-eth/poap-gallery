@@ -118,7 +118,7 @@ export function Event() {
   const validationCSVDownload = async () => {
     setCanDownloadCsv(CSV_STATUS.ReadyWithoutEns)
     let ownerIds = tokens.map(t => t.owner.id)
-    getEnsData(ownerIds).then(allnames => {
+    return getEnsData(ownerIds).then(allnames => {
       if(allnames.length > 0){
         setEnsNames(allnames)
       }
@@ -132,11 +132,7 @@ export function Event() {
 
   useEffect(() => {
     if (succeededLoadingEvent() && csvDownloadIsOnLastStep()) {
-      validationCSVDownload().then().catch(() => {
-        toast.error(`Could not get ENS data (You can download CSV without ENS resolution or try again later)`, {
-          duration: 8000
-        })
-      })
+      validationCSVDownload().then()
     }
     setTableIsLoading(!succeededLoadingEvent())
   }, [loadingEvent]) /* eslint-disable-line react-hooks/exhaustive-deps */
