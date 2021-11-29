@@ -18,6 +18,7 @@ import {dateCell, shrinkAddress, utcDateFormatted, utcDateFull} from '../utiliti
 import { useWindowWidth } from '@react-hook/window-size/throttled';
 import OpenLink from '../assets/images/openLink.svg'
 import {toast} from "react-hot-toast";
+import {Spinner} from "../components/spinner";
 
 const GRAPH_LIMIT = 1000;
 const CSV_STATUS = {
@@ -68,7 +69,7 @@ export function Event() {
   const succeededLoadingEvent = () => loadingEvent === FETCH_EVENT_PAGE_INFO_STATUS.SUCCEEDED
   const isLoadingEvent = () => loadingEvent === FETCH_EVENT_PAGE_INFO_STATUS.LOADING
   const failedLoadingEvent = () => loadingEvent === FETCH_EVENT_PAGE_INFO_STATUS.FAILED
-  const isIdle = () => loadingEvent === FETCH_EVENT_PAGE_INFO_STATUS.IDLE
+  const isIdle = () => loadingEvent === FETCH_EVENT_PAGE_INFO_STATUS.IDLE || loadingEvent === undefined
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -127,9 +128,6 @@ export function Event() {
       }
       setCanDownloadCsv(CSV_STATUS.Ready)
     }).catch(() => {
-      toast.error(`Could not get ENS data (You can download CSV without ENS resolution or try again later)`, {
-        duration: 8000
-      })
       setCanDownloadCsv(CSV_STATUS.Failed)
     })
   }
@@ -152,12 +150,12 @@ export function Event() {
           <meta property="og:title" content="POAP Gallery - Event"/>
         </Helmet>
         <Foliage />
-        {!errorEvent && (isLoadingEvent() || isIdle()) &&
+        {(isLoadingEvent() || isIdle()) &&
           <div className={'center'}>
             <Loader/>
           </div>
         }
-        {(errorEvent || Object.keys(event).length === 0) && !isLoadingEvent() && !isIdle() &&
+        {failedLoadingEvent() &&
           <div className={'token-not-found'}>
             <h2>{errorEvent || defaultEventErrorMessage}</h2>
             <div>
@@ -165,7 +163,7 @@ export function Event() {
             </div>
           </div>
         }
-        {(succeededLoadingEvent() || failedLoadingEvent()) && !errorEvent && Object.keys(event).length > 0 &&
+        {succeededLoadingEvent() &&
           <div className="container">
             <div style={{
               display: 'flex',
@@ -203,7 +201,7 @@ export function Event() {
                     className={'btn button-disabled csv-button'}
                     data-tip={'Please wait for the POAPs data to be loaded'}
                     onClick={null}
-                ><span style={{margin: 0}}>Download CSV</span><ReactTooltip effect={'solid'} /></button>
+                ><Spinner padding={0} imgWidth={25}/><ReactTooltip effect={'solid'} /></button>
               }
             </div>
             <div className='table-container'>

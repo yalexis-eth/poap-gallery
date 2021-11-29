@@ -169,8 +169,6 @@ export async function getEventPageData(eventId, first, skip) {
       tokens[j].owner.tokensOwned = mainnetOwners[tokens[j].owner.id].tokensOwned
     } else if (xDaiOwners[tokens[j].owner.id] !== undefined ) {
       tokens[j].owner.tokensOwned = xDaiOwners[tokens[j].owner.id].tokensOwned
-    } else {
-      console.log("NOT FOUND", tokens[j].owner.id, tokens[j].owner.tokensOwned)
     }
   }
   return { id: eventId, event, tokens: uniqBy(tokens, 'id').sort((a, b) => {
