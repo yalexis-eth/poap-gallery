@@ -8,11 +8,17 @@ import Tokens from './pages/event'
 
 import Header from './components/header'
 import Footer from './components/footer'
+
+import useIntercom from "@reclaim-ai/react-intercom-hook";
 import {Toaster} from "react-hot-toast";
 
 
 function App() {
 
+  // eslint-disable-next-line
+  const intercom = useIntercom({
+    app_id: process.env.REACT_APP_INTERCOM_APP_ID || 'syysagea'
+  })
   document.body.className = 'poap-app'
 
   return (
