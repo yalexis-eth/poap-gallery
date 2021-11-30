@@ -8,6 +8,7 @@ import Tokens from './pages/event'
 
 import Header from './components/header'
 import Footer from './components/footer'
+
 import useIntercom from "@reclaim-ai/react-intercom-hook";
 import {Toaster} from "react-hot-toast";
 
