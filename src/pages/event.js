@@ -17,7 +17,6 @@ import { Foliage } from '../components/foliage';
 import {dateCell, shrinkAddress, utcDateFormatted, utcDateFull} from '../utilities/utilities';
 import { useWindowWidth } from '@react-hook/window-size/throttled';
 import OpenLink from '../assets/images/openLink.svg'
-import {toast} from "react-hot-toast";
 import {Spinner} from "../components/spinner";
 
 const GRAPH_LIMIT = 1000;
