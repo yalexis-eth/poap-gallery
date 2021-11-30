@@ -1,7 +1,12 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import ActivityTable from '../components/activityTable'
 import {Helmet} from 'react-helmet';
-import {fetchIndexData, selectEventError, selectEventStatus, selectRecentEvents} from '../store';
+import {
+  FETCH_INDEX_PAGE_INFO_STATUS,
+  fetchIndexData,
+  selectIndexFetchStatus,
+  selectRecentEvents
+} from '../store';
 import {useDispatch, useSelector} from 'react-redux';
 import {EventCard} from "../components/eventCard";
 import Loader from '../components/loader'
@@ -22,9 +27,7 @@ export default function Gallery() {
   }, []); /* eslint-disable-line react-hooks/exhaustive-deps */
 
   const events  = useSelector(selectRecentEvents)
-  const eventStatus = useSelector(selectEventStatus)
-  const eventError = useSelector(selectEventError)
-
+  const indexFetchStatus = useSelector(selectIndexFetchStatus)
 
   const [items, setItems] = useState(events)
   const [search, setSearch] = useState(undefined);
@@ -50,7 +53,7 @@ export default function Gallery() {
     debounceHandleSearch(value, items)
   };
   const handleNewSearchValue = (value, items) => {
-    if (value && value.length > 1) {
+    if (value && value.length > 2) {
       const filteredItems = items.filter((item) => {
         return item.name.toLowerCase().indexOf(value.toLowerCase()) !== -1;
       });
@@ -254,27 +257,22 @@ export default function Gallery() {
                 </div>
               </div>
             </div>
-            {eventError ? (
-              <div
-                style={{
-                  gridColumn: '1 / 3',
-                }}
-              >
-                <span>Could not load gallery, check your connection and try again</span>
-              </div>
-
-            ) : eventStatus === 'succeeded' ? (
+            {indexFetchStatus === FETCH_INDEX_PAGE_INFO_STATUS.SUCCEEDED && (
               (search?.length === 0) ? <div className='failed-search'>
                 <img src={FailedSearch} alt='Failed search'/>
                 <h3>No results for that search :(</h3>
               </div> :
               <Cards events={(search?.length) ? search : items} length={search?.length || length} />
-            ) : (
-              <Loader/>
             )}
+            {(indexFetchStatus === FETCH_INDEX_PAGE_INFO_STATUS.IDLE || indexFetchStatus === FETCH_INDEX_PAGE_INFO_STATUS.LOADING) && <Loader/>}
           </div>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
         </div>
+          {indexFetchStatus === FETCH_INDEX_PAGE_INFO_STATUS.FAILED && (
+              <div className={'center'}>
+                <span>Could not load gallery, check your connection and try again</span>
+              </div>
+          )}
           {!search ?
             <button  className='btn' onClick={() => {
                 if (items && items.length) {
