@@ -26,6 +26,7 @@ const CSV_STATUS = {
   ReadyWithoutEns: 'ReadyWithoutEns',
   Ready: 'Ready',
   Failed: 'Failed',
+  NoTokens: 'NoTokens',
 }
 
 export default function Events() {
@@ -55,12 +56,13 @@ export function Event() {
   const [pageIndex, setPageIndex] = useState(0);
   const [csv_data, setCsv_data] = useState([]);
   const [ensNames, setEnsNames] = useState([]);
-  const [canDownloadCsv, setCanDownloadCsv] = useState(CSV_STATUS.DownloadingData);
+  const [canDownloadCsv, setCanDownloadCsv] = useState(CSV_STATUS.NoTokens);
   const [tableIsLoading, setTableIsLoading] = useState(true)
   const pageCount = useMemo( () => event.tokenCount % 50 !== 0 ? Math.floor(event.tokenCount / 50) + 1 : event.tokenCount, [event])
   const power = calculatePower(csv_data);
 
   const csvDownloadIsOnLastStep = () => canDownloadCsv === CSV_STATUS.DownloadingLastDataChunk
+  const csvDownloading = () => (canDownloadCsv === CSV_STATUS.DownloadingLastDataChunk || canDownloadCsv === CSV_STATUS.DownloadingData)
   const csvReady = () => canDownloadCsv === CSV_STATUS.Ready
   const csvOnlyMissingEns = () => canDownloadCsv === CSV_STATUS.ReadyWithoutEns
   const csvFailed = () => canDownloadCsv === CSV_STATUS.Failed
@@ -89,8 +91,10 @@ export function Event() {
     if (event && hasTokens && hasMorePages) {
       if (pageIndex + 1 === totalPages) {
         setCanDownloadCsv(CSV_STATUS.DownloadingLastDataChunk)
+      } else {
+        setCanDownloadCsv(CSV_STATUS.DownloadingData)
       }
-      setPageIndex(pageIndex + 1);
+      setPageIndex(pageIndex + 1)
     }
 
     let _csv_data = []
@@ -109,7 +113,7 @@ export function Event() {
       for (let i = 0; i < tokens.length; i++) {
         let validName = ensNames[i]
         if (validName) {
-          if (_csv_data[i+1]) { //TODO: test
+          if (_csv_data[i+1]) {
             _csv_data[i+1][2] = validName // i+1 is there to compensate for the first array which is just the csv titles
           }
         }
@@ -186,7 +190,7 @@ export function Event() {
             </div>
             <div className='table-header'>
               <div className='table-title'>Collections <span>({tokens.length})</span></div>
-              {(csvReady() || csvOnlyMissingEns() || csvFailed()) ?
+              {(csvReady() || csvOnlyMissingEns() || csvFailed()) &&
                 <CSVLink
                     filename={`${event.name}.csv`}
                     target="_blank"
@@ -196,7 +200,9 @@ export function Event() {
                 >
                   <span className={'no-margin'}>{`Download CSV${csvOnlyMissingEns() || csvFailed() ? ' (without ENS)' : ''}`}</span>
                   <ReactTooltip effect={'solid'} />
-                </CSVLink> :
+                </CSVLink>
+              }
+              {(csvDownloading()) &&
                 <button
                     className={'btn button-disabled csv-button'}
                     data-tip={'Please wait for the POAPs data to be loaded'}
