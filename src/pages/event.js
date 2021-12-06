@@ -121,14 +121,15 @@ export function Event() {
   const validationCSVDownload = async () => {
     setCanDownloadCsv(CSV_STATUS.ReadyWithoutEns)
     let ownerIds = tokens.map(t => t.owner.id)
-    return getEnsData(ownerIds).then(allnames => {
-      if(allnames.length > 0){
-        setEnsNames(allnames)
+    try {
+      const ensData = await getEnsData(ownerIds)
+      if(ensData.length > 0){
+        setEnsNames(ensData)
       }
       setCanDownloadCsv(CSV_STATUS.Ready)
-    }).catch(() => {
+    } catch(e) {
       setCanDownloadCsv(CSV_STATUS.Failed)
-    })
+    }
   }
 
   useEffect(() => {
