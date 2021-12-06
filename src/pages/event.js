@@ -193,7 +193,7 @@ export function Event() {
                     className={'btn csv-button'}
                     data={csv_data}
                 >
-                  <span className={'no-margin'}>{`Download CSV${csvOnlyMissingEns() || csvFailed() ? ' (without ens)' : ''}`}</span>
+                  <span className={'no-margin'}>{`Download CSV${csvOnlyMissingEns() || csvFailed() ? ' (without ENS)' : ''}`}</span>
                   <ReactTooltip effect={'solid'} />
                 </CSVLink> :
                 <button
