@@ -21,18 +21,11 @@ const ReverseRecords = new ethers.Contract(REACT_APP_ENS_CONTRACT, ensABI, provi
 
 // TODO: Refactor to render as it returns data rather than waiting all in batch
 export async function getEnsData(ownerIds){
-  const chunked = _.chunk(ownerIds, 50)
+  const chunked = _.chunk(ownerIds, 1200)
   let allnames = []
   for (let i = 0; i < chunked.length; i++) {
     const chunk = chunked[i];
-    let names
-    try{
-      // TODO: Figure out why some call throws error
-      names = await ReverseRecords.getNames(chunk)
-    }catch(e){
-      // Fallback to null if problem fetching Reverse record
-      names = chunk.map(a => null)
-    }
+    let names = await ReverseRecords.getNames(chunk)
     const validNames = names.map(name => {
       try {
         return (namehash.normalize(name) === name && name !== '') && name
@@ -175,8 +168,6 @@ export async function getEventPageData(eventId, first, skip) {
       tokens[j].owner.tokensOwned = mainnetOwners[tokens[j].owner.id].tokensOwned
     } else if (xDaiOwners[tokens[j].owner.id] !== undefined ) {
       tokens[j].owner.tokensOwned = xDaiOwners[tokens[j].owner.id].tokensOwned
-    } else {
-      console.log("NOT FOUND", tokens[j].owner.id, tokens[j].owner.tokensOwned)
     }
   }
   return { id: eventId, event, tokens: uniqBy(tokens, 'id').sort((a, b) => {
