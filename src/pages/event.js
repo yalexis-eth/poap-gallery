@@ -140,7 +140,7 @@ export function Event() {
 
   useEffect(() => {
     if (succeededLoadingEvent() && csvDownloadIsOnLastStep()) {
-      validationCSVDownload().then()
+      validationCSVDownload()
     }
     setTableIsLoading(!succeededLoadingEvent())
   }, [loadingEvent]) /* eslint-disable-line react-hooks/exhaustive-deps */
