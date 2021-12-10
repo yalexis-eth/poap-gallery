@@ -9,7 +9,8 @@ import {Helmet} from 'react-helmet'
 import {useDispatch, useSelector} from 'react-redux';
 import {FETCH_EVENT_PAGE_INFO_STATUS, fetchEventPageData} from '../store';
 import {CSVLink} from "react-csv";
-import {getEnsData} from '../store/mutations';
+import {
+  Data} from '../store/mutations';
 import Loader from '../components/loader'
 import _ from 'lodash'
 import { EventCard } from '../components/eventCard';
@@ -18,6 +19,7 @@ import {dateCell, shrinkAddress, utcDateFormatted, utcDateFull} from '../utiliti
 import { useWindowWidth } from '@react-hook/window-size/throttled';
 import OpenLink from '../assets/images/openLink.svg'
 import {Spinner} from "../components/spinner";
+import {toast} from "react-hot-toast";
 
 const GRAPH_LIMIT = 1000;
 const CSV_STATUS = {

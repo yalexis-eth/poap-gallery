@@ -21,12 +21,11 @@ const ReverseRecords = new ethers.Contract(REACT_APP_ENS_CONTRACT, ensABI, provi
 
 // TODO: Refactor to render as it returns data rather than waiting all in batch
 export async function getEnsData(ownerIds){
-  const chunked = _.chunk(ownerIds, 300)
+  const chunked = _.chunk(ownerIds, 1200)
   let allnames = []
   for (let i = 0; i < chunked.length; i++) {
     const chunk = chunked[i];
     let names = await ReverseRecords.getNames(chunk)
-
     const validNames = names.map(name => {
       try {
         return (namehash.normalize(name) === name && name !== '') && name
