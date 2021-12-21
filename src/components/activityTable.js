@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import {Link} from 'react-router-dom'
-import {getMainnetTransfers, getxDaiTransfers, POAP_API_URL} from "../store/api";
+import {getMainnetTransfers, getxDaiTransfers, POAP_API_URL, POAP_APP_URL} from "../store/api";
 import { Pill } from './pill';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
@@ -93,7 +93,7 @@ function Transfer({transfer}) {
         </>
       }
       <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
-        <a href={"https://app.poap.xyz/token/" + transfer.token.id} target="_blank" style={{margin: '.8rem 0', opacity: transfer.opacity}} className={`round-box ${transfer.opacity===1? 'first':''}`} rel="noopener noreferrer">
+        <a href={`${POAP_APP_URL}/token/${transfer.token.id}`} target="_blank" style={{margin: '.8rem 0', opacity: transfer.opacity}} className={`round-box ${transfer.opacity===1? 'first':''}`} rel="noopener noreferrer">
           <div className='round-box-image'>
             <LazyImage
               src={`${POAP_API_URL}/token/${transfer.token.id}/image`}
@@ -107,18 +107,18 @@ function Transfer({transfer}) {
             {
               (type === 'Claim')?
               <span> POAP claimed on event
-                {' '}<Link to={`/event/${transfer.token.event.id}`}>#{transfer.token.event.id}</Link>
+                {' '}<object><Link to={`/event/${transfer.token.event.id}`}>#{transfer.token.event.id}</Link></object>
                 {' '}on {transfer.network}
               </span> :
               (type === 'Transfer')?
               <span>POAP transferred from
-                <a href={"https://app.poap.xyz/scan/" + transfer.from.id} target="_blank"  rel="noopener noreferrer"> {transfer.from.id.substring(0, 8) + '…'} </a> to 
-                <a href={"https://app.poap.xyz/scan/" + transfer.to.id} target="_blank"  rel="noopener noreferrer"> {transfer.to.id.substring(0, 8) + '…'} </a>
+                <object><a href={`${POAP_APP_URL}/scan/${transfer.from.id}`} target="_blank"  rel="noopener noreferrer"> {transfer.from.id.substring(0, 8) + '…'} </a></object> to
+                <object><a href={`${POAP_APP_URL}/scan/${transfer.to.id}`} target="_blank"  rel="noopener noreferrer"> {transfer.to.id.substring(0, 8) + '…'} </a></object>
                  on {transfer.network}
               </span> :
               (type === 'Migration')?
               <span> POAP migrated to 
-                <a href={"https://app.poap.xyz/scan/" + transfer.to.id} target="_blank"  rel="noopener noreferrer"> {transfer.to.id.substring(0, 16) + '…'} </a>
+                <object><a href={`${POAP_APP_URL}/scan/${transfer.to.id}`} target="_blank"  rel="noopener noreferrer"> {transfer.to.id.substring(0, 16) + '…'} </a></object>
                 from {transfer.network} to Ethereum
               </span> :
               (type === 'Burn')?

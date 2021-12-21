@@ -1,17 +1,16 @@
-import React, {useEffect, useState} from 'react'
+import React, {useCallback, useEffect, useState} from 'react'
 import ReactTooltip from 'react-tooltip';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faAngleDown, faAngleUp, faDotCircle, faQuestionCircle} from '@fortawesome/free-solid-svg-icons';
 import {Helmet} from 'react-helmet'
 import {useDispatch, useSelector} from 'react-redux';
 import {
-  fetchIndexData,
+  fetchActivityPageData,
   selectMostClaimed,
   selectMostRecent,
-  selectRecentEvents,
   selectUpcoming
 } from '../store';
-import {getMainnetTransfers, getxDaiTransfers, POAP_API_URL} from "../store/api";
+import {getMainnetTransfers, getPaginatedEvents, getxDaiTransfers, POAP_API_URL, POAP_APP_URL} from "../store/api";
 import {EventCard} from "../components/eventCard";
 import { Pill } from '../components/pill';
 import Migration from '../assets/images/migrate.svg'
@@ -19,10 +18,18 @@ import Burn from '../assets/images/burn.svg'
 import Claim from '../assets/images/claim.svg'
 import Transfer from '../assets/images/transfer.svg'
 import { Foliage } from '../components/foliage';
-import {dateCell, shrinkAddress, transferType, utcDateFormatted, utcDateFromNow} from '../utilities/utilities';
+import {
+  dateCell, debounce,
+  onlyUnique,
+  shrinkAddress,
+  transferType,
+  utcDateFormatted,
+  utcDateFromNow
+} from '../utilities/utilities';
 import { useWindowWidth } from '@react-hook/window-size/throttled';
 import { Link } from 'react-router-dom'
 import { LazyImage } from '../components/LazyImage';
+import {toast} from "react-hot-toast";
 
 
 export default function Activity() {
@@ -30,7 +37,7 @@ export default function Activity() {
 
   // Meanwhile get all the events
   useEffect(() => {
-    dispatch(fetchIndexData());
+    dispatch(fetchActivityPageData())
   }, []); /* eslint-disable-line react-hooks/exhaustive-deps */
 
   const [loading, setLoading] = useState(false)
@@ -41,15 +48,8 @@ export default function Activity() {
   const mostClaimed = useSelector(selectMostClaimed)
   const mostRecent = useSelector(selectMostRecent)
   const upcoming = useSelector(selectUpcoming)
-  const recentEvents = useSelector(selectRecentEvents)
-  const [privateEvents, setPrivateEvents] = useState(undefined)
   const transferLimit = 15
 
-  useEffect(()=>{
-    if (recentEvents) {
-      setPrivateEvents(recentEvents.filter(e => e.private_event))
-    }
-  },[recentEvents])
   useEffect(() => {
       setLoading(true)
       getMainnetTransfers(transferLimit)
@@ -84,29 +84,31 @@ export default function Activity() {
         );
   }, []);
 
+  const toastNewTransfersError = () => toast.error('There was a problem loading recent activity', {})
+  const debouncedToastNewTransfersError = useCallback(debounce(() => toastNewTransfersError(), 500), [])
   useEffect(() => {
-    let _transfers = daitransfers.concat(mainnetTransfers)
-      // Filter ongoing private events
-      .filter(t => {
-        // Check if transfer belongs to a private event
-        const privateEvent = privateEvents.find(e => e.id === t.token.event.id)
-        if (privateEvent === undefined) return true;
-
-        // If it does, check if it is an ongoing private event
-        let evEndDate = new Date(privateEvent.end_date.replace(/-/g, ' ')).getTime()
-        let now = new Date().getTime()
-
-        // Show any transfers from finished private events
-        return evEndDate <= now;
-      })
-      // Sort from newer to older
-      .sort((a, b) => {
-        return b.timestamp - a.timestamp
-      })
-      // Only show a few
-      .slice(0, transferLimit)
-    setTransfers(_transfers)
-  }, [daitransfers, mainnetTransfers, privateEvents])
+    const setNewTransfers = async () => {
+      let transfersEventIds = daitransfers.map(t => t.token.event.id).concat(mainnetTransfers.map(t => t.token.event.id))
+      transfersEventIds = transfersEventIds.filter(onlyUnique)
+      const {items: publicEvents} = await getPaginatedEvents({event_ids: transfersEventIds, privateEvents: false})
+      let _transfers = daitransfers.concat(mainnetTransfers)
+          // Filter out private events
+          .filter(t => {
+            const publicEvent = publicEvents.find(e => e.id === parseInt(t.token.event.id))
+            return publicEvent !== undefined
+          })
+          // Sort from newer to older
+          .sort((a, b) => {
+            return b.timestamp - a.timestamp
+          })
+          // Only show a few
+          .slice(0, transferLimit)
+      setTransfers(_transfers)
+    }
+    setNewTransfers().then().catch(e =>
+        debouncedToastNewTransfersError()
+    )
+  }, [daitransfers, mainnetTransfers, debouncedToastNewTransfersError])
 
   return (
     <main id="site-main" role="main" className="app-content activity-main">
@@ -155,7 +157,7 @@ function TokenRow({transfer, dateFormat}) {
         }
         <a
           className='recent-activity-image'
-          href={"https://app.poap.xyz/token/"+transfer.token.id} target="_blank"  rel="noopener noreferrer">
+          href={`${POAP_APP_URL}/token/${transfer.token.id}`} target="_blank"  rel="noopener noreferrer">
             <LazyImage
               src={`${POAP_API_URL}/token/${transfer.token.id}/image`}
               width={80}
@@ -170,8 +172,8 @@ function TokenRow({transfer, dateFormat}) {
           <TokenRowDescription transfer={transfer} />
         </div>
       </td>
-      <td className='ellipsis'><a href={"https://app.poap.xyz/token/" + transfer.token.id} target="_blank"  rel="noopener noreferrer">{'#'}{transfer.token.id}</a></td>
-      <td style={{minWidth: '50px'}}><a href={"https://app.poap.xyz/scan/" + transfer.to.id} target="_blank"  rel="noopener noreferrer">
+      <td className='ellipsis'><a href={`${POAP_APP_URL}/token/${transfer.token.id}`} target="_blank"  rel="noopener noreferrer">{'#'}{transfer.token.id}</a></td>
+      <td style={{minWidth: '50px'}}><a href={`${POAP_APP_URL}/scan/${transfer.to.id}`} target="_blank"  rel="noopener noreferrer">
           <span>{shrinkAddress(transfer.to.id, 15)}</span>
         </a></td>
       <td> {transfer.token.transferCount && transfer.token.transferCount > 0 ? transfer.token.transferCount : 'Claimed'} </td>
@@ -190,7 +192,7 @@ function TokenRow({transfer, dateFormat}) {
             width > 430 &&
             <a
               className='recent-activity-image'
-              href={"https://app.poap.xyz/token/"+transfer.token.id} target="_blank"  rel="noopener noreferrer">
+              href={`${POAP_APP_URL}/token/${transfer.token.id}`} target="_blank"  rel="noopener noreferrer">
                 <LazyImage
                   src={`${POAP_API_URL}/token/${transfer.token.id}/image`}
                   width={80}
@@ -207,8 +209,8 @@ function TokenRow({transfer, dateFormat}) {
           <span className='expand-button' style={{width: `calc(100% - 180px${width>430?' - 118px':''})`}}><FontAwesomeIcon onClick={toggleRowExpand} icon={expanded? faAngleUp:faAngleDown} /></span>
         </div>
         <div className={`mobile-row-content ${expanded ? 'open' : ''}`}>
-          <span className='id-title'>POAP ID</span><span className='id-content'><a href={"https://app.poap.xyz/token/" + transfer.token.id} target="_blank"  rel="noopener noreferrer">{'#'}{transfer.token.id}</a></span>
-          <span className='address-title'>Owner</span><span className='address-content ellipsis'><a href={"https://app.poap.xyz/scan/" + transfer.to.id} target="_blank"  rel="noopener noreferrer">
+          <span className='id-title'>POAP ID</span><span className='id-content'><a href={`${POAP_APP_URL}/token/${transfer.token.id}`} target="_blank"  rel="noopener noreferrer">{'#'}{transfer.token.id}</a></span>
+          <span className='address-title'>Owner</span><span className='address-content ellipsis'><a href={`${POAP_APP_URL}/scan/${transfer.to.id}`} target="_blank"  rel="noopener noreferrer">
               <span>{
                 width>480
                 ? shrinkAddress(transfer.to.id, 25)
@@ -227,13 +229,13 @@ function TokenRowDescription({transfer}) {
   const type = transferType(transfer)
   return <div className='description'>{
     (type === 'Migration') ? <span>POAP migrated to
-      <a href={"https://app.poap.xyz/scan/" + transfer.to.id} target="_blank"  rel="noopener noreferrer"> {transfer.to.id.substring(0, 16) + '…'} </a>
+      <a href={`${POAP_APP_URL}/scan/${transfer.to.id}`} target="_blank"  rel="noopener noreferrer"> {transfer.to.id.substring(0, 16) + '…'} </a>
       from {transfer.network} to Ethereum</span> :
     (type === 'Claim') ? <span>POAP claimed on event <Link to={`/event/${transfer.token.event.id}`}>#{transfer.token.event.id}</Link> on {transfer.network}</span> :
     (type === 'Burn') ? <span>POAP burned on event <Link to={`/event/${transfer.token.event.id}`}>#{transfer.token.event.id}</Link> on {transfer.network}</span> :
     <span>POAP transferred from
-      <a href={`https://app.poap.xyz/scan/${transfer.from.id}`} target="_blank"  rel="noopener noreferrer"> {shrinkAddress(transfer.from.id, 10)} </a> to
-      <a href={`https://app.poap.xyz/scan/${transfer.to.id}`} target="_blank"  rel="noopener noreferrer"> {shrinkAddress(transfer.to.id, 10)}</a> on
+      <a href={`${POAP_APP_URL}/scan/${transfer.from.id}`} target="_blank"  rel="noopener noreferrer"> {shrinkAddress(transfer.from.id, 10)} </a> to
+      <a href={`${POAP_APP_URL}/scan/${transfer.to.id}`} target="_blank"  rel="noopener noreferrer"> {shrinkAddress(transfer.to.id, 10)}</a> on
       {' '}{transfer.network}
     </span>
   }</div>
