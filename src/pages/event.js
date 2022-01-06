@@ -64,11 +64,16 @@ export function Event() {
   const pageCount = useMemo( () => event.tokenCount % 50 !== 0 ? Math.floor(event.tokenCount / 50) + 1 : event.tokenCount, [event])
   const power = calculatePower(csv_data);
 
-  const csvDownloadIsOnLastStep = () => canDownloadCsv === CSV_STATUS.DownloadingLastDataChunk
   const csvDownloading = () => (canDownloadCsv === CSV_STATUS.DownloadingLastDataChunk || canDownloadCsv === CSV_STATUS.DownloadingData)
   const csvReady = () => canDownloadCsv === CSV_STATUS.Ready
   const csvOnlyMissingEns = () => canDownloadCsv === CSV_STATUS.ReadyWithoutEns
   const csvFailed = () => canDownloadCsv === CSV_STATUS.Failed
+
+  const readyToResolveENS = () => (
+      canDownloadCsv === CSV_STATUS.DownloadingLastDataChunk ||
+      canDownloadCsv === CSV_STATUS.ReadyWithoutEns ||
+      canDownloadCsv === CSV_STATUS.Ready ||
+      canDownloadCsv === CSV_STATUS.Failed)
 
   const succeededLoadingEvent = () => loadingEvent === FETCH_EVENT_PAGE_INFO_STATUS.SUCCEEDED
   const isLoadingEvent = () => loadingEvent === FETCH_EVENT_PAGE_INFO_STATUS.LOADING
@@ -132,19 +137,21 @@ export function Event() {
       const ensData = await getEnsData(ownerIds)
       if(ensData.length > 0){
         setEnsNames(ensData)
+        setCanDownloadCsv(CSV_STATUS.Ready)
+      } else {
+        setCanDownloadCsv(CSV_STATUS.Failed)
       }
-      setCanDownloadCsv(CSV_STATUS.Ready)
     } catch(e) {
       setCanDownloadCsv(CSV_STATUS.Failed)
     }
   }
 
   useEffect(() => {
-    if (succeededLoadingEvent() && csvDownloadIsOnLastStep()) {
+    if (succeededLoadingEvent() && readyToResolveENS()) {
       validationCSVDownload()
     }
     setTableIsLoading(!succeededLoadingEvent())
-  }, [loadingEvent]) /* eslint-disable-line react-hooks/exhaustive-deps */
+  }, [tokens]) /* eslint-disable-line react-hooks/exhaustive-deps */
 
   const defaultEventErrorMessage = 'Token not found'
 
