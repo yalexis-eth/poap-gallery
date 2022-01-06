@@ -1,10 +1,67 @@
 export const XDAI_SUBGRAPH_URL = process.env.REACT_APP_XDAI_SUBGRAPH_URL;
 export const MAINNET_SUBGRAPH_URL = process.env.REACT_APP_MAINNET_SUBGRAPH_URL;
 export const POAP_API_URL = process.env.REACT_APP_POAP_API_URL;
+export const POAP_APP_URL = process.env.REACT_APP_POAP_APP_URL;
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
+export const OrderType = {
+  id: {
+    name: 'Id',
+    val: 'id'
+  },
+  tokenCount: {
+    name: 'Supply',
+    val: 'tokenCount'
+  },
+  transferCount: {
+    name: 'Transfers',
+    val: 'transferCount'
+  },
+  date: {
+    name: 'Date',
+    val: 'start_date'
+  },
+  city: {
+    name: 'City',
+    val: 'city'
+  },
+}
+export const OrderDirection = {
+  ascending: {
+    name: 'Ascending',
+    val: 'asc'
+  },
+  descending: {
+    name: 'Descending',
+    val: 'desc'
+  },
+}
 
-export async function getEvents() {
-  const res = await fetch(`${POAP_API_URL}/events`)
+export const PAGE_LIMIT = 20
+
+export async function getPaginatedEvents({name = undefined, event_ids = undefined,
+                                           offset = undefined, limit = undefined,
+                                           orderBy = undefined, privateEvents = undefined}) {
+  const url = new URL(`${POAP_API_URL}/paginated-events`)
+  if (name) {
+    url.searchParams.append('name', name)
+  }
+  if (event_ids && event_ids.length) {
+    url.searchParams.append('event_ids', event_ids)
+  }
+  if (limit && limit > 0) {
+    url.searchParams.append('limit', limit)
+  }
+  if (offset !== undefined && offset >= 0) {
+    url.searchParams.append('offset', offset)
+  }
+  if (orderBy?.type && orderBy?.order) {
+    url.searchParams.append('sort_field', orderBy.type)
+    url.searchParams.append('sort_dir', orderBy.order)
+  }
+  if (privateEvents !== undefined) {
+    url.searchParams.append('private_event', privateEvents)
+  }
+  const res = await fetch(url.href)
   return res.json()
 }
 
@@ -13,7 +70,7 @@ export async function getEvent(id) {
   return res.json()
 }
 
-export async function getLayerEvents(url) {
+export async function getLayerEvents(url, first, skip, orderBy) {
   const res = await fetch(url, {
     method: 'POST',
     headers: {
@@ -22,7 +79,7 @@ export async function getLayerEvents(url) {
     body: JSON.stringify({
       query: `
       {
-        events(orderBy: id, orderDirection: desc, first: 1000) {
+        events(orderBy: ${orderBy.type}, orderDirection: ${orderBy.order}, first: ${first}, skip: ${skip}) {
           id
           tokenCount
           transferCount
@@ -35,12 +92,44 @@ export async function getLayerEvents(url) {
 	return res.json()
 }
 
-export async function getMainnetEvents() {
-  return getLayerEvents(MAINNET_SUBGRAPH_URL);
+export async function getLayerEventsByIds(url, ids, first = null) {
+  const ids_str = ids.map(id => "\"" + id + "\"").join(',')
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: `
+      {
+        events(where:{id_in: [${ids_str}]}${first && first > 0 ? `, first: ${first}` : ''}) {
+          id
+          tokenCount
+          transferCount
+        }
+      }
+      `
+    })
+  })
+
+  return res.json()
 }
 
-export async function getxDaiEvents() {
-	return getLayerEvents(XDAI_SUBGRAPH_URL);
+export async function getMainnetEventsByIds(ids, first = null) {
+  return getLayerEventsByIds(MAINNET_SUBGRAPH_URL, ids, first);
+}
+
+export async function getxDaiEventsByIds(ids, first = null) {
+  return getLayerEventsByIds(XDAI_SUBGRAPH_URL, ids, first);
+
+}
+
+export async function getMainnetEvents(first, skip, orderBy) {
+  return getLayerEvents(MAINNET_SUBGRAPH_URL, first, skip, orderBy);
+}
+
+export async function getxDaiEvents(first, skip, orderBy) {
+  return getLayerEvents(XDAI_SUBGRAPH_URL, first, skip, orderBy);
 
 }
 
@@ -187,7 +276,7 @@ export async function getMigrations(amount) {
 
 export async function validateMigrations(migrations) {
   // Step 2: Verify the minted tokens have a burned counterpart in layer 2
-  // TODO: add polygon check when we implement POAPs in the polygon chain
+  // TODO(sebas): add polygon check when we implement POAPs in the polygon chain
   const ids = migrations.map(t => "\"" + t.id + "\"").join(',')
   const res2 = await fetch(XDAI_SUBGRAPH_URL, {
     method: 'POST',
@@ -216,4 +305,9 @@ export async function validateMigrations(migrations) {
     })
   })
   return res2.json()
+}
+
+export async function getTop3Events() {
+  const res = await fetch(`${POAP_API_URL}/top-3-events`)
+  return res.json()
 }

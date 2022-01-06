@@ -1,25 +1,35 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Arrow from '../assets/images/angle_down.svg';
 
-export default function Dropdown({title, options, defaultOption, onClickOption}) {
+export default function Dropdown({options, disable, defaultOption, onClickOption}) {
   
-  const [_title, setTitle] = useState(title)
+  const [_title, setTitle] = useState(defaultOption.name)
   const [displayMenu, setDisplayMenu] = useState(false)
 
-  const toggleDisplayMenu = () => {
-    setDisplayMenu(!displayMenu)
+  const toggleDisplayMenu = () => setDisplayMenu((prevState) => !prevState)
+
+  const setValue = (option) => {
+    setTitle(option.name)
+    onClickOption(option)
   }
 
-  let optionsElements = []
-  for(let i = 0; i < options.length; i++) {
-    optionsElements.push(
-      <div className={`option ${options[i] === defaultOption?'active':''}`} onClick={() => {
-        setTitle(options[i])
-        toggleDisplayMenu()
-        onClickOption(options[i])
-      }}>{options[i]}</div>
-    )
+  const reset = () => {
+    setValue(defaultOption)
   }
+
+  useEffect(() => {
+    if(disable) {
+      setDisplayMenu(false)
+      reset()
+    }
+  }, [disable]) /* eslint-disable-line react-hooks/exhaustive-deps */
+
+  let optionsElements = options.map(dropdownOption =>
+      <div key={dropdownOption.val} className='option' onClick={() => {
+        setValue(dropdownOption)
+        toggleDisplayMenu()
+      }}>{dropdownOption.name}</div>
+  )
 
   return (
     <div className="select" style={{position: 'relative'}}

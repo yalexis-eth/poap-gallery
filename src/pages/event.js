@@ -2,7 +2,7 @@ import React, {useEffect, useMemo, useState} from 'react';
 import {usePagination, useSortBy, useTable} from 'react-table'
 import {InView} from 'react-intersection-observer';
 import ReactTooltip from 'react-tooltip';
-import {Route, Switch, useParams, useRouteMatch} from 'react-router-dom';
+import {Route, Switch, useParams, useRouteMatch, Link} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faAngleLeft, faAngleRight, faArrowDown, faArrowUp, faDotCircle, faQuestionCircle} from '@fortawesome/free-solid-svg-icons'
 import {Helmet} from 'react-helmet'
@@ -19,6 +19,7 @@ import { Foliage } from '../components/foliage';
 import {dateCell, shrinkAddress, utcDateFormatted, utcDateFull} from '../utilities/utilities';
 import { useWindowWidth } from '@react-hook/window-size/throttled';
 import OpenLink from '../assets/images/openLink.svg'
+import {POAP_APP_URL} from "../store/api";
 import {Spinner} from "../components/spinner";
 
 const GRAPH_LIMIT = 1000;
@@ -63,11 +64,16 @@ export function Event() {
   const pageCount = useMemo( () => event.tokenCount % 50 !== 0 ? Math.floor(event.tokenCount / 50) + 1 : event.tokenCount, [event])
   const power = calculatePower(csv_data);
 
-  const csvDownloadIsOnLastStep = () => canDownloadCsv === CSV_STATUS.DownloadingLastDataChunk
   const csvDownloading = () => (canDownloadCsv === CSV_STATUS.DownloadingLastDataChunk || canDownloadCsv === CSV_STATUS.DownloadingData)
   const csvReady = () => canDownloadCsv === CSV_STATUS.Ready
   const csvOnlyMissingEns = () => canDownloadCsv === CSV_STATUS.ReadyWithoutEns
   const csvFailed = () => canDownloadCsv === CSV_STATUS.Failed
+
+  const readyToResolveENS = () => (
+      canDownloadCsv === CSV_STATUS.DownloadingLastDataChunk ||
+      canDownloadCsv === CSV_STATUS.ReadyWithoutEns ||
+      canDownloadCsv === CSV_STATUS.Ready ||
+      canDownloadCsv === CSV_STATUS.Failed)
 
   const succeededLoadingEvent = () => loadingEvent === FETCH_EVENT_PAGE_INFO_STATUS.SUCCEEDED
   const isLoadingEvent = () => loadingEvent === FETCH_EVENT_PAGE_INFO_STATUS.LOADING
@@ -131,21 +137,26 @@ export function Event() {
       const ensData = await getEnsData(ownerIds)
       if(ensData.length > 0){
         setEnsNames(ensData)
+        setCanDownloadCsv(CSV_STATUS.Ready)
+      } else {
+        setCanDownloadCsv(CSV_STATUS.Failed)
       }
-      setCanDownloadCsv(CSV_STATUS.Ready)
     } catch(e) {
       setCanDownloadCsv(CSV_STATUS.Failed)
     }
   }
 
   useEffect(() => {
-    if (succeededLoadingEvent() && csvDownloadIsOnLastStep()) {
+    if (succeededLoadingEvent() && readyToResolveENS()) {
       validationCSVDownload()
     }
     setTableIsLoading(!succeededLoadingEvent())
-  }, [loadingEvent]) /* eslint-disable-line react-hooks/exhaustive-deps */
+  }, [tokens]) /* eslint-disable-line react-hooks/exhaustive-deps */
 
   const defaultEventErrorMessage = 'Token not found'
+
+  const previousEventURI = `/event/${parseInt(eventId)-1}`;
+  const nextEventURI = `/event/${parseInt(eventId)+1}`;
 
   return (
       <main id="site-main" role="main" className="app-content event-main">
@@ -181,9 +192,16 @@ export function Event() {
             }}>
               <div style={{flex: '0 0 18rem', display: 'flex', flexDirection: "column", justifyContent: "center"}}>
                 <div className='prev-next-buttons' style={{display: 'flex', justifyContent: 'space-between', marginBottom: 38,}}>
-                  <a href={parseInt(eventId)-1} ><FontAwesomeIcon icon={faAngleLeft}/>{'  Prev'}</a>
-                  <h4 style={{marginBottom: '0'}}><div className='event-title'>EVENT ID</div><div className='event-id'>#{eventId}</div> </h4>
-                  <a href={parseInt(eventId)+1} >{'Next  '}<FontAwesomeIcon icon={faAngleRight}/></a>
+                  <Link to={previousEventURI}>
+                    <FontAwesomeIcon icon={faAngleLeft}/>{'  Prev'}
+                  </Link>
+                  <h4 style={{marginBottom: '0'}}>
+                    <div className='event-title'>EVENT ID</div>
+                    <div className='event-id'>#{eventId}</div> 
+                  </h4>
+                  <Link to={nextEventURI}>
+                  {'Next  '}<FontAwesomeIcon icon={faAngleRight}/>
+                  </Link>
                 </div>
                 <div style={{minHeight: '200px', margin: '0 auto'}}>
                   <EventCard key={0} event={event} size='l' power={power} />
@@ -270,7 +288,7 @@ function TableContainer({tokens, ensNames, pageCount: pc, loading}) {
       <div className={`mobile-row open`}>
         <span className='id-title'>POAP ID</span><span className='id-content'>#{token.id}</span>
         <span className='address-title'>Address</span><span className='address-content ellipsis'>
-        <a href={"https://app.poap.xyz/scan/" + token.owner.id} target="_blank" rel="noopener noreferrer">{shrinkAddress(address, 15)}</a></span>
+        <a href={`${POAP_APP_URL}/scan/${token.owner.id}`} target="_blank" rel="noopener noreferrer">{shrinkAddress(address, 15)}</a></span>
         <span className='claim-title'>Claim Date</span><span className='claim-content'>{utcDateFormatted(token.created * 1000)}</span>
         <span className='tr-count-title'>Transaction Count</span><span className='tr-count-content'>{token.transferCount}</span>
         <span className='power-title'>Power</span><span className='power-content'>{token.owner.tokensOwned}</span>
@@ -317,8 +335,8 @@ function TableContainer({tokens, ensNames, pageCount: pc, loading}) {
     let _data = [], _mobileData = []
     for (let i = 0; i < tokens.length; i++) {
       _data.push({
-        col1:  (<ExternalLinkCell url={"https://app.poap.xyz/token/" + tokens[i].id} content={`#${tokens[i].id}`}/>) ,
-        col2: (<ExternalLinkCell url={"https://app.poap.xyz/scan/" + tokens[i].owner.id} tooltipText='View Collection in POAP.scan' content={tokens[i].owner.id}/>),
+        col1:  (<ExternalLinkCell url={`${POAP_APP_URL}/token/${tokens[i].id}`} content={`#${tokens[i].id}`}/>) ,
+        col2: (<ExternalLinkCell url={`${POAP_APP_URL}/scan/${tokens[i].owner.id}`} tooltipText='View Collection in POAP.scan' content={tokens[i].owner.id}/>),
         col3: tokens[i].created * 1000,
         col4: tokens[i].transferCount,
         col5: tokens[i].owner.tokensOwned,
@@ -341,7 +359,7 @@ function TableContainer({tokens, ensNames, pageCount: pc, loading}) {
         let validName = ensNames[i]
         if (validName) {
           if (data[i]) {
-            _data[i].col2 = (<a href={"https://app.poap.xyz/scan/" + tokens[i].owner.id} target="_blank"  rel="noopener noreferrer" data-tip='View Collection in POAP.scan'> <ReactTooltip effect='solid' /> {validName}</a>)
+            _data[i].col2 = (<a href={`${POAP_APP_URL}/scan/${tokens[i].owner.id}`} target="_blank"  rel="noopener noreferrer" data-tip='View Collection in POAP.scan'> <ReactTooltip effect='solid' /> {validName}</a>)
             _mobileData[i].col1 = <MobileRow token={tokens[i]} address={validName} />
           }
         }

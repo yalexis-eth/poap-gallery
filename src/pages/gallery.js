@@ -5,7 +5,7 @@ import {
   FETCH_INDEX_PAGE_INFO_STATUS,
   fetchIndexData,
   selectIndexFetchStatus,
-  selectRecentEvents
+  selectEvents, selectTotalResults
 } from '../store';
 import {useDispatch, useSelector} from 'react-redux';
 import {EventCard} from "../components/eventCard";
@@ -17,134 +17,107 @@ import FailedSearch from '../assets/images/failed-search.svg'
 import Dropdown from '../components/dropdown';
 import {faSearch} from "@fortawesome/free-solid-svg-icons/faSearch";
 import {useWindowWidth} from "@react-hook/window-size";
+import {OrderType, OrderDirection} from "../store/api";
+
+const SEARCH_STATUS = {
+  NoSearch: 'NoSearch',
+  Searching: 'Searching',
+  Success: 'Success',
+  Failed: 'Failed',
+}
 
 export default function Gallery() {
   const dispatch = useDispatch()
 
-  // Meanwhile get all the events
-  useEffect(() => {
-    dispatch(fetchIndexData());
-  }, []); /* eslint-disable-line react-hooks/exhaustive-deps */
-
-  const events  = useSelector(selectRecentEvents)
+  const events  = useSelector(selectEvents)
   const indexFetchStatus = useSelector(selectIndexFetchStatus)
+  const totalResultsAmount = useSelector(selectTotalResults)
+  const invalidEventsAmount = useSelector(state => state.events.currentInvalidResults)
 
   const [items, setItems] = useState(events)
-  const [search, setSearch] = useState(undefined);
-  const [length, setLength] = useState(40);
-
-  const orderTypeOptions = ['Date', 'Id', 'City', 'Holders', 'Transfers']
-  const [orderType, setOrderType] = useState(orderTypeOptions[0]);
-  const orderDirectionOptions = ['High to Low', 'Low to High']
-  const [orderDirection, setOrderDirection] = useState(orderDirectionOptions[0]);
-
+  const [searchStatus, setSearchStatus] = useState(SEARCH_STATUS.NoSearch);
   const [searchValue, setSearchValue] = useState('');
+  const [page, setPage] = useState(0);
+  const [moreToLoad, setMoreToLoad] = useState(true)
+
+  const initialOrderType = OrderType.date
+  const initialOrderDirection = OrderDirection.descending
+  const [orderType, setOrderType] = useState(initialOrderType)
+  const [orderDirection, setOrderDirection] = useState(initialOrderDirection)
+
+  const fetchData = ({reset = false, nameFilter = undefined}) => {
+    if (reset) {
+      setPage(0)
+    }
+    const isSearch = nameFilter?.length
+    // On search, force ordering by initial ordering
+    const fetchDataArgs = {
+      orderBy: isSearch ?
+          {type: initialOrderType.val, order: initialOrderDirection.val} :
+          {type: orderType.val, order: orderDirection.val},
+      nameFilter: nameFilter,
+      privateEvents: false,
+      reset: reset
+    }
+    dispatch(fetchIndexData(fetchDataArgs))
+  }
+
+  // Meanwhile reset state and get all the events
+  useEffect(() => {
+    if (searchStatus !== SEARCH_STATUS.Searching) {
+      eraseSearch()
+    }
+  }, [orderType, orderDirection]); /* eslint-disable-line react-hooks/exhaustive-deps */
+  useEffect(() => {
+    // Load more data
+    if (page > 0) fetchData({nameFilter: searchValue})
+  }, [page]); /* eslint-disable-line react-hooks/exhaustive-deps */
 
   const width = useWindowWidth();
 
   useEffect(() => {
-    setItems(events)
-  }, [events])
+    if (searchStatus === SEARCH_STATUS.Searching) {
+      setSearchStatus(events.length ? SEARCH_STATUS.Success : SEARCH_STATUS.Failed)
+    }
 
-  const debounceHandleSearch = useCallback(debounce((nextValue, items) => handleNewSearchValue(nextValue, items), 800), [])
-  const handleSearch = (event) => {
-    const value = event.target.value
-    setSearchValue(value);
-    debounceHandleSearch(value, items)
-  };
-  const handleNewSearchValue = (value, items) => {
-    if (value && value.length > 2) {
-      const filteredItems = items.filter((item) => {
-        return item.name.toLowerCase().indexOf(value.toLowerCase()) !== -1;
-      });
-      setSearch(filteredItems);
+    if (page > 0 && events.length === items.length) {
+      setMoreToLoad(false)
     } else {
-      setSearch(undefined);
+      setMoreToLoad(true)
     }
-  }
-
-  const handleOrderDirectionChange = (value) => {
-    setOrderDirection(value);
-    handleFilter(orderType, value);
-  };
-  const handleOrderTypeChange = (value) => {
-    setOrderType(value);
-    handleFilter(value, orderDirection);
-  };
-
-  const handleFilter = (type, direction) => {
-    let isAsc = direction === 'Low to High'
-    let sortedItems = [...items]
-    if (type === 'Date') {
-      sortedItems.sort((a, b) => {
-        const a_start_date = a.start_date.replace(/-/g, " ")
-        const b_start_date = b.start_date.replace(/-/g, " ")
-        return isAsc
-          ? new Date(a_start_date).getTime() - new Date(b_start_date).getTime()
-          : new Date(b_start_date).getTime() - new Date(a_start_date).getTime();
-      });
-    } else if(type === 'Id') {
-      sortedItems.sort((a, b) => {
-        return isAsc ? a.id - b.id : b.id - a.id
-      })
-    } else if (type === 'City') {
-      sortedItems.sort((a, b) => {
-        a = a.city.trim().toLowerCase()
-        b = b.city.trim().toLowerCase()
-
-        if(a === "") {
-          return 1
-        }
-        if (b === "") {
-          return -1
-        }
-        if( a > b ) {
-          return isAsc ? 1 : -1
-        } else if(b > a) {
-          return isAsc ? -1 : 1
-        } else {
-          return 0
-        }
-      })
-    } else if (type === 'Holders') {
-      sortedItems.sort((a, b) => {
-        if(a.tokenCount === undefined) {
-          a.tokenCount = 0
-        }
-        if(b.tokenCount === undefined) {
-          b.tokenCount = 0
-        }
-        if(a.tokenCount > b.tokenCount) {
-          return isAsc ? 1 : -1
-        } else if (b.tokenCount > a.tokenCount) {
-          return isAsc ? -1 : 1
-        } else {
-          return 0
-        }
-      });
-    } else if (type === 'Transfers') {
-      sortedItems.sort((a, b) => {
-        if(a.transferCount === undefined) {
-          a.transferCount = 0
-        }
-        if(b.transferCount === undefined) {
-          b.transferCount = 0
-        }
-        if(a.transferCount > b.transferCount) {
-          return isAsc ? 1 : -1
-        } else if (b.transferCount > a.transferCount) {
-          return isAsc ? -1 : 1
-        } else {
-          return 0
-        }
-      });
-    }
-    setItems(sortedItems)
-  };
+    setItems(events)
+  }, [events]) /* eslint-disable-line react-hooks/exhaustive-deps */
 
   const eraseSearch = () => {
     setSearchValue('');
-    debounceHandleSearch('', items)
+    setSearchStatus(SEARCH_STATUS.NoSearch)
+    handleNewSearchValue('')
+  }
+
+  const debounceHandleSearch = useCallback(debounce((nextValue) => handleNewSearchValue(nextValue), 800), [])
+  const minimumCharsForSearch = 3
+  const handleSearchInput = (event) => {
+    const value = event.target.value
+    debounceHandleSearch(value)
+    setSearchValue(value);
+    if (value?.length < minimumCharsForSearch) {
+      setSearchStatus(SEARCH_STATUS.NoSearch)
+    } else {
+      setSearchStatus(SEARCH_STATUS.Searching)
+    }
+  }
+  const handleNewSearchValue = (value) => {
+    if (value && value.length >= minimumCharsForSearch) {
+      fetchData({reset: true, nameFilter: value})
+    } else if (value === '') {
+      fetchData({reset: true})
+    }
+  }
+  const handleOrderDirectionChange = (value) => {
+    setOrderDirection(value);
+  }
+  const handleOrderTypeChange = (value) => {
+    setOrderType(value);
   }
 
   return (
@@ -165,15 +138,15 @@ export default function Gallery() {
           <div className="gallery-grid">
             <div className="gallery-search">
               <div style={{ display: 'flex', flexDirection: 'row'}}>
-                <input onChange={handleSearch} type="text" value={searchValue} placeholder="Search..." maxLength={20} />{' '}
+                <input onChange={handleSearchInput} type="text" value={searchValue} placeholder="Search..." maxLength={20} />{' '}
                 {
-                  searchValue.length
-                      ? <FontAwesomeIcon icon={faTimesCircle} style={{ position: 'relative', fontSize: '1.5rem', right: 37, top: 8, cursor: 'pointer', color: '#C4CAE8' }} onClick={eraseSearch} />
-                      : <FontAwesomeIcon icon={faSearch}      style={{ position: 'relative', fontSize: '1rem', right: 27, top: 11, color: '#C4CAE8' }}/>
+                  searchStatus === SEARCH_STATUS.NoSearch
+                      ? <FontAwesomeIcon icon={faSearch}      style={{ position: 'relative', fontSize: '1rem', right: 27, top: 11, color: '#C4CAE8' }}/>
+                      : <FontAwesomeIcon icon={faTimesCircle} style={{ position: 'relative', fontSize: '1.5rem', right: 37, top: 8, cursor: 'pointer', color: '#C4CAE8' }} onClick={eraseSearch} />
                 }
               </div>
               {
-                search && search.length ?
+                (searchStatus === SEARCH_STATUS.Success) &&
                 <span
                   style={{
                     position: 'absolute',
@@ -183,8 +156,8 @@ export default function Gallery() {
                     fontSize: '1rem',
                   }}
                 >
-                  {search.length} result(s)
-                </span> : null
+                  {totalResultsAmount - invalidEventsAmount} result(s)
+                </span>
               }
             </div>
             <div className="gallery-filter">
@@ -232,7 +205,11 @@ export default function Gallery() {
                         className="gallery-select-container"
                         role="menu"
                       >
-                        <Dropdown title={orderTypeOptions[0]} defaultOption={orderTypeOptions[0]} options={orderTypeOptions} onClickOption={(orderType) => handleOrderTypeChange(orderType)} />
+                        <Dropdown
+                            defaultOption={initialOrderType}
+                            options={Object.values(OrderType)}
+                            disable={searchStatus !== SEARCH_STATUS.NoSearch}
+                            onClickOption={(orderType) => handleOrderTypeChange(orderType)} />
                       </div>
                     </div>
                     <div
@@ -250,20 +227,26 @@ export default function Gallery() {
                         className="gallery-select-container"
                         role="menu"
                       >
-                        <Dropdown title={orderDirectionOptions[0]} defaultOption={orderDirectionOptions[0]} options={orderDirectionOptions} onClickOption={(orderDirection) => handleOrderDirectionChange(orderDirection)} />
+                        <Dropdown
+                            defaultOption={initialOrderDirection}
+                            options={Object.values(OrderDirection)}
+                            disable={searchStatus !== SEARCH_STATUS.NoSearch}
+                            onClickOption={(orderDirection) => handleOrderDirectionChange(orderDirection)} />
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            {indexFetchStatus === FETCH_INDEX_PAGE_INFO_STATUS.SUCCEEDED && (
-              (search?.length === 0) ? <div className='failed-search'>
+            {(indexFetchStatus === FETCH_INDEX_PAGE_INFO_STATUS.SUCCEEDED || indexFetchStatus === FETCH_INDEX_PAGE_INFO_STATUS.LOADING_MORE) && searchStatus === SEARCH_STATUS.Failed &&
+              <div className='failed-search'>
                 <img src={FailedSearch} alt='Failed search'/>
                 <h3>No results for that search :(</h3>
-              </div> :
-              <Cards events={(search?.length) ? search : items} length={search?.length || length} />
-            )}
+              </div>
+            }
+            {(indexFetchStatus === FETCH_INDEX_PAGE_INFO_STATUS.SUCCEEDED || indexFetchStatus === FETCH_INDEX_PAGE_INFO_STATUS.LOADING_MORE) && searchStatus !== SEARCH_STATUS.Failed &&
+              <Cards events={items} />
+            }
             {(indexFetchStatus === FETCH_INDEX_PAGE_INFO_STATUS.IDLE || indexFetchStatus === FETCH_INDEX_PAGE_INFO_STATUS.LOADING) && <Loader/>}
           </div>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -273,16 +256,14 @@ export default function Gallery() {
                 <span>Could not load gallery, check your connection and try again</span>
               </div>
           )}
-          {!search ?
+          {
+            moreToLoad && (indexFetchStatus === FETCH_INDEX_PAGE_INFO_STATUS.SUCCEEDED || indexFetchStatus === FETCH_INDEX_PAGE_INFO_STATUS.LOADING_MORE) &&
+            searchStatus !== SEARCH_STATUS.Failed &&
             <button  className='btn' onClick={() => {
-                if (items && items.length) {
-                  if (length + 20 < items.length) {
-                    setLength(length + 20);
-                  } else {
-                    setLength(items.length);
-                  }
-                }
-              }}
+              if (items && items.length) {
+                setPage(page + 1);
+              }
+            }}
               style={{
                 marginTop: '40px',
                 width: 'fit-content',
@@ -294,10 +275,12 @@ export default function Gallery() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                boxShadow: '0 6px 18px 0 #6534FF4D'
-              }}>
-              Load more
-            </button> : null
+                boxShadow: '0 6px 18px 0 #6534FF4D',
+              }}
+              disabled={indexFetchStatus === FETCH_INDEX_PAGE_INFO_STATUS.LOADING_MORE}
+            >
+                Load more
+            </button>
           }
         </div>
       </div>
@@ -305,16 +288,6 @@ export default function Gallery() {
   );
 }
 
-function Cards({ events, length }) {
-  let cards = [];
-  if (events && events.length) {
-    let len = (length <= events.length) ? length : events.length;
-    for (let i = 0; i < len; i++) {
-      const event = events[i]
-      if ( !event.private_event ) {
-        cards.push(<EventCard key={i} event={event} />)
-      }
-    }
-  }
-  return cards;
+function Cards({ events }) {
+  return (events && events.length) ? events.map((event, idx) => <EventCard key={`${event.id}-${idx}`} event={event} />) : null
 }
