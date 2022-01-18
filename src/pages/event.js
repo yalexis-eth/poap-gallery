@@ -157,6 +157,15 @@ export function Event() {
 
   const previousEventURI = `/event/${parseInt(eventId)-1}`;
   const nextEventURI = `/event/${parseInt(eventId)+1}`;
+  const resetState = () => {
+    setTableIsLoading(true)
+    setCanDownloadCsv(CSV_STATUS.NoTokens)
+    setPageIndex(0)
+    setEnsNames([])
+  }
+  const onPageChangeHandler = () => {
+    resetState()
+  }
 
   return (
       <main id="site-main" role="main" className="app-content event-main">
@@ -192,14 +201,14 @@ export function Event() {
             }}>
               <div style={{flex: '0 0 18rem', display: 'flex', flexDirection: "column", justifyContent: "center"}}>
                 <div className='prev-next-buttons' style={{display: 'flex', justifyContent: 'space-between', marginBottom: 38,}}>
-                  <Link to={previousEventURI}>
+                  <Link onClick={onPageChangeHandler} to={previousEventURI}>
                     <FontAwesomeIcon icon={faAngleLeft}/>{'  Prev'}
                   </Link>
                   <h4 style={{marginBottom: '0'}}>
                     <div className='event-title'>EVENT ID</div>
                     <div className='event-id'>#{eventId}</div> 
                   </h4>
-                  <Link to={nextEventURI}>
+                  <Link onClick={onPageChangeHandler} to={nextEventURI}>
                   {'Next  '}<FontAwesomeIcon icon={faAngleRight}/>
                   </Link>
                 </div>
