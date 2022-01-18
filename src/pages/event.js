@@ -157,6 +157,7 @@ export function Event() {
 
   const previousEventURI = `/event/${parseInt(eventId)-1}`;
   const nextEventURI = `/event/${parseInt(eventId)+1}`;
+
   const resetState = () => {
     setTableIsLoading(true)
     setCanDownloadCsv(CSV_STATUS.NoTokens)
