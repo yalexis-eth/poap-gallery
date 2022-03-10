@@ -1,13 +1,14 @@
+import React from 'react'
 import { ZERO_ADDRESS } from '../store/api';
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import relativeTime from "dayjs/plugin/relativeTime";
-import CyberConnect from '../assets/images/cyberConnect.svg';
-import Mazury from '../assets/images/mazury.png';
-import Poap from '../assets/images/POAP.svg';
-import Prysm from '../assets/images/prysm.svg';
-import Rainbow from '../assets/images/rainbow.png';
-import Tally from '../assets/images/tally.png';
+import { ReactComponent as Mazury } from "../assets/images/mazury.svg";
+import { ReactComponent as Rainbow } from "../assets/images/rainbow.svg";
+import { ReactComponent as Tally } from "../assets/images/tally.svg";
+import { ReactComponent as CyberConnect } from "../assets/images/cyberConnect.svg";
+import { ReactComponent as Poap } from "../assets/images/POAP.svg";
+import { ReactComponent as Prysm } from "../assets/images/prysm.svg";
 import {CYBERCONNECT_APP_URL, MAZURY_APP_URL, POAP_EXPLORE_APP_URL,
    PRYSM_APP_URL, RAINBOW_APP_URL, WITHTALLY_APP_URL} from "../store/api";
 
@@ -103,37 +104,97 @@ export const collectionlLinks = [
   {
     id: 'POAP_EXPLORE',
     getUrl: PoapExploreLink,
-    icon: Poap,
+    icon: (
+      <Poap
+        style={{
+          margin: "0 5px",
+          verticalAlign: "middle",
+          width: "20px",
+          height: "20px",
+        }}
+        alt={"Open external link"}
+      />
+    ),
     tooltipText: 'View Collection in Explore.poap.xyz'
   },
   {
     id: 'PRYSM',
     getUrl: PrysmScanLink,
-    icon: Prysm,
+    icon: (
+      <Prysm
+        style={{
+          margin: "0 5px",
+          verticalAlign: "middle",
+          width: "20px",
+          height: "20px",
+        }}
+        alt={"Open external link"}
+      />
+    ),
     tooltipText: 'View Collection in Prysm.xyz'
   },
   {
     id: 'RAINBOW',
     getUrl: RainbowLink,
-    icon: Rainbow,
+    icon: (
+      <Rainbow
+        style={{
+          margin: "0 5px",
+          verticalAlign: "middle",
+          width: "20px",
+          height: "20px",
+        }}
+        alt={"Open external link"}
+      />
+    ),
     tooltipText: 'View Collection in Rainbow.me'
   },
   {
     id: 'MAZURY',
     getUrl: MazuryLink,
-    icon: Mazury,
+    icon: (
+      <Mazury
+        style={{
+          margin: "0 5px",
+          verticalAlign: "middle",
+          width: "20px",
+          height: "20px",
+        }}
+        alt={"Open external link"}
+      />
+    ),
     tooltipText: 'View Collection in Mazury.xyz'
   },
   {
     id: 'WITHTALLY',
     getUrl: WithTallyLink,
-    icon: Tally,
+    icon: (
+      <Tally
+        style={{
+          margin: "0 5px",
+          verticalAlign: "middle",
+          width: "20px",
+          height: "20px",
+        }}
+        alt={"Open external link"}
+      />
+    ),
     tooltipText: 'View Collection in Tally'
   },
   {
     id: 'CYBERCONNECT',
     getUrl: CyberconnectLink,
-    icon: CyberConnect,
+    icon: (
+      <CyberConnect
+        style={{
+          margin: "0 5px",
+          verticalAlign: "middle",
+          width: "20px",
+          height: "20px",
+        }}
+        alt={"Open external link"}
+      />
+    ),
     tooltipText: 'View Collection in Cyberconnect.me'
   },
 ]

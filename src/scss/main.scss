@@ -1,8 +1,8 @@
 /* ******************************************************
    Main Import File
-        - Base Imports (Varialbes/Utilities/Base styles)
-        - Components (Navigation/Tools/Modules)
-        - Vendor Imports (Third party plugins)
+   - Base Imports (Varialbes/Utilities/Base styles)
+   - Vendor Imports (Third party plugins)
+   - Components (Navigation/Tools/Modules)
    ****************************************************** */
 
 /* ================================================================
@@ -19,6 +19,14 @@
 @import 'globals/forms';
 
 /* ================================================================
+   Vendor Imports
+   ================================================================ */
+// @import 'vendor/slick';
+// @import "vendor/slick-theme";
+@import 'vendor/aos';
+@import 'vendor/_cooltipz';
+
+/* ================================================================
    Component Imports
    ================================================================ */
 
@@ -31,10 +39,3 @@
 @import 'components/eventsapp';
 @import 'components/footer';
 @import 'components/poapapp';
-
-/* ================================================================
-   Vendor Imports
-   ================================================================ */
-// @import 'vendor/slick';
-// @import "vendor/slick-theme";
-@import 'vendor/aos';
