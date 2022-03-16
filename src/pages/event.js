@@ -249,90 +249,39 @@ export function Event() {
   )
 }
 
-function ExternalIconCell({url, icon, tooltipText = null, content}) {
-  const [isHovering, setIsHovering] = useState(false)
-  const [isHoveringLink, setIsHoveringLink] = useState(false)
-
-  let hoverDeactivateTimeout = null;
-  let hoverLinkDeactivateTimeout = null;
-  useEffect(()=>{
-    return () => {
-      // Clear timeouts on unmount
-      clearTimeout(hoverDeactivateTimeout)
-      clearTimeout(hoverLinkDeactivateTimeout)
-    }
-  })
+const ExternalIconCell = ({url, icon, tooltipText = null}) => {
   return (
-      <a href={url} target="_blank" rel="noopener noreferrer"
-         data-tip={tooltipText}
-         data-for='mainTooltip'
-         onMouseEnter={() => {setIsHovering(true)}}
-         onMouseLeave={() => {hoverDeactivateTimeout = setTimeout(() => {
-           if (!isHoveringLink) setIsHovering(false)
-         }, 500)}}
-         style={{position: 'relative', width: 27}}
-      >
-        <span>
-          <img src={icon}
-               style={{'margin': '0 5px', 'verticalAlign': 'middle', width: '20px', height: '20px'}}
-               alt={'Open external link'} />
-        </span>
-        <ReactTooltip id='mainTooltip' effect='solid'/>
-        {
-          isHovering &&
-          <><div className='external-link'
-                 data-tip='Open external link'
-                 data-for='linkTooltip'
-                 onMouseEnter={() => {clearTimeout(hoverDeactivateTimeout); clearTimeout(hoverLinkDeactivateTimeout); setIsHoveringLink(true)}}
-                 onMouseLeave={() => {hoverLinkDeactivateTimeout = setTimeout(() => {
-                   setIsHoveringLink(false)
-                   setIsHovering(false)
-                 }, 500)}}
-          >
-          </div><ReactTooltip id='linkTooltip' effect='solid' place='bottom'/></> }
-      </a>
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={tooltipText}
+      data-cooltipz-dir="top"
+      data-cooltipz-disable-focus
+      style={{ position: "relative", width: 27 }}
+    >
+      <span>{icon}</span>
+    </a>
   );
 }
 
-function ExternalLinkCell({url, tooltipText = null, content}) {
-  const [isHovering, setIsHovering] = useState(false)
-  const [isHoveringLink, setIsHoveringLink] = useState(false)
-  const width = useWindowWidth()
-  let hoverDeactivateTimeout = null;
-  let hoverLinkDeactivateTimeout = null;
-  useEffect(()=>{
-    return () => {
-      // Clear timeouts on unmount
-      clearTimeout(hoverDeactivateTimeout)
-      clearTimeout(hoverLinkDeactivateTimeout)
-    }
-  })
+const ExternalLinkCell = ({ url, tooltipText = null, content }) => {
+  const width = useWindowWidth();
+
   return (
-    <a href={url} target="_blank" rel="noopener noreferrer"
-       data-tip={tooltipText}
-       data-for='mainTooltip'
-       onMouseEnter={() => {setIsHovering(true)}}
-       onMouseLeave={() => {hoverDeactivateTimeout = setTimeout(() => {
-         if (!isHoveringLink) setIsHovering(false)
-       }, 500)}}
-       style={{position: 'relative', width: 27}}
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={tooltipText}
+      data-cooltipz-dir="top"
+      data-cooltipz-disable-focus
+      style={{ position: "relative", width: 27 }}
     >
-      <span>{shrinkAddress(content, width > 768 ? 20 : 10)}</span><ReactTooltip id='mainTooltip' effect='solid'/>
-       {
-         isHovering &&
-         <><div className='external-link'
-              data-tip='Open external link'
-              data-for='linkTooltip'
-              onMouseEnter={() => {clearTimeout(hoverDeactivateTimeout); clearTimeout(hoverLinkDeactivateTimeout); setIsHoveringLink(true)}}
-              onMouseLeave={() => {hoverLinkDeactivateTimeout = setTimeout(() => {
-                setIsHoveringLink(false)
-                setIsHovering(false)
-              }, 500)}}
-         >
-         </div><ReactTooltip id='linkTooltip' effect='solid' place='bottom'/></> }
-   </a>
- );
-}
+      <span>{shrinkAddress(content, width > 768 ? 20 : 10)}</span>
+    </a>
+  );
+};
 
 function TableContainer({tokens, ensNames, pageCount: pc, loading}) {
   const [data, setData] = useState([]);

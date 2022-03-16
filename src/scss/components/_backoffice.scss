@@ -1,3 +1,12 @@
+:root {
+  --cooltipz-bg-color: #{$color-dark};
+  --cooltipz-font-size: 13px;
+  --cooltipz-font-family: #{$font-family};
+  --cooltipz-border-radius: 3px;
+  --cooltipz-border-color: #{$color-dark};
+  --cooltipz-arrow-size: 0.4rem;
+}
+
 .app-content {
   &.backoffice {
     padding-bottom: 200px;
