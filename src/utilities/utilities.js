@@ -101,7 +101,7 @@ export const externalLinkSetter = (owner_id, name) => {
     [MAZURY_PARTNER.name]: `${MAZURY_PARTNER.url}/people/${owner_id}`,
     [CYBERCONNECT_PARTNER.name]: `${CYBERCONNECT_PARTNER.url}/address/${owner_id}`,
     [WITHTALLY_PARTNER.name]: `${WITHTALLY_PARTNER.url}/voter/${owner_id}`,
-    [GM_PARTNER.name]: `${GM_PARTNER.url}/u/${owner_id}`,
+    [GM_PARTNER.name]: `${GM_PARTNER.url}/u/${owner_id}/poaps`,
     [MOCA_PARTNER.name]: `${MOCA_PARTNER.url}/member/${owner_id}`,
     [WELOOK_PARTNER.name]: `${WELOOK_PARTNER.url}/${owner_id}`,
     [BACKDROP_PARTNER.name]: `${BACKDROP_PARTNER.url}/${owner_id}`,
