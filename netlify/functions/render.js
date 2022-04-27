@@ -79,7 +79,7 @@ function dectectBot(userAgent) {
 
 const getEvent = async (id) => {
   try {
-    return await axios.get('https://api.poap.xyz/events/id/'+id)
+    return await axios.get('https://api.poap.tech/events/id/'+id)
   } catch (error) {
     console.error(error)
   }

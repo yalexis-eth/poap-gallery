@@ -5,7 +5,7 @@
 * https://opensea.io/assets/poap-v2?sortBy=assets_prod_main
 * https://etherscan.io/token/0x22c1f6050e56d2876009903609a2cc3fef83b415?a=0xf6b6f07862a02c85628b3a9688beae07fea9c863#inventory
 
-* https://api.poap.xyz/token/16815/image
+* https://api.poap.tech/token/16815/image
 
 ## Mainnet
 
