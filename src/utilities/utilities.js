@@ -8,7 +8,7 @@ import { ReactComponent as Rainbow } from "../assets/images/rainbow.svg";
 import { ReactComponent as Tally } from "../assets/images/tally.svg";
 import { ReactComponent as CyberConnect } from "../assets/images/cyberConnect.svg";
 import { ReactComponent as Poap } from "../assets/images/POAP.svg";
-import { ReactComponent as Prysm } from "../assets/images/prysm.svg";
+import { ReactComponent as GitPoap } from "../assets/images/gitpoap.svg"
 import { ReactComponent as Gm } from "../assets/images/gm.svg";
 import { ReactComponent as Moca } from "../assets/images/moca.svg";
 import { ReactComponent as Welook } from "../assets/images/welook.svg";
@@ -16,7 +16,6 @@ import { ReactComponent as Backdrop } from "../assets/images/backdrop.svg";
 import { ReactComponent as Light } from "../assets/images/light.svg";
 
 //Partners
-const PRYSM_PARTNER = { "name": 'PRYSM', "url": 'https://beta.prysm.xyz' }
 const POAP_EXPLORE_PARTNER = { "name": 'POAP_EXPLORE', "url": 'https://explore.poap.xyz' }
 const RAINBOW_PARTNER = { "name": 'RAINBOW', "url": 'https://rainbow.me' }
 const MAZURY_PARTNER = { "name": 'MAZURY', "url": 'https://app.mazury.xyz' }
@@ -27,6 +26,7 @@ const MOCA_PARTNER = { "name": 'MOCA', "url": 'https://app.museumofcryptoart.com
 const WELOOK_PARTNER = { "name": 'WELOOK', "url": 'https://welook.io' }
 const BACKDROP_PARTNER = { "name": 'BACKDROP', "url": 'https://backdrop.so' }
 const LIGHT_PARTNER = { "name": 'LIGHT', "url": 'https://light.so' }
+const GIT_POAP_PARTNER = { "name": 'GIT_POAP', "url": 'https://www.gitpoap.io' }
 
 dayjs.extend(utc)
 dayjs.extend(relativeTime)
@@ -95,7 +95,6 @@ export const toastInfoOptions = {
 
 export const externalLinkSetter = (owner_id, name) => {
   const collectionLinks = {
-    [PRYSM_PARTNER.name]: `${PRYSM_PARTNER.url}/profile/${owner_id}/achievements`,
     [POAP_EXPLORE_PARTNER.name]: `${POAP_EXPLORE_PARTNER.url}/${owner_id}`,
     [RAINBOW_PARTNER.name]: `${RAINBOW_PARTNER.url}/${owner_id}?family=POAP`,
     [MAZURY_PARTNER.name]: `${MAZURY_PARTNER.url}/people/${owner_id}`,
@@ -106,6 +105,7 @@ export const externalLinkSetter = (owner_id, name) => {
     [WELOOK_PARTNER.name]: `${WELOOK_PARTNER.url}/${owner_id}`,
     [BACKDROP_PARTNER.name]: `${BACKDROP_PARTNER.url}/${owner_id}`,
     [LIGHT_PARTNER.name]: `${LIGHT_PARTNER.url}/${owner_id}`,
+    [GIT_POAP_PARTNER.name]: `${GIT_POAP_PARTNER.url}/p/${owner_id}`,
     'default': ''
   };
   return collectionLinks[name] ||  collectionLinks['default']
@@ -126,21 +126,6 @@ export const collectionlLinks = [
       />
     ),
     tooltipText: 'View Collection in Explore.poap.xyz'
-  },
-  {
-    id: PRYSM_PARTNER.name,
-    icon: (
-      <Prysm
-        style={{
-          margin: "0 5px",
-          verticalAlign: "middle",
-          width: "20px",
-          height: "20px",
-        }}
-        alt={"Open external link"}
-      />
-    ),
-    tooltipText: 'View Collection in Prysm.xyz'
   },
   {
     id: RAINBOW_PARTNER.name,
@@ -277,4 +262,19 @@ export const collectionlLinks = [
     ),
     tooltipText: 'View Collection in Light.so'
   },
+  {
+    id: GIT_POAP_PARTNER.name,
+    icon: (
+      <GitPoap
+        style={{
+          margin: "0 5px",
+          verticalAlign: "middle",
+          width: "20px",
+          height: "20px",
+        }}
+        alt={"Open external link"}
+      />
+    ),
+    tooltipText: 'View Collection in GitPoap.io'
+  }
 ]
