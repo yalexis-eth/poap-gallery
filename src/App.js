@@ -11,7 +11,7 @@ import Header from './components/header'
 import Footer from './components/footer'
 import useIntercom from "@reclaim-ai/react-intercom-hook";
 import {Toaster} from "react-hot-toast";
-
+import { useAppMonitor } from './utilities/hooks/useAppMonitor';
 
 function App() {
   const GA_MEASUREMENT_ID = process.env.REACT_APP_GA_MEASUREMENT_ID || 'G-W21W3VZBBN'
@@ -25,6 +25,8 @@ function App() {
     ReactGA.initialize(GA_MEASUREMENT_ID);
     ReactGA.send("pageview");
   }
+
+  useAppMonitor()
 
   document.body.className = 'poap-app'
 
