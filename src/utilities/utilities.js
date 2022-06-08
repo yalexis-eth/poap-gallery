@@ -9,6 +9,7 @@ import { ReactComponent as Tally } from "../assets/images/tally.svg";
 import { ReactComponent as CyberConnect } from "../assets/images/cyberConnect.svg";
 import { ReactComponent as Poap } from "../assets/images/POAP.svg";
 import { ReactComponent as GitPoap } from "../assets/images/gitpoap.svg"
+import { ReactComponent as PoapIn } from "../assets/images/poapin.svg"
 import { ReactComponent as Gm } from "../assets/images/gm.svg";
 import { ReactComponent as Moca } from "../assets/images/moca.svg";
 import { ReactComponent as Welook } from "../assets/images/welook.svg";
@@ -27,6 +28,7 @@ const WELOOK_PARTNER = { "name": 'WELOOK', "url": 'https://welook.io' }
 const BACKDROP_PARTNER = { "name": 'BACKDROP', "url": 'https://backdrop.so' }
 const LIGHT_PARTNER = { "name": 'LIGHT', "url": 'https://light.so' }
 const GIT_POAP_PARTNER = { "name": 'GIT_POAP', "url": 'https://www.gitpoap.io' }
+const POAP_IN_PARTNER = { "name": 'POAP_IN', "url": 'https://poap.in/v' }
 
 dayjs.extend(utc)
 dayjs.extend(relativeTime)
@@ -106,6 +108,7 @@ export const externalLinkSetter = (owner_id, name) => {
     [BACKDROP_PARTNER.name]: `${BACKDROP_PARTNER.url}/${owner_id}`,
     [LIGHT_PARTNER.name]: `${LIGHT_PARTNER.url}/${owner_id}`,
     [GIT_POAP_PARTNER.name]: `${GIT_POAP_PARTNER.url}/p/${owner_id}`,
+    [POAP_IN_PARTNER.name]: `${POAP_IN_PARTNER.url}/${owner_id}`,
     'default': ''
   };
   return collectionLinks[name] ||  collectionLinks['default']
@@ -276,5 +279,20 @@ export const collectionlLinks = [
       />
     ),
     tooltipText: 'View Collection in GitPoap.io'
-  }
+  },
+  {
+    id: POAP_IN_PARTNER.name,
+    icon: (
+      <PoapIn
+        style={{
+          margin: "0 5px",
+          verticalAlign: "middle",
+          width: "20px",
+          height: "20px",
+        }}
+        alt={"Open external link"}
+      />
+    ),
+    tooltipText: 'View Collection in Poap.in'
+  },
 ]
