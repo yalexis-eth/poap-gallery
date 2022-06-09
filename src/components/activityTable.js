@@ -43,7 +43,7 @@ export default function ActivityTable() {
       .then(
         (result) => {
           let transfers = result.data.transfers
-          transfers.map(t => t.network = "xDai")
+          transfers.map(t => t.network = "Gnosis")
           setDaiTransfers(transfers)
           setLoading(false)
         },
