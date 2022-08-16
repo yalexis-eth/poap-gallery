@@ -26,7 +26,7 @@ yarn
 cp .env.template .env // Add your own REACT_APP_RPC_PROVIDER_URL
 ```
 
-## How to run with functions localy
+## How to run with the functions localy
 ### Link to configuration of Netlify
 * https://docs.netlify.com/cli/get-started/#get-started-with-netlify-dev
 
